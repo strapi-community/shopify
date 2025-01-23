@@ -32,18 +32,23 @@
     "test:ts:front": "run -T tsc -p admin/tsconfig.json",
     "verify": "strapi-plugin verify",
     "watch": "strapi-plugin watch",
-    "watch:link": "strapi-plugin watch:link"
+    "watch:link": "strapi-plugin watch:link",
+    "graphql-codegen": "graphql-codegen"
   },
   "dependencies": {
+    "@shopify/admin-api-client": "^1.0.4",
     "@shopify/shopify-api": "^11.7.0",
+    "@shopify/storefront-api-client": "^1.0.3",
     "@strapi/design-system": "^2.0.0-rc.14",
     "@strapi/icons": "^2.0.0-rc.14",
     "@types/lodash": "^4.17.14",
+    "fp-ts": "^2.16.9",
     "lodash": "^4.17.21",
     "react-intl": "^7.1.0",
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@shopify/api-codegen-preset": "^1.1.4",
     "@strapi/sdk-plugin": "^5.3.0",
     "@strapi/strapi": "^5.6.0",
     "@strapi/types": "^5.6.0",

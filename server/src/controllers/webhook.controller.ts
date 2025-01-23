@@ -10,25 +10,25 @@ const controller = ({ strapi }: StrapiContext) => {
       console.log('handleAuthCallback');
     },
     async handleOrderWebhook(ctx: Context) {
-      const bodyElement = ctx.request.body[UNPARSED];
-      const { valid, ...rest } = await shopifyService.get().webhooks.validate({
-        rawBody: bodyElement,
-        rawRequest: ctx.request,
-        rawResponse: ctx.response,
-      });
-      console.log('valid', valid);
-      console.log('rest', rest);
-      return {};
+      // const bodyElement = ctx.request.body[UNPARSED];
+      // const { valid, ...rest } = await shopifyService.getShop().webhooks.validate({
+      //   rawBody: bodyElement,
+      //   rawRequest: ctx.request,
+      //   rawResponse: ctx.response,
+      // });
+      // console.log('valid', valid);
+      // console.log('rest', rest);
+      // return {};
     },
     async handleProductWebhook(ctx: Context) {
-      const { valid, ...rest } = await shopifyService.get().webhooks.validate({
-        rawBody: ctx.request.body[UNPARSED],
-        rawRequest: ctx.request,
-        rawResponse: ctx.response,
-      });
-      console.log('valid', valid);
-      console.log('rest', rest);
-      return {};
+      // const { valid, ...rest } = await shopifyService.getShop().webhooks.validate({
+      //   rawBody: ctx.request.body[UNPARSED],
+      //   rawRequest: ctx.request,
+      //   rawResponse: ctx.response,
+      // });
+      // console.log('valid', valid);
+      // console.log('rest', rest);
+      // return {};
     },
   };
 };
