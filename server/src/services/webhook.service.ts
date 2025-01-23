@@ -1,13 +1,13 @@
-import { omit } from 'lodash';
-import type { StrapiContext } from '../@types';
-import { HOST } from '../const/shopify';
 import {
   WebhookEventBridgeEndpoint,
   WebhookHttpEndpoint,
   WebhookPubSubEndpoint,
   WebhookSubscriptionFormat,
   WebhookSubscriptionTopic,
-} from '../shopify/admin.types';
+} from '../@types/shopify';
+import { StrapiContext, CallbackUrl, CreateWebhookSubscription, WebhookData } from '../@types';
+import { omit } from 'lodash';
+import { HOST } from '../const/shopify';
 import { getService } from '../utils/getService';
 import { Operation } from '../validators/admin.validator';
 import {
@@ -16,7 +16,6 @@ import {
   deleteSubscription,
   getWebhooksByCallbackURL,
 } from './shopify.gql.service';
-import { CallbackUrl, CreateWebhookSubscription, WebhookData } from './types';
 
 export default ({ strapi }: StrapiContext) => {
   const shopService = getService(strapi, 'shop');

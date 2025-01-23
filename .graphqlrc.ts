@@ -18,7 +18,7 @@ module.exports = {
       apiType: ApiType.Admin,
       apiVersion: '2025-01',
       documents: ['./server/**/*.{ts,tsx}'],
-      outputDir: './server/src/shopify',
+      outputDir: './server/src/@types/shopify',
       declarations: false,
     }),
   },

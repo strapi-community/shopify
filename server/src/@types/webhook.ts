@@ -1,4 +1,4 @@
-import { WebhookSubscriptionFormat, WebhookSubscriptionTopic } from '../shopify/admin.types';
+import { WebhookSubscriptionFormat, WebhookSubscriptionTopic } from './shopify';
 
 export type CallbackUrl = string;
 export interface WebhookData {

@@ -688,7 +688,7 @@ export type AppConnection = {
   pageInfo: PageInfo;
 };
 
-/** App credits can be applied by the merchant towards future app purchases, webhooks, or usage records in Shopify. */
+/** App credits can be applied by the merchant towards future app purchases, subscriptions, or usage records in Shopify. */
 export type AppCredit = Node & {
   __typename?: 'AppCredit';
   /** The amount that can be used towards future app purchases in Shopify. */
@@ -826,9 +826,9 @@ export type AppInstallation = HasMetafields & Node & {
   __typename?: 'AppInstallation';
   /** The access scopes granted to the application by a merchant during installation. */
   accessScopes: Array<AccessScope>;
-  /** The active application webhooks billed to the shop on a recurring basis. */
+  /** The active application subscriptions billed to the shop on a recurring basis. */
   activeSubscriptions: Array<AppSubscription>;
-  /** All webhooks created for a shop. */
+  /** All subscriptions created for a shop. */
   allSubscriptions: AppSubscriptionConnection;
   /** Application which is installed. */
   app: App;
@@ -1443,7 +1443,7 @@ export enum AppSubscriptionStatus {
    * @deprecated As of API version 2021-01, when a merchant approves an app subscription, the status immediately transitions from `pending` to `active`.
    */
   Accepted = 'ACCEPTED',
-  /** The app subscription has been approved by the merchant. Active app webhooks are billed to the shop. After payment, partners receive payouts. */
+  /** The app subscription has been approved by the merchant. Active app subscriptions are billed to the shop. After payment, partners receive payouts. */
   Active = 'ACTIVE',
   /** The app subscription was cancelled by the app. This could be caused by the app being uninstalled, a new app subscription being activated, or a direct cancellation by the app. This is a terminal state. */
   Cancelled = 'CANCELLED',
@@ -1532,7 +1532,7 @@ export type AppUsagePricingInput = {
   terms: Scalars['String']['input'];
 };
 
-/** Store usage for app webhooks with usage pricing. */
+/** Store usage for app subscriptions with usage pricing. */
 export type AppUsageRecord = Node & {
   __typename?: 'AppUsageRecord';
   /** The date and time when the usage record was created. */
@@ -10847,9 +10847,9 @@ export type CustomerPaymentMethodRemoteUserError = DisplayableError & {
 
 /** Possible error codes that can be returned by `CustomerPaymentMethodRemoteUserError`. */
 export enum CustomerPaymentMethodRemoteUserErrorCode {
-  /** Authorize.net is not enabled for webhooks. */
+  /** Authorize.net is not enabled for subscriptions. */
   AuthorizeNetNotEnabledForSubscriptions = 'AUTHORIZE_NET_NOT_ENABLED_FOR_SUBSCRIPTIONS',
-  /** Braintree is not enabled for webhooks. */
+  /** Braintree is not enabled for subscriptions. */
   BraintreeNotEnabledForSubscriptions = 'BRAINTREE_NOT_ENABLED_FOR_SUBSCRIPTIONS',
   /** Exactly one remote reference is required. */
   ExactlyOneRemoteReferenceRequired = 'EXACTLY_ONE_REMOTE_REFERENCE_REQUIRED',
@@ -14220,7 +14220,7 @@ export type DiscountCodeApp = {
   appDiscountType: AppDiscountType;
   /** Whether the discount applies on regular one-time-purchase items. */
   appliesOnOneTimePurchase: Scalars['Boolean']['output'];
-  /** Whether the discount applies to webhooks items. */
+  /** Whether the discount applies to subscriptions items. */
   appliesOnSubscription: Scalars['Boolean']['output'];
   /** Whether a customer can only use the discount once. */
   appliesOncePerCustomer: Scalars['Boolean']['output'];
@@ -14351,7 +14351,7 @@ export type DiscountCodeAppCreatePayload = {
 export type DiscountCodeAppInput = {
   /** Whether the discount applies on regular one-time-purchase items. */
   appliesOnOneTimePurchase?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Whether the discount applies to webhooks items. */
+  /** Whether the discount applies to subscriptions items. */
   appliesOnSubscription?: InputMaybe<Scalars['Boolean']['input']>;
   /** Whether a customer can only use the discount once. */
   appliesOncePerCustomer?: InputMaybe<Scalars['Boolean']['input']>;
@@ -14372,7 +14372,7 @@ export type DiscountCodeAppInput = {
   functionId?: InputMaybe<Scalars['String']['input']>;
   /** Additional metafields to associate to the discount. [Metafields](https://shopify.dev/docs/apps/build/custom-data) provide dynamic function configuration with different parameters, such as `percentage` for a percentage discount. Merchants can set metafield values in the Shopify admin, which makes the discount function more flexible and customizable. */
   metafields?: InputMaybe<Array<MetafieldInput>>;
-  /** The number of times a discount applies on recurring purchases (webhooks).         0 will apply infinitely whereas 1 will only apply to the first checkout. */
+  /** The number of times a discount applies on recurring purchases (subscriptions).         0 will apply infinitely whereas 1 will only apply to the first checkout. */
   recurringCycleLimit?: InputMaybe<Scalars['Int']['input']>;
   /** The date and time when the discount becomes active and is available to customers. */
   startsAt?: InputMaybe<Scalars['DateTime']['input']>;
@@ -16666,7 +16666,7 @@ export type DraftOrderInput = {
    * The list of product variant or custom line item.
    * Each draft order must include at least one line item.
    *
-   * NOTE: Draft orders don't currently support webhooks.
+   * NOTE: Draft orders don't currently support subscriptions.
    */
   lineItems?: InputMaybe<Array<DraftOrderLineItemInput>>;
   /** The localized fields attached to the draft order. For example, Tax IDs. */
@@ -24245,7 +24245,7 @@ export type LocationDeleteUserError = DisplayableError & {
 export enum LocationDeleteUserErrorCode {
   /** An error occurred while deleting the location. */
   GenericError = 'GENERIC_ERROR',
-  /** The location cannot be deleted while it has any active Retail webhooks in the Point of Sale channel. */
+  /** The location cannot be deleted while it has any active Retail subscriptions in the Point of Sale channel. */
   LocationHasActiveRetailSubscription = 'LOCATION_HAS_ACTIVE_RETAIL_SUBSCRIPTION',
   /** The location cannot be deleted while it has inventory. */
   LocationHasInventory = 'LOCATION_HAS_INVENTORY',
@@ -29592,19 +29592,19 @@ export type Mutation = {
   draftOrderUpdate?: Maybe<DraftOrderUpdatePayload>;
   /**
    * Updates the server pixel to connect to an EventBridge endpoint.
-   * Running this mutation deletes any previous webhooks for the server pixel.
+   * Running this mutation deletes any previous subscriptions for the server pixel.
    */
   eventBridgeServerPixelUpdate?: Maybe<EventBridgeServerPixelUpdatePayload>;
   /**
    * Creates a new Amazon EventBridge webhook subscription.
    *
-   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook webhooks specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook webhooks](https://shopify.dev/docs/apps/build/webhooks/subscribe).
+   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/docs/apps/build/webhooks/subscribe).
    */
   eventBridgeWebhookSubscriptionCreate?: Maybe<EventBridgeWebhookSubscriptionCreatePayload>;
   /**
    * Updates an Amazon EventBridge webhook subscription.
    *
-   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook webhooks specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook webhooks](https://shopify.dev/docs/apps/build/webhooks/subscribe).
+   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/docs/apps/build/webhooks/subscribe).
    */
   eventBridgeWebhookSubscriptionUpdate?: Maybe<EventBridgeWebhookSubscriptionUpdatePayload>;
   /** Acknowledges file update failure by resetting FAILED status to READY and clearing any media errors. */
@@ -30301,19 +30301,19 @@ export type Mutation = {
   productVariantsBulkUpdate?: Maybe<ProductVariantsBulkUpdatePayload>;
   /**
    * Updates the server pixel to connect to a Google PubSub endpoint.
-   * Running this mutation deletes any previous webhooks for the server pixel.
+   * Running this mutation deletes any previous subscriptions for the server pixel.
    */
   pubSubServerPixelUpdate?: Maybe<PubSubServerPixelUpdatePayload>;
   /**
    * Creates a new Google Cloud Pub/Sub webhook subscription.
    *
-   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook webhooks specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook webhooks](https://shopify.dev/docs/apps/build/webhooks/subscribe).
+   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/docs/apps/build/webhooks/subscribe).
    */
   pubSubWebhookSubscriptionCreate?: Maybe<PubSubWebhookSubscriptionCreatePayload>;
   /**
    * Updates a Google Cloud Pub/Sub webhook subscription.
    *
-   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook webhooks specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook webhooks](https://shopify.dev/docs/apps/build/webhooks/subscribe).
+   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/docs/apps/build/webhooks/subscribe).
    */
   pubSubWebhookSubscriptionUpdate?: Maybe<PubSubWebhookSubscriptionUpdatePayload>;
   /** Creates a publication. */
@@ -30685,19 +30685,19 @@ export type Mutation = {
   /**
    * Creates a new webhook subscription.
    *
-   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook webhooks specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook webhooks](https://shopify.dev/docs/apps/build/webhooks/subscribe).
+   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/docs/apps/build/webhooks/subscribe).
    */
   webhookSubscriptionCreate?: Maybe<WebhookSubscriptionCreatePayload>;
   /**
    * Deletes a webhook subscription.
    *
-   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook webhooks specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook webhooks](https://shopify.dev/docs/apps/build/webhooks/subscribe).
+   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/docs/apps/build/webhooks/subscribe).
    */
   webhookSubscriptionDelete?: Maybe<WebhookSubscriptionDeletePayload>;
   /**
    * Updates a webhook subscription.
    *
-   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook webhooks specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook webhooks](https://shopify.dev/docs/apps/build/webhooks/subscribe).
+   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/docs/apps/build/webhooks/subscribe).
    */
   webhookSubscriptionUpdate?: Maybe<WebhookSubscriptionUpdatePayload>;
 };
@@ -37638,7 +37638,7 @@ export enum PayoutSortKeys {
   Status = 'STATUS'
 }
 
-/** Represents a valid PayPal Express webhooks gateway status. */
+/** Represents a valid PayPal Express subscriptions gateway status. */
 export enum PaypalExpressSubscriptionsGatewayStatus {
   /** The status is disabled. */
   Disabled = 'DISABLED',
@@ -40971,7 +40971,7 @@ export type ProductSetInput = {
    * If `true`, then the old handle is redirected to the new one automatically.
    */
   redirectNewHandle?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Whether the product can only be purchased with a selling plan (subscription). Products that are sold exclusively on subscription can only be created on online stores. If set to `true` on an already existing product, then the product will be marked unavailable on channels that don't support webhooks. */
+  /** Whether the product can only be purchased with a selling plan (subscription). Products that are sold exclusively on subscription can only be created on online stores. If set to `true` on an already existing product, then the product will be marked unavailable on channels that don't support subscriptions. */
   requiresSellingPlan?: InputMaybe<Scalars['Boolean']['input']>;
   /**
    * The [SEO title and description](https://help.shopify.com/manual/promoting-marketing/seo/adding-keywords)
@@ -43654,19 +43654,19 @@ export type QueryRoot = {
   /**
    * Returns a webhook subscription by ID.
    *
-   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook webhooks specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook webhooks](https://shopify.dev/docs/apps/build/webhooks/subscribe).
+   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/docs/apps/build/webhooks/subscribe).
    */
   webhookSubscription?: Maybe<WebhookSubscription>;
   /**
-   * Returns a list of webhook webhooks.
+   * Returns a list of webhook subscriptions.
    *
-   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook webhooks specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook webhooks](https://shopify.dev/docs/apps/build/webhooks/subscribe).
+   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/docs/apps/build/webhooks/subscribe).
    */
   webhookSubscriptions: WebhookSubscriptionConnection;
   /**
-   * The count of webhook webhooks.
+   * The count of webhook subscriptions.
    *
-   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook webhooks specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook webhooks](https://shopify.dev/docs/apps/build/webhooks/subscribe). Limited to a maximum of 10000.
+   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/docs/apps/build/webhooks/subscribe). Limited to a maximum of 10000.
    */
   webhookSubscriptionsCount?: Maybe<Count>;
 };
@@ -47929,7 +47929,7 @@ export type SelectedVariantOptionInput = {
 
 /**
  * Represents how a product can be sold and purchased. Selling plans and associated records (selling plan groups
- * and policies) are deleted 48 hours after a merchant uninstalls their webhooks app. We recommend backing
+ * and policies) are deleted 48 hours after a merchant uninstalls their subscriptions app. We recommend backing
  * up these records if you need to restore them later.
  *
  * For more information on selling plans, refer to
@@ -47986,7 +47986,7 @@ export type SellingPlan = HasMetafieldDefinitions & HasMetafields & HasPublished
 
 /**
  * Represents how a product can be sold and purchased. Selling plans and associated records (selling plan groups
- * and policies) are deleted 48 hours after a merchant uninstalls their webhooks app. We recommend backing
+ * and policies) are deleted 48 hours after a merchant uninstalls their subscriptions app. We recommend backing
  * up these records if you need to restore them later.
  *
  * For more information on selling plans, refer to
@@ -48000,7 +48000,7 @@ export type SellingPlanMetafieldArgs = {
 
 /**
  * Represents how a product can be sold and purchased. Selling plans and associated records (selling plan groups
- * and policies) are deleted 48 hours after a merchant uninstalls their webhooks app. We recommend backing
+ * and policies) are deleted 48 hours after a merchant uninstalls their subscriptions app. We recommend backing
  * up these records if you need to restore them later.
  *
  * For more information on selling plans, refer to
@@ -48021,7 +48021,7 @@ export type SellingPlanMetafieldDefinitionsArgs = {
 
 /**
  * Represents how a product can be sold and purchased. Selling plans and associated records (selling plan groups
- * and policies) are deleted 48 hours after a merchant uninstalls their webhooks app. We recommend backing
+ * and policies) are deleted 48 hours after a merchant uninstalls their subscriptions app. We recommend backing
  * up these records if you need to restore them later.
  *
  * For more information on selling plans, refer to
@@ -48040,7 +48040,7 @@ export type SellingPlanMetafieldsArgs = {
 
 /**
  * Represents how a product can be sold and purchased. Selling plans and associated records (selling plan groups
- * and policies) are deleted 48 hours after a merchant uninstalls their webhooks app. We recommend backing
+ * and policies) are deleted 48 hours after a merchant uninstalls their subscriptions app. We recommend backing
  * up these records if you need to restore them later.
  *
  * For more information on selling plans, refer to
@@ -48141,7 +48141,7 @@ export enum SellingPlanAnchorType {
 /**
  * Represents the billing frequency associated to the selling plan (for example, bill every week, or bill every
  * three months). The selling plan billing policy and associated records (selling plan groups, selling plans, pricing
- * policies, and delivery policy) are deleted 48 hours after a merchant uninstalls their webhooks app.
+ * policies, and delivery policy) are deleted 48 hours after a merchant uninstalls their subscriptions app.
  * We recommend backing up these records if you need to restore them later.
  */
 export type SellingPlanBillingPolicy = SellingPlanFixedBillingPolicy | SellingPlanRecurringBillingPolicy;
@@ -48164,7 +48164,7 @@ export enum SellingPlanCategory {
   Other = 'OTHER',
   /** The selling plan is for pre-orders. */
   PreOrder = 'PRE_ORDER',
-  /** The selling plan is for webhooks. */
+  /** The selling plan is for subscriptions. */
   Subscription = 'SUBSCRIPTION',
   /** The selling plan is for try before you buy purchases. */
   TryBeforeYouBuy = 'TRY_BEFORE_YOU_BUY'
@@ -48227,7 +48227,7 @@ export type SellingPlanConnection = {
 /**
  * Represents the delivery frequency associated to the selling plan (for example, deliver every month, or deliver
  * every other week). The selling plan delivery policy and associated records (selling plan groups, selling plans,
- * pricing policies, and billing policy) are deleted 48 hours after a merchant uninstalls their webhooks app.
+ * pricing policies, and billing policy) are deleted 48 hours after a merchant uninstalls their subscriptions app.
  * We recommend backing up these records if you need to restore them later.
  */
 export type SellingPlanDeliveryPolicy = SellingPlanFixedDeliveryPolicy | SellingPlanRecurringDeliveryPolicy;
@@ -48375,7 +48375,7 @@ export enum SellingPlanFulfillmentTrigger {
 /**
  * Represents a selling method (for example, "Subscribe and save" or "Pre-paid"). Selling plan groups
  * and associated records (selling plans and policies) are deleted 48 hours after a merchant
- * uninstalls their webhooks app. We recommend backing up these records if you need to restore them later.
+ * uninstalls their subscriptions app. We recommend backing up these records if you need to restore them later.
  */
 export type SellingPlanGroup = HasPublishedTranslations & Node & {
   __typename?: 'SellingPlanGroup';
@@ -48421,7 +48421,7 @@ export type SellingPlanGroup = HasPublishedTranslations & Node & {
 /**
  * Represents a selling method (for example, "Subscribe and save" or "Pre-paid"). Selling plan groups
  * and associated records (selling plans and policies) are deleted 48 hours after a merchant
- * uninstalls their webhooks app. We recommend backing up these records if you need to restore them later.
+ * uninstalls their subscriptions app. We recommend backing up these records if you need to restore them later.
  */
 export type SellingPlanGroupAppliesToProductArgs = {
   productId: Scalars['ID']['input'];
@@ -48431,7 +48431,7 @@ export type SellingPlanGroupAppliesToProductArgs = {
 /**
  * Represents a selling method (for example, "Subscribe and save" or "Pre-paid"). Selling plan groups
  * and associated records (selling plans and policies) are deleted 48 hours after a merchant
- * uninstalls their webhooks app. We recommend backing up these records if you need to restore them later.
+ * uninstalls their subscriptions app. We recommend backing up these records if you need to restore them later.
  */
 export type SellingPlanGroupAppliesToProductVariantArgs = {
   productVariantId: Scalars['ID']['input'];
@@ -48441,7 +48441,7 @@ export type SellingPlanGroupAppliesToProductVariantArgs = {
 /**
  * Represents a selling method (for example, "Subscribe and save" or "Pre-paid"). Selling plan groups
  * and associated records (selling plans and policies) are deleted 48 hours after a merchant
- * uninstalls their webhooks app. We recommend backing up these records if you need to restore them later.
+ * uninstalls their subscriptions app. We recommend backing up these records if you need to restore them later.
  */
 export type SellingPlanGroupAppliesToProductVariantsArgs = {
   productId: Scalars['ID']['input'];
@@ -48451,7 +48451,7 @@ export type SellingPlanGroupAppliesToProductVariantsArgs = {
 /**
  * Represents a selling method (for example, "Subscribe and save" or "Pre-paid"). Selling plan groups
  * and associated records (selling plans and policies) are deleted 48 hours after a merchant
- * uninstalls their webhooks app. We recommend backing up these records if you need to restore them later.
+ * uninstalls their subscriptions app. We recommend backing up these records if you need to restore them later.
  */
 export type SellingPlanGroupProductVariantsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -48466,7 +48466,7 @@ export type SellingPlanGroupProductVariantsArgs = {
 /**
  * Represents a selling method (for example, "Subscribe and save" or "Pre-paid"). Selling plan groups
  * and associated records (selling plans and policies) are deleted 48 hours after a merchant
- * uninstalls their webhooks app. We recommend backing up these records if you need to restore them later.
+ * uninstalls their subscriptions app. We recommend backing up these records if you need to restore them later.
  */
 export type SellingPlanGroupProductVariantsCountArgs = {
   productId?: InputMaybe<Scalars['ID']['input']>;
@@ -48476,7 +48476,7 @@ export type SellingPlanGroupProductVariantsCountArgs = {
 /**
  * Represents a selling method (for example, "Subscribe and save" or "Pre-paid"). Selling plan groups
  * and associated records (selling plans and policies) are deleted 48 hours after a merchant
- * uninstalls their webhooks app. We recommend backing up these records if you need to restore them later.
+ * uninstalls their subscriptions app. We recommend backing up these records if you need to restore them later.
  */
 export type SellingPlanGroupProductsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -48490,7 +48490,7 @@ export type SellingPlanGroupProductsArgs = {
 /**
  * Represents a selling method (for example, "Subscribe and save" or "Pre-paid"). Selling plan groups
  * and associated records (selling plans and policies) are deleted 48 hours after a merchant
- * uninstalls their webhooks app. We recommend backing up these records if you need to restore them later.
+ * uninstalls their subscriptions app. We recommend backing up these records if you need to restore them later.
  */
 export type SellingPlanGroupSellingPlansArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -48504,7 +48504,7 @@ export type SellingPlanGroupSellingPlansArgs = {
 /**
  * Represents a selling method (for example, "Subscribe and save" or "Pre-paid"). Selling plan groups
  * and associated records (selling plans and policies) are deleted 48 hours after a merchant
- * uninstalls their webhooks app. We recommend backing up these records if you need to restore them later.
+ * uninstalls their subscriptions app. We recommend backing up these records if you need to restore them later.
  */
 export type SellingPlanGroupTranslationsArgs = {
   locale: Scalars['String']['input'];
@@ -48842,7 +48842,7 @@ export type SellingPlanInventoryPolicyInput = {
  * Represents the type of pricing associated to the selling plan (for example, a $10 or 20% discount that is set
  * for a limited period or that is fixed for the duration of the subscription). Selling plan pricing policies and
  * associated records (selling plan groups, selling plans, billing policy, and delivery policy) are deleted 48
- * hours after a merchant uninstalls their webhooks app. We recommend backing up these records if you need
+ * hours after a merchant uninstalls their subscriptions app. We recommend backing up these records if you need
  * to restore them later.
  */
 export type SellingPlanPricingPolicy = SellingPlanFixedPricingPolicy | SellingPlanRecurringPricingPolicy;
@@ -49945,9 +49945,9 @@ export type ShopFeatures = {
   deliveryProfiles: Scalars['Boolean']['output'];
   /** Whether a shop has access to the Google Analytics dynamic remarketing feature. */
   dynamicRemarketing: Scalars['Boolean']['output'];
-  /** Whether a shop can be migrated to use Shopify webhooks. */
+  /** Whether a shop can be migrated to use Shopify subscriptions. */
   eligibleForSubscriptionMigration: Scalars['Boolean']['output'];
-  /** Whether a shop is configured properly to sell webhooks. */
+  /** Whether a shop is configured properly to sell subscriptions. */
   eligibleForSubscriptions: Scalars['Boolean']['output'];
   /** Whether a shop can create gift cards. */
   giftCards: Scalars['Boolean']['output'];
@@ -49965,7 +49965,7 @@ export type ShopFeatures = {
   internationalPriceOverrides: Scalars['Boolean']['output'];
   /** Whether a shop can enable international price rules. */
   internationalPriceRules: Scalars['Boolean']['output'];
-  /** Whether a shop has enabled a legacy subscription gateway to handle older webhooks. */
+  /** Whether a shop has enabled a legacy subscription gateway to handle older subscriptions. */
   legacySubscriptionGatewayEnabled: Scalars['Boolean']['output'];
   /**
    * Whether to show the Live View metrics in the Shopify admin. Live view is hidden from merchants that are on a trial
@@ -49977,7 +49977,7 @@ export type ShopFeatures = {
    * @deprecated No longer supported.
    */
   onboardingVisual: Scalars['Boolean']['output'];
-  /** Whether a shop is configured to sell webhooks with PayPal Express. */
+  /** Whether a shop is configured to sell subscriptions with PayPal Express. */
   paypalExpressSubscriptionGatewayStatus: PaypalExpressSubscriptionsGatewayStatus;
   /** Whether a shop has access to all reporting features. */
   reports: Scalars['Boolean']['output'];
@@ -53366,7 +53366,7 @@ export enum SubscriptionContractSubscriptionStatus {
   Active = 'ACTIVE',
   /** The contract was ended by an unplanned customer action. */
   Cancelled = 'CANCELLED',
-  /** The contract has ended per the expected circumstances. All billing and deliverycycles of the webhooks were executed. */
+  /** The contract has ended per the expected circumstances. All billing and deliverycycles of the subscriptions were executed. */
   Expired = 'EXPIRED',
   /** The contract ended because billing failed and no further billing attempts are expected. */
   Failed = 'FAILED',
@@ -56383,21 +56383,21 @@ export type WebPixelUpdatePayload = {
   webPixel?: Maybe<WebPixel>;
 };
 
-/** An Amazon EventBridge partner event source to which webhook webhooks publish events. */
+/** An Amazon EventBridge partner event source to which webhook subscriptions publish events. */
 export type WebhookEventBridgeEndpoint = {
   __typename?: 'WebhookEventBridgeEndpoint';
   /** The ARN of this EventBridge partner event source. */
   arn: Scalars['ARN']['output'];
 };
 
-/** An HTTPS endpoint to which webhook webhooks send POST requests. */
+/** An HTTPS endpoint to which webhook subscriptions send POST requests. */
 export type WebhookHttpEndpoint = {
   __typename?: 'WebhookHttpEndpoint';
   /** The URL to which the webhooks events are sent. */
   callbackUrl: Scalars['URL']['output'];
 };
 
-/** A Google Cloud Pub/Sub topic to which webhook webhooks publish events. */
+/** A Google Cloud Pub/Sub topic to which webhook subscriptions publish events. */
 export type WebhookPubSubEndpoint = {
   __typename?: 'WebhookPubSubEndpoint';
   /** The Google Cloud Pub/Sub project ID. */
@@ -56481,10 +56481,10 @@ export type WebhookSubscriptionEdge = {
   node: WebhookSubscription;
 };
 
-/** An endpoint to which webhook webhooks send webhooks events. */
+/** An endpoint to which webhook subscriptions send webhooks events. */
 export type WebhookSubscriptionEndpoint = WebhookEventBridgeEndpoint | WebhookHttpEndpoint | WebhookPubSubEndpoint;
 
-/** The supported formats for webhook webhooks. */
+/** The supported formats for webhook subscriptions. */
 export enum WebhookSubscriptionFormat {
   Json = 'JSON',
   Xml = 'XML'
@@ -56518,7 +56518,7 @@ export enum WebhookSubscriptionSortKeys {
 }
 
 /**
- * The supported topics for webhook webhooks. You can use webhook webhooks to receive
+ * The supported topics for webhook subscriptions. You can use webhook subscriptions to receive
  * notifications about particular events in a shop.
  *
  * You create [mandatory webhooks](https://shopify.dev/apps/webhooks/configuration/mandatory-webhooks#mandatory-compliance-webhooks) either via the
