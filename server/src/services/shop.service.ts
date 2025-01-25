@@ -1,6 +1,6 @@
 import { LATEST_API_VERSION, type Session, type Shopify, shopifyApi } from '@shopify/shopify-api';
-import { HOST } from '../const/shopify';
-import { getShopsRepository } from '../repositories/shop.repository';
+import { getShopsRepository } from '../repositories/shop';
+import { getHost } from '../utils/getHost';
 import { ShopifyShopConfig } from '../validators/admin.validator';
 
 export default () => {
@@ -30,7 +30,7 @@ export default () => {
       apiSecretKey: shopifyShop.apiSecretKey,
       adminApiAccessToken: shopifyShop.adminApiAccessToken,
       scopes: scopes.map((scope) => scope.trim()),
-      hostName: HOST,
+      hostName: getHost(strapi),
       hostScheme: 'http',
       isCustomStoreApp: true,
     });

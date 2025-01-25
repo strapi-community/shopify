@@ -39,12 +39,6 @@ export default {
       type: 'string',
       required: true,
     },
-    operations: {
-      type: 'relation',
-      relation: 'manyToMany',
-      target: 'plugin::shopify.operation',
-      required: true,
-    },
     webhooks: {
       type: 'relation',
       relation: 'oneToMany',

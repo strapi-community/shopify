@@ -45,16 +45,16 @@ export const createAllSubscriptionMutation = `
     #graphql 
     ${createSubscriptionFragment}
     mutation createAllProducts(
-        $createTopic: WebhookSubscriptionTopic!, 
-        $updateTopic: WebhookSubscriptionTopic!, 
-        $removeTopic: WebhookSubscriptionTopic!, 
+        $createTopic: WebhookSubscriptionTopic!,
+        $updateTopic: WebhookSubscriptionTopic!,
+        $removeTopic: WebhookSubscriptionTopic!,
         $webhookSubscription: WebhookSubscriptionInput!
     ) {
         create: webhookSubscriptionCreate(topic: $createTopic, webhookSubscription: $webhookSubscription) {
             ...CreateWebhookSubscriptionFragment
         }
         update: webhookSubscriptionCreate(topic: $updateTopic, webhookSubscription: $webhookSubscription) {
-           ...CreateWebhookSubscriptionFragment
+            ...CreateWebhookSubscriptionFragment
         }
         remove: webhookSubscriptionCreate(topic: $removeTopic, webhookSubscription: $webhookSubscription) {
             ...CreateWebhookSubscriptionFragment
@@ -65,11 +65,11 @@ export const createSingleSubscriptionMutation = `
     #graphql 
     ${createSubscriptionFragment}
     mutation updateProducts(
-        $topic: WebhookSubscriptionTopic!, 
+        $topic: WebhookSubscriptionTopic!,
         $webhookSubscription: WebhookSubscriptionInput!
     ) {
         webhookSubscriptionCreate(topic: $topic, webhookSubscription: $webhookSubscription) {
-           ...CreateWebhookSubscriptionFragment
+            ...CreateWebhookSubscriptionFragment
         }
     }
 `;

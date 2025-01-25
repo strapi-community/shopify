@@ -1,3 +1,4 @@
+import { HOOK_TYPE } from '../const/shopify';
 import { StrapiRoute } from './types';
 
 const routes: StrapiRoute<'webhook'>[] = [
@@ -21,7 +22,7 @@ const routes: StrapiRoute<'webhook'>[] = [
   },
   {
     method: 'POST',
-    path: '/webhooks/orders',
+    path: HOOK_TYPE.ORDER.pathSuffix,
     handler: 'webhook.handleOrderWebhook',
     config: {
       auth: false,
@@ -30,7 +31,7 @@ const routes: StrapiRoute<'webhook'>[] = [
   },
   {
     method: 'POST',
-    path: '/webhooks/products',
+    path: HOOK_TYPE.PRODUCT.pathSuffix,
     handler: 'webhook.handleProductWebhook',
     config: {
       auth: false,

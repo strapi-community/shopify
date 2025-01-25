@@ -1,29 +1,33 @@
 import '@shopify/shopify-api/adapters/node';
 import type { Core } from '@strapi/strapi';
+import { getShopsRepository } from './repositories/shop';
 import { getService } from './utils/getService';
-import { getOperationsRepository } from './repositories/operation.reporitory';
 
 const bootstrap = async ({ strapi }: { strapi: Core.Strapi }) => {
   const shopifyService = getService(strapi, 'shopify');
-  const adminService = getService(strapi, 'admin');
-  const operationRepository = getOperationsRepository(strapi);
-  const [{ shops }, isInitialized] = await Promise.all([
-    adminService.settings.getSettings(false),
-    operationRepository.count(),
-  ]);
+  const shopRepository = getShopsRepository(strapi);
 
-  if (isInitialized === 0) {
-    await operationRepository.createMany([
-      { name: 'CREATE' },
-      { name: 'UPDATE' },
-      { name: 'REMOVE' },
-    ]);
-  }
+  const shops = await shopRepository.findMany({
+    where: {
+      webhooks: {
+        $or: [
+          {
+            callbackUrl: { $null: true },
+          },
+          {
+            shopifyId: { $null: true },
+          },
+        ],
+      },
+    },
+    populate: {
+      webhooks: true,
+    },
+  });
+
   if (shops.length === 0) {
-    strapi.log.warn('No Shopify shops found. Skipping Shopify service initialization.');
     return;
   }
-
   await shopifyService.init(shops);
 };
 

@@ -2,9 +2,7 @@ import { schemaConfig } from './schema';
 
 export default {
   default: {
-    accessToken: '',
-    accessKey: '',
-    secretKey: '',
+    host: '',
   },
   validator(config: unknown) {
     const result = schemaConfig.safeParse(config);

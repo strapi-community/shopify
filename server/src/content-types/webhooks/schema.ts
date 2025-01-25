@@ -1,3 +1,5 @@
+import { WebhookSubscriptionFormat, WebhookSubscriptionTopic } from '../../@types/shopify';
+
 export default {
   collectionName: 'plugins_shopify_webhooks',
   info: {
@@ -18,28 +20,36 @@ export default {
     },
   },
   attributes: {
-    shopifyId: {
-      type: 'string',
+    topic: {
+      type: 'enumeration',
+      enum: [
+        WebhookSubscriptionTopic.ProductsCreate,
+        WebhookSubscriptionTopic.ProductsUpdate,
+        WebhookSubscriptionTopic.ProductsDelete,
+        WebhookSubscriptionTopic.OrdersCreate,
+        WebhookSubscriptionTopic.OrdersUpdated,
+        WebhookSubscriptionTopic.OrdersDelete,
+      ],
       required: true,
     },
-    topic: {
+    shopifyId: {
       type: 'string',
-      required: true,
     },
     format: {
       type: 'enumeration',
-      enum: ['JSON'],
-      required: true,
+      enum: [WebhookSubscriptionFormat.Json],
     },
     callbackUrl: {
       type: 'string',
-      required: true,
+    },
+    errors: {
+      type: 'json',
     },
     shop: {
       type: 'relation',
       relation: 'manyToOne',
       target: 'plugin::shopify.shop',
       inversedBy: 'webhooks',
-    }
+    },
   },
 };

@@ -1,9 +1,5 @@
 import { z } from 'zod';
+
 export const schemaConfig = z.object({
-  accessToken: z.string().nonempty('Access token is required'),
-  accessKey: z.string().nonempty('Access key is required'),
-  secretKey: z.string().nonempty('Secret key is required'),
+  host: z.string().url().nonempty(),
 });
-
-
-export type Config = z.infer<typeof schemaConfig>;

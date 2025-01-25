@@ -1,24 +1,19 @@
-import type { StrapiContext } from '../@types';
+import { omit, uniqBy } from 'lodash';
+import { StrapiContext } from '../@types';
+import { WebhookSubscriptionFormat } from '../@types/shopify';
 import { BadRequestException } from '../exceptions/BadRequestException';
-import { getOperationsRepository } from '../repositories/operation.reporitory';
-import { getShopsRepository } from '../repositories/shop.repository';
-import { getWebhookRepository } from '../repositories/webhook.repository';
+import { getShopsRepository } from '../repositories/shop';
+import { getWebhookRepository } from '../repositories/webhook';
 import { getService } from '../utils/getService';
-import type { Settings, ShopifyShopConfig, ShopifyShopWithId } from '../validators/admin.validator';
+import type { Settings, ShopifyShopWithId } from '../validators/admin.validator';
 
 const partialHideValue = (value: string) =>
   `${value.substring(0, 3)}*****${value.substring(value.length - 1)}`;
 
-const checkIfValueContainsAsterisk = (value: string) => value.includes('*');
-
 export default ({ strapi }: StrapiContext) => {
   const shopsRepository = getShopsRepository(strapi);
-  const operationsRepository = getOperationsRepository(strapi);
   const webhookRepository = getWebhookRepository(strapi);
   const webhookService = getService(strapi, 'webhook');
-
-  const checkShopSettingsContainsAsterisk = (shop: ShopifyShopConfig) =>
-    checkIfValueContainsAsterisk(shop.apiKey) || checkIfValueContainsAsterisk(shop.apiSecretKey);
 
   return {
     settings: {
@@ -28,7 +23,7 @@ export default ({ strapi }: StrapiContext) => {
             isActive: true,
           },
           populate: {
-            operations: true,
+            webhooks: true,
           },
         });
         return {
@@ -63,37 +58,75 @@ export default ({ strapi }: StrapiContext) => {
         if (count > 0) {
           throw new BadRequestException('Shop already exists');
         }
-        const attachedOperations = await operationsRepository.findMany({
-          where: { name: { $in: shop.operations.map((operation) => operation.name) } },
-        });
-        const newShop = await shopsRepository.create({
-          ...shop,
-          operations: attachedOperations,
-        });
-        const createWebhookSubscription = await webhookService.create(
-          shop.address,
-          attachedOperations
-        );
-        await webhookRepository.createMany(
-          Object.values(createWebhookSubscription)
-            .filter((_) => _.hasError)
-            .map((webhook) => {
-              return {
-                ...webhook,
-                shop: newShop,
-              };
+        const newShop = await shopsRepository.create(omit(shop, 'webhooks'));
+        const hooksData = await Promise.all(
+          uniqBy(shop.webhooks, 'topic').map((hook) =>
+            webhookRepository.create(true, {
+              ...hook,
+              format: WebhookSubscriptionFormat.Json,
+              shop: newShop,
             })
+          )
         );
+
+        const webhookData = await webhookService.create(shop.address, hooksData);
+        if (webhookData.length) {
+          await Promise.all(
+            webhookData.map((data) => webhookRepository.update({ id: data.id }, data))
+          );
+        }
 
         return shopsRepository.findOne({
           where: { id: newShop.id },
-          populate: { operations: true, webhooks: true },
+          populate: { webhooks: true },
         });
       },
       async removeShop(id: number) {
-        return shopsRepository.remove({ where: { id } });
+        const shop = await shopsRepository.findOne({ where: { id }, populate: { webhooks: true } });
+        if (!shop) {
+          return;
+        }
+        const result = await webhookService.remove(
+          shop.address,
+          shop.webhooks.map((hook) => hook.shopifyId)
+        );
+
+        if (result.some((r) => r.hasError)) {
+          await Promise.all(
+            result
+              .filter((r) => r.hasError)
+              .map((r) => webhookRepository.update({ shopifyId: r.id }, { errors: r.errors }))
+          );
+          throw new BadRequestException(
+            'Failed to remove shop',
+            result.map((r) => `The webhook ${r.id}: ${r.errors.join(', ')}`).join(', ')
+          );
+        }
+        const [removeResult] = await Promise.all([
+          shopsRepository.remove({ where: { id } }),
+          webhookRepository.remove({ where: { shop: { id } } }),
+        ]);
+        return removeResult;
       },
       async updateShop(newShop: ShopifyShopWithId) {
+        throw new BadRequestException('Not implemented yet');
+        // TODO TBD: what we should allow when user want disable some webhook? or enable? or change callback url?
+        const oldShop = await shopsRepository.findOne({
+          where: { id: newShop.id },
+          populate: { webhooks: true },
+        });
+        if (!oldShop) {
+          return;
+        }
+        const hooksData = await Promise.all(
+          uniqBy(newShop.webhooks, 'topic').map((hook) =>
+            webhookRepository.create(true, {
+              ...hook,
+              format: WebhookSubscriptionFormat.Json,
+              shop: newShop,
+            })
+          )
+        );
         return shopsRepository.update({ id: newShop.id }, newShop);
       },
     },

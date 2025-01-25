@@ -1,21 +1,21 @@
+import { omit } from 'lodash';
+import { CallbackUrl, StrapiContext } from '../@types';
 import {
+  CreateAllProductsMutation,
   WebhookEventBridgeEndpoint,
   WebhookHttpEndpoint,
   WebhookPubSubEndpoint,
   WebhookSubscriptionFormat,
-  WebhookSubscriptionTopic,
 } from '../@types/shopify';
-import { StrapiContext, CallbackUrl, CreateWebhookSubscription, WebhookData } from '../@types';
-import { omit } from 'lodash';
-import { HOST } from '../const/shopify';
+import { WebhookData, WebhookWithShopId } from '../repositories/validators';
+import { getCorrectSuffix } from '../utils/getCorrectSuffix';
+import { getHost } from '../utils/getHost';
 import { getService } from '../utils/getService';
-import { Operation } from '../validators/admin.validator';
 import {
-  createAllSubscriptionMutation,
   createSingleSubscriptionMutation,
   deleteSubscription,
   getWebhooksByCallbackURL,
-} from './shopify.gql.service';
+} from './shopify.gql';
 
 export default ({ strapi }: StrapiContext) => {
   const shopService = getService(strapi, 'shop');
@@ -37,76 +37,51 @@ export default ({ strapi }: StrapiContext) => {
     }
     return '';
   };
-  const mutationMap = {
-    CREATE: WebhookSubscriptionTopic.ProductsCreate,
-    UPDATE: WebhookSubscriptionTopic.ProductsUpdate,
-    REMOVE: WebhookSubscriptionTopic.ProductsDelete,
-  } as const;
+
+  const formatData = (
+    id: number,
+    result:
+      | CreateAllProductsMutation['create']
+      | CreateAllProductsMutation['update']
+      | CreateAllProductsMutation['remove']
+  ): WebhookData => {
+    return {
+      ...omit(result.webhookSubscription || {}, ['endpoint', 'id']),
+      id,
+      shopifyId: result.webhookSubscription?.id,
+      errors: result.userErrors.map((error) => error.message ?? error),
+      callbackUrl: extractCallbackUrl(result.webhookSubscription.endpoint),
+    } as WebhookData;
+  };
 
   return {
-    async create(address: string, operations: Operation[]): Promise<CreateWebhookSubscription> {
+    async create(address: string, hooks: WebhookWithShopId[]): Promise<WebhookData[]> {
+      // TODO: please don't remove this code, it is usefully for testing
+      // return Promise.all(hooks.map(async (hook) => {
+      //   return {
+      //     id: hook.id,
+      //     topic: hook.topic,
+      //     // callbackUrl: `${getHost(strapi)}${HOOK_TYPE.PRODUCT.pathSuffix}`,
+      //     // format: WebhookSubscriptionFormat.Json,
+      //     // shopifyId: '123',
+      //     errors: ['sssdd'],
+      //   } as WebhookData
+      // }));
       const client = await getClient(address);
-      if (operations.length === 3) {
-        const { data: result } = await client.request(createAllSubscriptionMutation, {
-          variables: {
-            createTopic: WebhookSubscriptionTopic.ProductsCreate,
-            updateTopic: WebhookSubscriptionTopic.ProductsUpdate,
-            removeTopic: WebhookSubscriptionTopic.ProductsDelete,
-            webhookSubscription: {
-              callbackUrl: `${HOST}/api/shopify/webhooks/products`,
-              format: WebhookSubscriptionFormat.Json,
-            },
-          },
-        });
-        const hasCreateErrors = result.create.userErrors.length > 0;
-        const hasUpdateErrors = result.update.userErrors.length > 0;
-        const hasRemoveErrors = result.remove.userErrors.length > 0;
-        console.log(JSON.stringify(result, null, 2));
-        return {
-          CREATE: {
-            shopifyId: result.create.webhookSubscription?.id,
-            hasError: hasCreateErrors,
-            ...omit(result.create.webhookSubscription, ['endpoint', 'id']),
-            callbackUrl: extractCallbackUrl(result.create.webhookSubscription.endpoint),
-          },
-          UPDATE: {
-            shopifyId: result.update.webhookSubscription?.id,
-            hasError: hasUpdateErrors,
-            ...omit(result.update.webhookSubscription, ['endpoint', 'id']),
-            callbackUrl: extractCallbackUrl(result.create.webhookSubscription.endpoint),
-          },
-          REMOVE: {
-            hasError: hasRemoveErrors,
-            shopifyId: result.remove.webhookSubscription?.id,
-            ...omit(result.remove.webhookSubscription, ['endpoint', 'id']),
-            callbackUrl: extractCallbackUrl(result.create.webhookSubscription.endpoint),
-          },
-        };
-      }
-      const data = await Promise.all(
-        operations.map(async (operation) => {
+      return Promise.all(
+        hooks.map(async (hook) => {
           const { data: result } = await client.request(createSingleSubscriptionMutation, {
             variables: {
-              topic: mutationMap[operation.name],
+              topic: hook.topic,
               webhookSubscription: {
-                callbackUrl: `${HOST}/api/shopify/webhooks/products`,
+                callbackUrl: `${getHost(strapi)}${getCorrectSuffix(hook.topic)}`,
                 format: WebhookSubscriptionFormat.Json,
               },
             },
           });
-          return {
-            [operation.name]: {
-              shopifyId: result.webhookSubscriptionCreate.webhookSubscription.id,
-              hasError: result.webhookSubscriptionCreate.userErrors.length > 0,
-              ...omit(result.webhookSubscriptionCreate.webhookSubscription, ['endpoint', 'id']),
-              callbackUrl: extractCallbackUrl(
-                result.webhookSubscriptionCreate.webhookSubscription.endpoint
-              ),
-            },
-          };
+          return formatData(hook.id, result.webhookSubscriptionCreate);
         })
       );
-      return data.reduce((acc, curr) => ({ ...acc, ...curr }), {});
     },
     async validate(address: string, webhook: WebhookData[]) {
       const client = await getClient(address);
@@ -141,30 +116,26 @@ export default ({ strapi }: StrapiContext) => {
       );
       return data.reduce((acc, curr) => ({ ...acc, ...curr }), {});
     },
-    async remove(address: string, webhookId: string) {
+    async remove(address: string, webhookId: string[]) {
       const client = await getClient(address);
-      const { data: result } = await client.request(deleteSubscription, {
-        variables: {
-          id: webhookId,
-        },
-      });
-      return result.webhookSubscriptionDelete.deletedWebhookSubscriptionId;
-    },
-    async list(address: string) {
-      const client = await getClient(address);
-      const { data: existingWebhooks } = await client.request(getWebhooksByCallbackURL, {
-        variables: {
-          // TODO: extract to function
-          callbackUrl: `${HOST}/api/shopify/webhooks/products`,
-        },
-      });
-      if (!existingWebhooks.webhookSubscriptions) {
-        return [];
-      }
-      return existingWebhooks.webhookSubscriptions.nodes;
-    },
-    async update(address: string) {
-      const client = await getClient(address);
+      const result = await Promise.all(
+        webhookId.map(async (id) => {
+          const { data: result } = await client.request(deleteSubscription, {
+            variables: {
+              id,
+            },
+          });
+          return {
+            ...result.webhookSubscriptionDelete,
+            id,
+          };
+        })
+      );
+      return result.map((data) => ({
+        id: data.id,
+        hasError: !!data.userErrors.length,
+        errors: data.userErrors.map((error) => error.message ?? error) as string[],
+      }));
     },
   };
 };

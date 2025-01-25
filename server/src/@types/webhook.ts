@@ -2,15 +2,12 @@ import { WebhookSubscriptionFormat, WebhookSubscriptionTopic } from './shopify';
 
 export type CallbackUrl = string;
 export interface WebhookData {
+  id: number;
   shopifyId: string;
-  hasError: boolean;
   topic: WebhookSubscriptionTopic;
   format: WebhookSubscriptionFormat;
   callbackUrl: CallbackUrl;
+  userErrors: string[];
 }
 
-export interface CreateWebhookSubscription {
-  CREATE?: WebhookData;
-  UPDATE?: WebhookData;
-  REMOVE?: WebhookData;
-}
+export type CreateWebhookSubscription = Record<string, WebhookData>

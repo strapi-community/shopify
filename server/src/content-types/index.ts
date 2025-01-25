@@ -1,11 +1,9 @@
 import webhook from './webhooks';
 import shop from './shops';
-import operation from './operations';
 
 const contentTypes = {
   webhook,
   shop,
-  operation,
 };
 
 export type ContentTypes = typeof contentTypes;

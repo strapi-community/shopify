@@ -1,13 +1,12 @@
-import type { RequestContext } from '../@types/koa';
+import { isLeft } from 'fp-ts/lib/Either';
 import type { StrapiContext } from '../@types';
+import type { RequestContext } from '../@types/koa';
 import { getService } from '../utils/getService';
 import {
   getAddShopValidator,
   getRemoveShopValidator,
-  getSaveSettingsValidator,
   getUpdateShopValidator,
 } from '../validators/admin.validator';
-import { isLeft } from 'fp-ts/lib/Either';
 
 const controller = ({ strapi }: StrapiContext) => {
   const adminService = getService(strapi, 'admin');
