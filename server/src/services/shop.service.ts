@@ -58,8 +58,8 @@ export default () => {
       }
       return getShop(shopifyShop);
     },
-    remove(shopName: string) {
-      return shopCache.delete(shopName);
+    remove(address: string) {
+      return shopCache.delete(address);
     },
     async getOrCreateSession(address: string) {
       if (sessionCache.has(address)) {

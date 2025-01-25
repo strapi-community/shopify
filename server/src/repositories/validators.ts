@@ -59,6 +59,7 @@ const shopBase = z.object({
   id: z.union([z.number(), z.string()]).transform((val) => Number(val)),
   documentId: z.string(),
   address: z.string().url('The address must be a valid URL.'),
+  vendor: z.string(),
   apiKey: z
     .string()
     .refine((data) => !data.includes('*'), { message: 'API key cannot contain asterisks.' }),

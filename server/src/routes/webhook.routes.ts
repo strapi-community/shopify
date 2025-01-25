@@ -22,7 +22,7 @@ const routes: StrapiRoute<'webhook'>[] = [
   },
   {
     method: 'POST',
-    path: HOOK_TYPE.ORDER.pathSuffix,
+    path: HOOK_TYPE.ORDER.pathSuffix.replace('/api/shopify', ''),
     handler: 'webhook.handleOrderWebhook',
     config: {
       auth: false,
@@ -31,7 +31,7 @@ const routes: StrapiRoute<'webhook'>[] = [
   },
   {
     method: 'POST',
-    path: HOOK_TYPE.PRODUCT.pathSuffix,
+    path: HOOK_TYPE.PRODUCT.pathSuffix.replace('/api/shopify', ''),
     handler: 'webhook.handleProductWebhook',
     config: {
       auth: false,

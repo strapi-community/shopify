@@ -6,6 +6,7 @@ const createHookSchema = webhookValidator.create.base.pick({ topic: true });
 
 const createShopSchema = shopValidator.create.base
   .pick({
+    vendor: true,
     address: true,
     apiKey: true,
     apiSecretKey: true,

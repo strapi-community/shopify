@@ -18,6 +18,10 @@ export default {
     },
   },
   attributes: {
+    vendor: {
+      type: 'string',
+      required: true,
+    },
     address: {
       type: 'string',
       required: true,

@@ -55,6 +55,8 @@ export default ({ strapi }: StrapiContext) => {
   };
 
   return {
+
+    async handleProductWebhook(address: string, rawBody: string) {},
     async create(address: string, hooks: WebhookWithShopId[]): Promise<WebhookData[]> {
       // TODO: please don't remove this code, it is usefully for testing
       // return Promise.all(hooks.map(async (hook) => {
