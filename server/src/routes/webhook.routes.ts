@@ -1,38 +1,13 @@
 import { HOOK_TYPE } from '../const/shopify';
 import { StrapiRoute } from './types';
 
+const clearPathSuffix = (pathSuffix: string) => pathSuffix.replace('/api/shopify', '');
+
 const routes: StrapiRoute<'webhook'>[] = [
   {
-    method: 'GET',
-    path: '/webhooks/auth/callback',
-    handler: 'webhook.handleAuthCallback',
-    config: {
-      auth: false,
-      policies: [],
-    },
-  },
-  {
-    method: 'GET',
-    path: '/webhooks/auth/oauth/callback',
-    handler: 'webhook.handleAuthCallback',
-    config: {
-      auth: false,
-      policies: [],
-    },
-  },
-  {
     method: 'POST',
-    path: HOOK_TYPE.ORDER.pathSuffix.replace('/api/shopify', ''),
-    handler: 'webhook.handleOrderWebhook',
-    config: {
-      auth: false,
-      policies: [],
-    },
-  },
-  {
-    method: 'POST',
-    path: HOOK_TYPE.PRODUCT.pathSuffix.replace('/api/shopify', ''),
-    handler: 'webhook.handleProductWebhook',
+    path: clearPathSuffix(HOOK_TYPE.COMMON.pathSuffix),
+    handler: 'webhook.handleWebhook',
     config: {
       auth: false,
       policies: [],

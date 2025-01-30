@@ -6,6 +6,7 @@ import { getShopsRepository } from '../repositories/shop';
 import { getWebhookRepository } from '../repositories/webhook';
 import { getService } from '../utils/getService';
 import type { Settings, ShopifyShopWithId } from '../validators/admin.validator';
+import shopService from './shop.service';
 
 const partialHideValue = (value: string) =>
   `${value.substring(0, 3)}*****${value.substring(value.length - 1)}`;
@@ -14,6 +15,7 @@ export default ({ strapi }: StrapiContext) => {
   const shopsRepository = getShopsRepository(strapi);
   const webhookRepository = getWebhookRepository(strapi);
   const webhookService = getService(strapi, 'webhook');
+  const shopService = getService(strapi, 'shop');
 
   return {
     settings: {
@@ -65,6 +67,8 @@ export default ({ strapi }: StrapiContext) => {
               ...hook,
               format: WebhookSubscriptionFormat.Json,
               shop: newShop,
+              service: hook.service,
+              method: hook.method,
             })
           )
         );
@@ -105,8 +109,14 @@ export default ({ strapi }: StrapiContext) => {
         const [removeResult] = await Promise.all([
           shopsRepository.remove({ where: { id } }),
           webhookRepository.remove({ where: { shop: { id } } }),
+          shopService.remove(shop.address),
         ]);
-        return removeResult;
+        return {
+          ...removeResult,
+          apiKey: partialHideValue(shop.apiKey),
+          apiSecretKey: partialHideValue(shop.apiSecretKey),
+          adminApiAccessToken: partialHideValue(shop.adminApiAccessToken),
+        };
       },
       async updateShop(newShop: ShopifyShopWithId) {
         throw new BadRequestException('Not implemented yet');

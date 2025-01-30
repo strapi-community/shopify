@@ -51,5 +51,14 @@ export default {
       target: 'plugin::shopify.shop',
       inversedBy: 'webhooks',
     },
+    service: {
+      type: 'string',
+      required: true,
+    },
+    method: {
+      type: 'string',
+      required: true,
+    },
   },
 };
+ 

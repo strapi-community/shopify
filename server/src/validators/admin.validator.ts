@@ -2,7 +2,11 @@ import { z } from 'zod';
 import { shopValidator, webhookValidator } from '../repositories/validators';
 import { validate } from './utils';
 
-const createHookSchema = webhookValidator.create.base.pick({ topic: true });
+const createHookSchema = webhookValidator.create.base.pick({
+  topic: true,
+  service: true,
+  method: true,
+});
 
 const createShopSchema = shopValidator.create.base
   .pick({

@@ -6,11 +6,10 @@ export const getCorrectSuffix = (topic: AvailableTopic) => {
     case WebhookSubscriptionTopic.ProductsCreate:
     case WebhookSubscriptionTopic.ProductsUpdate:
     case WebhookSubscriptionTopic.ProductsDelete:
-      return HOOK_TYPE.PRODUCT.pathSuffix;
     case WebhookSubscriptionTopic.OrdersCreate:
     case WebhookSubscriptionTopic.OrdersUpdated:
     case WebhookSubscriptionTopic.OrdersDelete:
-      return HOOK_TYPE.ORDER.pathSuffix;
+      return HOOK_TYPE.COMMON.pathSuffix;
     default:
       throw new Error('Invalid topic');
   }

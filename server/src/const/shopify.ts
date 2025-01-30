@@ -1,12 +1,8 @@
 export const HOOK_TYPE = {
-  ORDER: {
-    name: 'ORDER',
-    pathSuffix: '/api/shopify/webhooks/orders',
+  COMMON: {
+    name: 'COMMON',
+    pathSuffix: '/api/shopify/webhooks',
   },
-  PRODUCT: {
-    name: 'PRODUCT',
-    pathSuffix: '/api/shopify/webhooks/products',
-  }
 } as const;
 
 export const HOOK_OPERATION_TYPE = {

@@ -24,6 +24,13 @@ export const webhookBase = z.object({
   publishedAt: z.string().nullable().optional(),
   locale: z.string().nullable().optional(),
   errors: z.string().array().nullable().optional(),
+  method: z.string(),
+  service: z
+    .string()
+    .regex(
+      /^admin::|api::[a-zA-Z0-9_]+\.[a-zA-Z0-9_]+|plugin::[a-zA-Z0-9_]+\.[a-zA-Z0-9_]+$/,
+      'Invalid service name allowed values: admin::, api::[a-zA-Z0-9_]+\.[a-zA-Z0-9_]+, plugin::[a-zA-Z0-9_]+\.[a-zA-Z0-9_]+'
+    ),
 });
 const webhookWithShopId = webhookBase.merge(z.object({ shop: z.object({ id: z.number() }) }));
 const webhookShopifyCreating = webhookBase.pick({
@@ -38,7 +45,13 @@ export const webhookValidator = {
   create: {
     base: webhookBase,
     withShopId: webhookWithShopId,
-    draft: webhookBase.pick({ id: true, documentId: true, topic: true }),
+    draft: webhookBase.pick({
+      id: true,
+      documentId: true,
+      topic: true,
+      service: true,
+      method: true,
+    }),
   },
   findOne: {
     base: webhookBase,

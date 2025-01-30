@@ -22,19 +22,19 @@ export default () => {
     'read_purchase_options',
   ] as const;
 
-  function getShop(shopifyShop: ShopifyShopConfig) {
+  function getShop(shopifyShopConfig: ShopifyShopConfig) {
     const api = shopifyApi({
       apiVersion: LATEST_API_VERSION,
       isEmbeddedApp: false,
-      apiKey: shopifyShop.apiKey,
-      apiSecretKey: shopifyShop.apiSecretKey,
-      adminApiAccessToken: shopifyShop.adminApiAccessToken,
+      apiKey: shopifyShopConfig.apiKey,
+      apiSecretKey: shopifyShopConfig.apiSecretKey,
+      adminApiAccessToken: shopifyShopConfig.adminApiAccessToken,
       scopes: scopes.map((scope) => scope.trim()),
       hostName: getHost(strapi),
       hostScheme: 'http',
       isCustomStoreApp: true,
     });
-    shopCache.set(shopifyShop.address, api);
+    shopCache.set(shopifyShopConfig.address, api);
     return api;
   }
 
@@ -59,18 +59,19 @@ export default () => {
       return getShop(shopifyShop);
     },
     remove(address: string) {
-      return shopCache.delete(address);
+       shopCache.delete(address);
+       sessionCache.delete(address);
     },
     async getOrCreateSession(address: string) {
       if (sessionCache.has(address)) {
         const session = sessionCache.get(address);
+        console.log('session', session.isExpired());
         if (!session.isExpired()) {
           return session;
         }
       }
       const shop = await this.getOrCreate(address);
       const appSession = shop.session.customAppSession(new URL(address).hostname);
-
       sessionCache.set(address, appSession);
       return appSession;
     },
