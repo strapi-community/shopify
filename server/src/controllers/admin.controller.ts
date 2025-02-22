@@ -3,24 +3,46 @@ import type { StrapiContext } from '../@types';
 import type { RequestContext } from '../@types/koa';
 import { getService } from '../utils/getService';
 import {
-  getAddShopValidator,
+  getAddShopValidator, getQueryShopsValidator, getQueryShopValidator,
   getRemoveShopValidator,
   getUpdateShopValidator,
 } from '../validators/admin.validator';
 
 const controller = ({ strapi }: StrapiContext) => {
   const adminService = getService(strapi, 'admin');
-  // Settings
   return {
+    // Settings
     async getSettings() {
       return adminService.settings.getSettings();
     },
     async restore() {
       return adminService.settings.restore();
     },
-    // Shop
-    async getShops() {
-      return adminService.shops.getShops();
+    // services
+    async getServices(ctx: RequestContext) {
+      return adminService.services.getServices();
+    },
+    // Shopify shops
+    async getShops(ctx: RequestContext) {
+      const query = getQueryShopsValidator(ctx.query);
+      if (isLeft(query)) {
+        return ctx.badRequest(query.left.message, {
+          issues: query.left.issues,
+        });
+      }
+      return adminService.shops.getShops(query.right);
+    },
+    async getShop(ctx: RequestContext) {
+      const params = getQueryShopValidator({
+        ...ctx.query,
+        id: ctx.params.shopId,
+      });
+      if (isLeft(params)) {
+        return ctx.badRequest(params.left.message, {
+          issues: params.left.issues,
+        });
+      }
+      return adminService.shops.getShop(params.right);
     },
     async addShop(ctx: RequestContext) {
       const payload = getAddShopValidator({

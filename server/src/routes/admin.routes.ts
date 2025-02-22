@@ -12,11 +12,21 @@ const routes: StrapiRoute<'admin'>[] = [
     path: '/settings',
     handler: 'admin.restore',
   },
+  // Services
+  {
+    method: 'GET',
+    path: '/settings/services',
+    handler: 'admin.getServices',
+  },
   // Shops
   {
     method: 'GET',
     path: '/settings/shops',
     handler: 'admin.getShops',
+  },
+  { method: 'GET',
+    path: '/settings/shops/:shopId',
+    handler: 'admin.getShop'
   },
   {
     method: 'POST',
