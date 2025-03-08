@@ -28,8 +28,8 @@ export const webhookBase = z.object({
   service: z
     .string()
     .regex(
-      /^admin::|api::[a-zA-Z0-9_]+\.[a-zA-Z0-9_]+|plugin::[a-zA-Z0-9_]+\.[a-zA-Z0-9_]+$/,
-      'Invalid service name allowed values: admin::, api::[a-zA-Z0-9_]+\.[a-zA-Z0-9_]+, plugin::[a-zA-Z0-9_]+\.[a-zA-Z0-9_]+'
+      /^admin::|api::[a-zA-Z0-9_\-]+\.[a-zA-Z0-9_\-]+|plugin::[a-zA-Z0-9_\-]+\.[a-zA-Z0-9_\-]+$/,
+      'Invalid service name allowed values: admin::, api::[a-zA-Z0-9_\\-]+\.[a-zA-Z0-9_\\-]+, plugin::[a-zA-Z0-9_\\-]+\\.[a-zA-Z0-9_\\-]+'
     ),
 });
 const webhookWithShopId = webhookBase.merge(z.object({ shop: z.object({ id: z.number() }) }));
