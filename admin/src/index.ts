@@ -1,7 +1,9 @@
-import { getTranslation } from './utils/getTranslation';
-import { PLUGIN_ID } from './pluginId';
+import { flattenObject, prefixPluginTranslations } from '@sensinum/strapi-utils';
 import { Initializer } from './components/Initializer';
 import { PluginIcon } from './components/PluginIcon';
+import { PLUGIN_ID } from './pluginId';
+
+import { en } from './translations';
 
 export default {
   register(app: any) {
@@ -28,15 +30,23 @@ export default {
   },
 
   async registerTrads({ locales }: { locales: string[] }) {
-    return Promise.all(
-      locales.map(async (locale) => {
-        try {
-          const { default: data } = await import(`./translations/${locale}.json`);
+    const trads = { en };
 
-          return { data, locale };
-        } catch {
-          return { data: {}, locale };
+    return Promise.all(
+      locales.map(async (locale: string) => {
+        if (locale in trads) {
+          const typedLocale = locale as keyof typeof trads;
+          return trads[typedLocale]().then(({ default: trad }) => {
+            return {
+              data: prefixPluginTranslations(flattenObject(trad), PLUGIN_ID),
+              locale,
+            };
+          });
         }
+        return {
+          data: prefixPluginTranslations(flattenObject({}), PLUGIN_ID),
+          locale,
+        };
       })
     );
   },
