@@ -8,7 +8,7 @@ import { getService } from '../utils/getService';
 export const getUpdateProductValidator = async (
   strapi: Core.Strapi,
   vendor: string,
-  ctx: Context
+  ctx: Context,
 ) => {
   const shopRepository = getShopsRepository(strapi);
   const shopService = getService(strapi, 'shop');
@@ -22,8 +22,8 @@ export const getUpdateProductValidator = async (
     return left('Shop not found');
   }
 
-  const shopify = await shopService.getOrCreate(shop.address);
-  const result = await shopify.webhooks.validate({
+  const { shop: shopifyShop } = await shopService.getOrCreateShop(vendor);
+  const result = await shopifyShop.webhooks.validate({
     rawBody: ctx.request.body[UNPARSED],
     rawRequest: ctx.request,
     rawResponse: ctx.response,

@@ -20,11 +20,7 @@ import {
 export default ({ strapi }: StrapiContext) => {
   const shopService = getService(strapi, 'shop');
 
-  async function getClient(address: string) {
-    const shop = await shopService.getOrCreate(address);
-    const session = await shopService.getOrCreateSession(address);
-    return new shop.clients.Graphql({ session });
-  }
+
 
   const extractCallbackUrl = (
     endpoint:
@@ -56,8 +52,7 @@ export default ({ strapi }: StrapiContext) => {
 
   return {
 
-    async handleProductWebhook(address: string, rawBody: string) {},
-    async create(address: string, hooks: WebhookWithShopId[]): Promise<WebhookData[]> {
+    async create(vendor: string, hooks: WebhookWithShopId[]): Promise<WebhookData[]> {
       // TODO: please don't remove this code, it is usefully for testing
       // return Promise.all(hooks.map(async (hook) => {
       //   return {
@@ -69,7 +64,7 @@ export default ({ strapi }: StrapiContext) => {
       //     errors: ['sssdd'],
       //   } as WebhookData
       // }));
-      const client = await getClient(address);
+      const client = await shopService.getGQLClient(vendor);
       return Promise.all(
         hooks.map(async (hook) => {
           const { data: result } = await client.request(createSingleSubscriptionMutation, {
@@ -85,8 +80,8 @@ export default ({ strapi }: StrapiContext) => {
         })
       );
     },
-    async validate(address: string, webhook: WebhookData[]) {
-      const client = await getClient(address);
+    async validate(vendor: string, webhook: WebhookData[]) {
+      const client = await shopService.getGQLClient(vendor);
       const aggregateWebhook = webhook.reduce(
         (acc, curr) => {
           if (!acc[curr.callbackUrl]) {
@@ -118,8 +113,9 @@ export default ({ strapi }: StrapiContext) => {
       );
       return data.reduce((acc, curr) => ({ ...acc, ...curr }), {});
     },
-    async remove(address: string, webhookId: string[]) {
-      const client = await getClient(address);
+    async remove(vendor: string, webhookId: string[]) {
+      const client = await shopService.getGQLClient(vendor);
+      console.log('client', client);
       const result = await Promise.all(
         webhookId.map(async (id) => {
           const { data: result } = await client.request(deleteSubscription, {
