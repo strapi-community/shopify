@@ -31,3 +31,4 @@ const controller = ({ strapi }: StrapiContext) => {
 };
 
 export default controller;
+

@@ -93,7 +93,7 @@ export default ({ strapi }: StrapiContext) => {
         };
       },
       async addShop(shop: ShopifyShopWithId) {
-        const count = await shopsRepository.count({ where: { address: shop.address } });
+        const count = await shopsRepository.count({ where: { vendor: shop.vendor } });
         if (count > 0) {
           throw new BadRequestException('Shop already exists');
         }
@@ -111,7 +111,7 @@ export default ({ strapi }: StrapiContext) => {
             ),
           );
 
-          const webhookData = await webhookService.create(shop.address, hooksData);
+          const webhookData = await webhookService.create(shop.vendor, hooksData);
           if (webhookData.length) {
             await Promise.all(
               webhookData.map((data) => webhookRepository.update({ id: data.id }, data)),
@@ -131,7 +131,7 @@ export default ({ strapi }: StrapiContext) => {
         }
         return strapi.db.transaction(async () => {
           const result = await webhookService.remove(
-            shop.address,
+            shop.vendor,
             shop.webhooks.map((hook) => hook.shopifyId),
           );
 
@@ -149,7 +149,7 @@ export default ({ strapi }: StrapiContext) => {
           const [removeResult] = await Promise.all([
             shopsRepository.remove({ where: { id } }),
             webhookRepository.remove({ where: { shop: { id } } }),
-            shopService.remove(shop.address),
+            shopService.remove(shop.vendor),
           ]);
           return {
             ...removeResult,

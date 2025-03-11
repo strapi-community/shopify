@@ -1,10 +1,12 @@
 import { LATEST_API_VERSION, type Session, type Shopify, shopifyApi } from '@shopify/shopify-api';
 import { getShopsRepository } from '../repositories/shop';
-import { getHost } from '../utils/getHost';
+import type { Shop } from '../repositories/validators';
+import { getHost } from '../utils';
 import { ShopifyShopConfig } from '../validators/admin.validator';
 
+type CachedShopData = { shop: Shopify; config: Shop };
 export default () => {
-  const shopCache = new Map<string, Shopify>();
+  const shopCache = new Map<string, CachedShopData>();
   const sessionCache = new Map<string, Session>();
   const scopes = [
     'read_apps',
@@ -34,46 +36,61 @@ export default () => {
       hostScheme: 'http',
       isCustomStoreApp: true,
     });
-    shopCache.set(shopifyShopConfig.address, api);
+    shopCache.set(shopifyShopConfig.vendor, { shop: api, config: shopifyShopConfig });
     return api;
   }
 
   return {
-    async getConfig(address: string) {
-      return getShopsRepository(strapi).findOne({ where: { address } });
+    async getConfig(vendor: string) {
+      return getShopsRepository(strapi).findOne({ where: { vendor } });
     },
     getOrCreateWithConfig(shopifyShop: ShopifyShopConfig) {
-      if (shopCache.has(shopifyShop.address)) {
-        return shopCache.get(shopifyShop.address);
+      if (shopCache.has(shopifyShop.vendor)) {
+        return shopCache.get(shopifyShop.vendor);
       }
       return getShop(shopifyShop);
     },
-    async getOrCreate(address: string) {
-      if (shopCache.has(address)) {
-        return shopCache.get(address);
+    async getOrCreateShop(vendor: string): Promise<CachedShopData> {
+      if (shopCache.has(vendor)) {
+        return shopCache.get(vendor);
       }
-      const shopifyShop = await this.getConfig(address);
-      if (!shopifyShop) {
+      const shopifyConfig = await this.getConfig(vendor);
+      if (!shopifyConfig) {
         throw new Error('Shop not found');
       }
-      return getShop(shopifyShop);
+      return {
+        config: shopifyConfig,
+        shop: getShop(shopifyConfig),
+      };
     },
-    remove(address: string) {
-       shopCache.delete(address);
-       sessionCache.delete(address);
+    remove(vendor: string) {
+      shopCache.delete(vendor);
+      sessionCache.delete(vendor);
     },
-    async getOrCreateSession(address: string) {
-      if (sessionCache.has(address)) {
-        const session = sessionCache.get(address);
-        console.log('session', session.isExpired());
+    async getOrCreateSession(vendor: string, cachedShopData?: CachedShopData) {
+      if (sessionCache.has(vendor)) {
+        const session = sessionCache.get(vendor);
         if (!session.isExpired()) {
           return session;
         }
       }
-      const shop = await this.getOrCreate(address);
-      const appSession = shop.session.customAppSession(new URL(address).hostname);
-      sessionCache.set(address, appSession);
+      const { shop, config } = cachedShopData ?? await this.getOrCreateShop(vendor);
+      const appSession = shop.session.customAppSession(new URL(config.address).hostname);
+      sessionCache.set(vendor, appSession);
       return appSession;
+    },
+
+    async getGQLClient(vendor: string) {
+      const shopData = await this.getOrCreateShop(vendor);
+      const session = await this.getOrCreateSession(vendor, shopData);
+
+      return new shopData.shop.clients.Graphql({ session });
+    },
+    async getRestClient(vendor: string) {
+      const shopData = await this.getOrCreateShop(vendor);
+      const session = await this.getOrCreateSession(vendor, shopData);
+
+      return new shopData.shop.clients.Rest({ session });
     },
   };
 };

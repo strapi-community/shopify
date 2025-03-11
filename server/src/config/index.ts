@@ -3,6 +3,7 @@ import { schemaConfig } from './schema';
 export default {
   default: {
     host: '',
+    engine: 'memory',
   },
   validator(config: unknown) {
     const result = schemaConfig.safeParse(config);

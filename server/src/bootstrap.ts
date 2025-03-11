@@ -1,7 +1,7 @@
 import '@shopify/shopify-api/adapters/node';
-import type { Core } from '@strapi/strapi';
+import { Core } from '@strapi/strapi';
 import { getShopsRepository } from './repositories/shop';
-import { getService } from './utils/getService';
+import { getService } from './utils';
 
 const bootstrap = async ({ strapi }: { strapi: Core.Strapi }) => {
   const shopifyService = getService(strapi, 'shopify');
