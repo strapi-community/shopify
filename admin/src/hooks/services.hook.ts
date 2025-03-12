@@ -4,12 +4,10 @@ import { getApiClient } from '../api/client';
 
 export const useServices = () => {
   const fetch = getFetchClient();
-  const apiClient = getApiClient(fetch);
+  const { readServices, readServicesIndex } = getApiClient(fetch);
 
   return useQuery({
-    queryKey: apiClient.readServicesIndex(),
-    queryFn() {
-      return apiClient.readServices();
-    },
+    queryKey: readServicesIndex(),
+    queryFn: readServices,
   });
 };

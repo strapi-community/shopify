@@ -16,13 +16,9 @@ export const useAdminNavigation = () => {
 
   return useMemo(
     () => ({
-      goToNew() {
-        navigate(`/plugins/${PLUGIN_ID}/new`);
-      },
+      goToNew: () => navigate(`/plugins/${PLUGIN_ID}/new`),
 
-      goToEdit(id: number) {
-        navigate(`/plugins/${PLUGIN_ID}/${id}/edit`);
-      },
+      goToEdit: (id: number) => navigate(`/plugins/${PLUGIN_ID}/${id}/edit`),
 
       params,
     }),

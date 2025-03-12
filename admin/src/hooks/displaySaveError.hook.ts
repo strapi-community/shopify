@@ -11,26 +11,26 @@ export const useDisplayError = () => {
 
     if (parsedError.success) {
       if (parsedError.data?.response?.data?.error?.details?.issues?.length) {
-        parsedError.data.response.data.error.details.issues.forEach((issue) => {
+        return parsedError.data.response.data.error.details.issues.forEach((issue) => {
           toggleNotification({
             type: 'danger',
             message: `${issue.path.join('.')}: ${issue.message}`,
             timeout: MESSAGE_TIMEOUT,
           });
         });
-      } else {
-        toggleNotification({
-          type: 'danger',
-          message: parsedError.data.message,
-          timeout: MESSAGE_TIMEOUT,
-        });
       }
-    } else {
-      toggleNotification({
+
+      return toggleNotification({
         type: 'danger',
-        message: error.message,
+        message: parsedError.data.message,
         timeout: MESSAGE_TIMEOUT,
       });
     }
+
+    toggleNotification({
+      type: 'danger',
+      message: error.message,
+      timeout: MESSAGE_TIMEOUT,
+    });
   };
 };

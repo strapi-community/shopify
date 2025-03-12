@@ -48,17 +48,15 @@ export const EditPage: FC = () => {
     });
 
     updateShopMutation.mutate(shop, {
-      onSettled() {
-        dispatch({ type: 'LOADING_STOP' });
-      },
-      onSuccess() {
+      onSettled: () => dispatch({ type: 'LOADING_STOP' }),
+      onSuccess: () => {
         dispatch({ type: 'MARK_CLEAN' });
 
         displaySaveSuccess();
       },
       onError: displayApiErrors,
     });
-  }, []);
+  }, [dispatch, updateShopMutation]);
 
   const onDelete = useCallback(
     (shop: ShopSchemaWithIdSchema) => {
@@ -67,10 +65,8 @@ export const EditPage: FC = () => {
       });
 
       deleteShopMutation.mutate(shop, {
-        onSettled() {
-          dispatch({ type: 'LOADING_STOP' });
-        },
-        onSuccess() {
+        onSettled: () => dispatch({ type: 'LOADING_STOP' }),
+        onSuccess: () => {
           dispatch({ type: 'MARK_CLEAN' });
 
           displayDeleteSuccess();
@@ -79,7 +75,7 @@ export const EditPage: FC = () => {
         onError: displayApiErrors,
       });
     },
-    [dispatch, goToNew, displayApiErrors, displayDeleteSuccess]
+    [dispatch, goToNew, displayApiErrors, displayDeleteSuccess, deleteShopMutation]
   );
 
   const onChange = useCallback((next: Pick<ShopSchemaWithIdSchema, FormField>) => {
@@ -90,15 +86,17 @@ export const EditPage: FC = () => {
         ...next,
       },
     });
-  }, []);
+  }, [dispatch, current]);
 
-  const validator = useCallback((shop: unknown) => {
-    return new Promise<ShopSchemaWithIdSchema>((resolve, reject) => {
-      const result = shopSchemaWithIdSchema.safeParse(shop);
+  const validator = useCallback(
+    (shop: unknown) =>
+      new Promise<ShopSchemaWithIdSchema>((resolve, reject) => {
+        const result = shopSchemaWithIdSchema.safeParse(shop);
 
-      if (result.success) {
-        resolve(result.data);
-      } else {
+        if (result.success) {
+          return resolve(result.data);
+        }
+
         const errors = result.error.issues.reduce<Record<string, string>>((acc, item) => {
           acc[item.path.join('.')] = item.message;
 
@@ -108,9 +106,24 @@ export const EditPage: FC = () => {
         reject(errors);
 
         dispatch({ type: 'ERRORS', errors });
-      }
-    });
-  }, []);
+      }),
+    [dispatch]
+  );
+
+  const onDeleteConfirm = useCallback(() => {
+    onDelete(current);
+  }, [current, onDelete]);
+
+  const onSave = useCallback(() => {
+    validator(current)
+      .then(onSubmit)
+      .catch((errors) => {
+        dispatch({
+          type: 'ERRORS',
+          errors,
+        });
+      });
+  }, [validator, current]);
 
   useEffect(() => {
     if (!params.id) {
@@ -127,7 +140,7 @@ export const EditPage: FC = () => {
         goToNew();
       }
     }
-  }, [isLoading, shop]);
+  }, [isLoading, shop, dispatch, goToNew]);
 
   return (
     <Layouts.Root>
@@ -154,22 +167,7 @@ export const EditPage: FC = () => {
                       </Button>
                     </Dialog.Cancel>
                     <Dialog.Action>
-                      <Button
-                        fullWidth
-                        variant="secondary-light"
-                        onClick={() => {
-                          validator(current)
-                            .then((result) => {
-                              onDelete(result);
-                            })
-                            .catch((errors) => {
-                              dispatch({
-                                type: 'ERRORS',
-                                errors,
-                              });
-                            });
-                        }}
-                      >
+                      <Button fullWidth variant="secondary-light" onClick={onDeleteConfirm}>
                         {formatMessage(getTrad('form.shop.delete.dialog.confirm'))}
                       </Button>
                     </Dialog.Action>
@@ -181,18 +179,7 @@ export const EditPage: FC = () => {
                 startIcon={<Check />}
                 fullWidth
                 disabled={isSubmitting || !isDirty || isLoading}
-                onClick={() => {
-                  validator(current)
-                    .then((result) => {
-                      onSubmit(result);
-                    })
-                    .catch((errors) => {
-                      dispatch({
-                        type: 'ERRORS',
-                        errors,
-                      });
-                    });
-                }}
+                onClick={onSave}
               >
                 {formatMessage(getTrad('form.shop.save'))}
               </Button>

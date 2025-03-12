@@ -79,6 +79,14 @@ export const ShopForm: FC<Props> = (props) => {
     [props.shop]
   );
 
+  const onChangeCurried =
+    <TKey extends keyof ShopSchemaWithIdSchema, TValue extends ShopSchemaWithIdSchema[TKey]>(
+      key: TKey
+    ) =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      onChange(key, event.target.value as TValue);
+    };
+
   const onAddWebhook = useCallback(() => {
     if (!nextAvailableTopic) {
       return;
@@ -178,9 +186,7 @@ export const ShopForm: FC<Props> = (props) => {
                       <TextInput
                         type="string"
                         name="address"
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                          onChange('address', event.target.value);
-                        }}
+                        onChange={onChangeCurried('address')}
                         value={values.address}
                         disabled={disabled || props.mode === 'edit'}
                       />
@@ -197,9 +203,7 @@ export const ShopForm: FC<Props> = (props) => {
                       <TextInput
                         type="string"
                         name="apiSecretKey"
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                          onChange('apiSecretKey', event.target.value);
-                        }}
+                        onChange={onChangeCurried('apiSecretKey')}
                         value={values.apiSecretKey}
                         disabled={disabled}
                         placeholder={formatMessage(getTrad('form.shop.apiSecretKey.placeholder'))}
@@ -218,9 +222,7 @@ export const ShopForm: FC<Props> = (props) => {
                       <TextInput
                         type="string"
                         name="vendor"
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                          onChange('vendor', event.target.value);
-                        }}
+                        onChange={onChangeCurried('vendor')}
                         value={values.vendor}
                         disabled={disabled || props.mode === 'edit'}
                       />
@@ -236,9 +238,7 @@ export const ShopForm: FC<Props> = (props) => {
                       <TextInput
                         type="string"
                         name="apiKey"
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                          onChange('apiKey', event.target.value);
-                        }}
+                        onChange={onChangeCurried('apiKey')}
                         value={values.apiKey}
                         disabled={disabled}
                         placeholder={formatMessage(getTrad('form.shop.apiKey.placeholder'))}
@@ -258,9 +258,7 @@ export const ShopForm: FC<Props> = (props) => {
                       <TextInput
                         type="string"
                         name="adminApiAccessToken"
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                          onChange('adminApiAccessToken', event.target.value);
-                        }}
+                        onChange={onChangeCurried('adminApiAccessToken')}
                         value={values.adminApiAccessToken}
                         disabled={disabled}
                         placeholder={formatMessage(

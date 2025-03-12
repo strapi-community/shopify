@@ -1,5 +1,6 @@
 import { getFetchClient } from '@strapi/strapi/admin';
 import { once } from 'lodash';
+import { PLUGIN_ID as URL_PREFIX } from '../pluginId';
 import {
   NewShopSchemaWithIdSchema,
   ServiceSchema,
@@ -8,35 +9,24 @@ import {
   shopSchemaWithIdSchema,
 } from '../validators/shop.validator';
 
-const URL_PREFIX = 'shopify';
-
 export type ApiClient = ReturnType<typeof getApiClient>;
 
 export const getApiClient = once((fetch: ReturnType<typeof getFetchClient>) => ({
-  getIndexPrefix() {
-    return [URL_PREFIX];
-  },
+  getIndexPrefix: () => [URL_PREFIX],
 
-  readAll() {
-    return fetch
+  readAll: () =>
+    fetch
       .get(`/${URL_PREFIX}/settings/shops`)
-      .then(({ data }) => shopSchemaWithIdSchema.array().parse(data));
-  },
+      .then(({ data }) => shopSchemaWithIdSchema.array().parse(data)),
+  readAllIndex: () => [URL_PREFIX, 'shops'],
 
-  readAllIndex() {
-    return [URL_PREFIX, 'shops'];
-  },
-
-  createShop(body: NewShopSchemaWithIdSchema): Promise<ShopSchemaWithIdSchema> {
-    return fetch
+  createShop: (body: NewShopSchemaWithIdSchema): Promise<ShopSchemaWithIdSchema> =>
+    fetch
       .post(`/${URL_PREFIX}/settings/shops`, body)
-      .then(({ data }) => shopSchemaWithIdSchema.parse(data));
-  },
+      .then(({ data }) => shopSchemaWithIdSchema.parse(data)),
 
-  getReadShopIndex(id: number) {
-    return [URL_PREFIX, 'shops', id];
-  },
-  readShop(id: number): Promise<ShopSchemaWithIdSchema> {
+  getReadShopIndex: (id: number) => [URL_PREFIX, 'shops', id],
+  readShop: (id: number): Promise<ShopSchemaWithIdSchema> => {
     const query = new URLSearchParams();
 
     query.append('populate[webhooks]', 'true');
@@ -50,22 +40,17 @@ export const getApiClient = once((fetch: ReturnType<typeof getFetchClient>) => (
       }));
   },
 
-  updateShop(body: ShopSchemaWithIdSchema): Promise<ShopSchemaWithIdSchema> {
-    return fetch
+  updateShop: (body: ShopSchemaWithIdSchema): Promise<ShopSchemaWithIdSchema> =>
+    fetch
       .put(`/${URL_PREFIX}/settings/shops/${body.id}`, body)
-      .then(({ data }) => shopSchemaWithIdSchema.parse(data));
-  },
+      .then(({ data }) => shopSchemaWithIdSchema.parse(data)),
 
-  deleteShop(body: ShopSchemaWithIdSchema): Promise<void> {
-    return fetch.del(`/${URL_PREFIX}/settings/shops/${body.id}`).then(() => {});
-  },
+  deleteShop: (body: ShopSchemaWithIdSchema): Promise<void> =>
+    fetch.del(`/${URL_PREFIX}/settings/shops/${body.id}`).then(() => {}),
 
-  readServicesIndex() {
-    return [URL_PREFIX, 'services'];
-  },
-  readServices(): Promise<Array<ServiceSchema>> {
-    return fetch
+  readServicesIndex: () => [URL_PREFIX, 'services'],
+  readServices: (): Promise<Array<ServiceSchema>> =>
+    fetch
       .get(`/${URL_PREFIX}/settings/services`)
-      .then(({ data }) => serviceSchema.array().parse(data));
-  },
+      .then(({ data }) => serviceSchema.array().parse(data)),
 }));
