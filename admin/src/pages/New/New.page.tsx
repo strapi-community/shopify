@@ -43,13 +43,15 @@ export const NewPage: FC = () => {
   const displayApiErrors = useDisplayError();
   const displaySaveSuccess = useDisplaySaveSuccess('new');
 
-  const validator = useCallback((shop: unknown) => {
-    return new Promise<NewShopSchemaWithIdSchema>((resolve, reject) => {
-      const result = newShopSchemaWithIdSchema.safeParse(shop);
+  const validator = useCallback(
+    (shop: unknown) =>
+      new Promise<NewShopSchemaWithIdSchema>((resolve, reject) => {
+        const result = newShopSchemaWithIdSchema.safeParse(shop);
 
-      if (result.success) {
-        resolve(result.data);
-      } else {
+        if (result.success) {
+          return resolve(result.data);
+        }
+
         const errors = result.error.issues.reduce<Record<string, string>>((acc, item) => {
           acc[item.path.join('.')] = item.message;
 
@@ -59,9 +61,9 @@ export const NewPage: FC = () => {
         reject(errors);
 
         dispatch({ type: 'ERRORS', errors });
-      }
-    });
-  }, []);
+      }),
+    [dispatch]
+  );
 
   const onSubmit = useCallback((shop: NewShopSchemaWithIdSchema) => {
     dispatch({
@@ -69,16 +71,27 @@ export const NewPage: FC = () => {
     });
 
     createShopMutation.mutate(shop, {
-      onSuccess({ id }) {
+      onSuccess: ({ id }) => {
         displaySaveSuccess();
         goToEdit(id);
       },
-      onSettled() {
-        dispatch({ type: 'LOADING_STOP' });
-      },
+
+      onSettled: () => dispatch({ type: 'LOADING_STOP' }),
+
       onError: displayApiErrors,
     });
-  }, []);
+  }, [dispatch, createShopMutation, displaySaveSuccess, goToEdit, displayApiErrors]);
+
+  const onSave = useCallback(() => {
+    validator(current)
+      .then(onSubmit)
+      .catch((errors) => {
+        dispatch({
+          type: 'ERRORS',
+          errors,
+        });
+      });
+  }, [current, validator, dispatch]);
 
   const onChange = useCallback((next: Partial<NewShopSchemaWithIdSchema>) => {
     dispatch({
@@ -88,7 +101,7 @@ export const NewPage: FC = () => {
         ...next,
       },
     });
-  }, []);
+  }, [current, dispatch]);
 
   return (
     <Layouts.Root>
@@ -98,23 +111,7 @@ export const NewPage: FC = () => {
           title={formatMessage(getTrad('header.shop.new.title'))}
           primaryAction={
             <Flex>
-              <Button
-                startIcon={<Check />}
-                fullWidth
-                disabled={isSubmitting}
-                onClick={() => {
-                  validator(current)
-                    .then((result) => {
-                      onSubmit(result);
-                    })
-                    .catch((errors) => {
-                      dispatch({
-                        type: 'ERRORS',
-                        errors,
-                      });
-                    });
-                }}
-              >
+              <Button startIcon={<Check />} fullWidth disabled={isSubmitting} onClick={onSave}>
                 {formatMessage(getTrad('form.shop.save'))}
               </Button>
             </Flex>

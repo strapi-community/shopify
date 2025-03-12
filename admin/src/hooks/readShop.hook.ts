@@ -3,15 +3,13 @@ import { useQuery } from '@tanstack/react-query';
 
 import { getApiClient } from '../api/client';
 
-export const useReadShop = (id?: number) => {
+export const useReadShop = (id = 0) => {
   const fetch = getFetchClient();
-  const apiClient = getApiClient(fetch);
+  const { getReadShopIndex, readShop } = getApiClient(fetch);
 
   return useQuery({
-    queryKey: apiClient.getReadShopIndex(id ?? 0),
-    queryFn() {
-      return apiClient.readShop(id ?? 0);
-    },
+    queryKey: getReadShopIndex(id),
+    queryFn: () => readShop(id),
     enabled: !!id,
   });
 };

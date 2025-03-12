@@ -4,12 +4,10 @@ import { getApiClient } from '../api/client';
 
 export const useShops = () => {
   const fetch = getFetchClient();
-  const apiClient = getApiClient(fetch);
+  const { readAllIndex, readAll } = getApiClient(fetch);
 
   return useQuery({
-    queryKey: apiClient.readAllIndex(),
-    queryFn() {
-      return apiClient.readAll();
-    }
+    queryKey: readAllIndex(),
+    queryFn: readAll,
   });
 };
