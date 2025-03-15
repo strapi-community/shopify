@@ -217,15 +217,22 @@ const processSingleResult = (
     }
   });
 };
-/**
- * Get product fields from the result
- */
-export const getProductFields = (
+
+type ProductFieldsParams = {
   contentType: Array<FieldType>,
   fetchedData: Awaited<ReturnType<Middleware.Middleware>>,
   contentTypes: Map<UID.ContentType, Array<FieldType>>,
   components: Map<UID.ContentType, Array<FieldType>>
-): ProductFieldsResult => {
+}
+/**
+ * Get product fields from the result
+ */
+export const getProductFields = ({
+  contentType,
+  fetchedData,
+  contentTypes,
+  components
+}:ProductFieldsParams): ProductFieldsResult => {
   if (!fetchedData || typeof fetchedData !== 'object') {
     return new Map<string, Map<string, string>>();
   }

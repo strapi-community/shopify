@@ -30,12 +30,12 @@ const register = ({ strapi }: { strapi: Core.Strapi }) => {
         }
 
         const shopifyService = getService(strapi, 'shopify');
-        const productFields = getProductFields(
+        const productFields = getProductFields({
           contentType,
-          result,
-          contentTypesWithCustomField,
-          componentsWithCustomField
-        );
+          fetchedData: result,
+          contentTypes: contentTypesWithCustomField,
+          components: componentsWithCustomField,
+        });
 
         return applyProductValues(result, productFields, shopifyService);
       default:
