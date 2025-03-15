@@ -1,7 +1,7 @@
 import type { Schema, UID } from '@strapi/strapi';
 import { Attribute } from '@strapi/types/dist/schema';
 import { FieldType } from '../../@types/document.service';
-import { BLACKLISTED_FIELDS, BLACKLISTED_RELATIONS, COMPONENT_FIELDS, SHOOIFY_CUSTOM_FIELDS } from '../../const';
+import { BLACKLISTED_FIELDS, BLACKLISTED_RELATIONS, COMPONENT_FIELDS, SHOPIFY_CUSTOM_FIELDS } from '../../const';
 
 /**
  * Gets models with custom fields from content types or components
@@ -65,7 +65,7 @@ const mapAttributeToField = (
       if (
         typeof attribute === 'object' &&
         'customField' in attribute &&
-        attribute.customField === SHOOIFY_CUSTOM_FIELDS
+        attribute.customField === SHOPIFY_CUSTOM_FIELDS
       ) {
         return { field: attributeName, type: 'raw' };
       }
