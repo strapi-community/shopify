@@ -82,13 +82,5 @@
     "name": "shopify",
     "displayName": "Shopify",
     "description": ""
-  },
-  "jest": {
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      ".tmp",
-      ".cache"
-    ],
-    "testEnvironment": "node"
   }
 }

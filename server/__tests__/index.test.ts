@@ -1,5 +1,0 @@
-describe('Hello', () => {
-  it('should ', () => {
-
-  });
-});
