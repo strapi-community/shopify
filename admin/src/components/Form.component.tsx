@@ -9,12 +9,14 @@ import {
   Flex,
   Grid,
   IconButton,
+  TextButton,
   TextInput,
 } from '@strapi/design-system';
-import { Trash } from '@strapi/icons';
+import { Plus, Trash } from '@strapi/icons';
 import { Form, useNotification } from '@strapi/strapi/admin';
-import { FC, PropsWithChildren, useCallback, useEffect } from 'react';
+import { FC, useCallback, useEffect } from 'react';
 import { useIntl } from 'react-intl';
+import styled from 'styled-components';
 import { useServices } from '../hooks/services.hook';
 import { getTrad, isTranslationKey } from '../translations';
 import {
@@ -271,155 +273,172 @@ export const ShopForm: FC<Props> = (props) => {
               </BaseContainer>
 
               <BaseContainer>
-                <Flex gap={5} direction="column" width="100%" alignItems="stretch">
-                  {props.shop.webhooks?.length ? (
-                    <Accordion.Root>
-                      {props.shop.webhooks.map((webhook, index) => {
-                        const methods =
-                          services?.find((service) => webhook.service === service.name)?.methods ??
-                          [];
+                <Field name="webhooks" label={formatMessage(getTrad('form.shop.webhooks.label'))}>
+                  <Flex direction="column" width="100%" alignItems="stretch">
+                    {props.shop.webhooks?.length ? (
+                      <Accordion.Root>
+                        {props.shop.webhooks.map((webhook, index) => {
+                          const methods =
+                            services?.find((service) => webhook.service === service.name)
+                              ?.methods ?? [];
 
-                        // @ts-expect-error
-                        const serviceErrorMessage: string = errors[`webhooks.${index}.service`];
-                        // @ts-expect-error
-                        const methodErrorMessage: string = errors[`webhooks.${index}.method`];
+                          // @ts-expect-error
+                          const serviceErrorMessage: string = errors[`webhooks.${index}.service`];
+                          // @ts-expect-error
+                          const methodErrorMessage: string = errors[`webhooks.${index}.method`];
 
-                        return (
-                          <Accordion.Item
-                            key={Object.values(webhook).join('-')}
-                            value={`webhook-${index}`}
-                          >
-                            <Accordion.Header>
-                              <Accordion.Trigger>{webhook.topic}</Accordion.Trigger>
+                          return (
+                            <Accordion.Item
+                              key={Object.values(webhook).join('-')}
+                              value={`webhook-${index}`}
+                            >
+                              <Accordion.Header>
+                                <Accordion.Trigger>{webhook.topic}</Accordion.Trigger>
 
-                              <Accordion.Actions>
-                                <Dialog.Root>
-                                  <Dialog.Trigger>
-                                    <IconButton>
-                                      <Trash />
-                                    </IconButton>
-                                  </Dialog.Trigger>
-                                  <Dialog.Content>
-                                    <Dialog.Body>
-                                      {formatMessage(
-                                        getTrad('form.shop.webhooks.delete.dialog.body')
-                                      )}
-                                    </Dialog.Body>
-                                    <Dialog.Footer>
-                                      <Dialog.Cancel>
-                                        <Button fullWidth variant="tertiary">
-                                          {formatMessage(
-                                            getTrad('form.shop.webhooks.delete.dialog.cancel')
-                                          )}
-                                        </Button>
-                                      </Dialog.Cancel>
-                                      <Dialog.Action>
-                                        <Button
-                                          fullWidth
-                                          variant="secondary-light"
-                                          onClick={onDeleteWebhook(index)}
-                                        >
-                                          {formatMessage(
-                                            getTrad('form.shop.delete.dialog.confirm')
-                                          )}
-                                        </Button>
-                                      </Dialog.Action>
-                                    </Dialog.Footer>
-                                  </Dialog.Content>
-                                </Dialog.Root>
-                              </Accordion.Actions>
-                            </Accordion.Header>
-                            <Accordion.Content>
-                              <Flex direction="column" gap={5} padding={5}>
-                                <Field
-                                  name="service"
-                                  label={formatMessage(getTrad('form.shop.webhooks.service'))}
-                                  error={
-                                    serviceErrorMessage
-                                      ? isTranslationKey(serviceErrorMessage, allKeys)
-                                        ? formatMessage(getTrad(serviceErrorMessage))
-                                        : renderError('webhooks')
-                                      : undefined
-                                  }
-                                >
-                                  <Combobox
+                                <Accordion.Actions>
+                                  <Dialog.Root>
+                                    <Dialog.Trigger>
+                                      <IconButton>
+                                        <Trash />
+                                      </IconButton>
+                                    </Dialog.Trigger>
+                                    <Dialog.Content>
+                                      <Dialog.Body>
+                                        {formatMessage(
+                                          getTrad('form.shop.webhooks.delete.dialog.body')
+                                        )}
+                                      </Dialog.Body>
+                                      <Dialog.Footer>
+                                        <Dialog.Cancel>
+                                          <Button fullWidth variant="tertiary">
+                                            {formatMessage(
+                                              getTrad('form.shop.webhooks.delete.dialog.cancel')
+                                            )}
+                                          </Button>
+                                        </Dialog.Cancel>
+                                        <Dialog.Action>
+                                          <Button
+                                            fullWidth
+                                            variant="secondary-light"
+                                            onClick={onDeleteWebhook(index)}
+                                          >
+                                            {formatMessage(
+                                              getTrad('form.shop.delete.dialog.confirm')
+                                            )}
+                                          </Button>
+                                        </Dialog.Action>
+                                      </Dialog.Footer>
+                                    </Dialog.Content>
+                                  </Dialog.Root>
+                                </Accordion.Actions>
+                              </Accordion.Header>
+                              <Accordion.Content>
+                                <Flex direction="column" gap={5} padding={5}>
+                                  <Field
                                     name="service"
-                                    autocomplete="both"
-                                    onChange={onServiceChange(index)}
-                                    value={webhook.service}
-                                    disabled={webhook.isPersisted}
-                                    width="100%"
+                                    label={formatMessage(getTrad('form.shop.webhooks.service'))}
+                                    error={
+                                      serviceErrorMessage
+                                        ? isTranslationKey(serviceErrorMessage, allKeys)
+                                          ? formatMessage(getTrad(serviceErrorMessage))
+                                          : renderError('webhooks')
+                                        : undefined
+                                    }
                                   >
-                                    {services?.map((service) => (
-                                      <ComboboxOption key={service.name} value={service.name}>
-                                        {service.name}
-                                      </ComboboxOption>
-                                    ))}
-                                  </Combobox>
-                                </Field>
+                                    <Combobox
+                                      name="service"
+                                      autocomplete="both"
+                                      onChange={onServiceChange(index)}
+                                      value={webhook.service}
+                                      disabled={webhook.isPersisted}
+                                      width="100%"
+                                    >
+                                      {services?.map((service) => (
+                                        <ComboboxOption key={service.name} value={service.name}>
+                                          {service.name}
+                                        </ComboboxOption>
+                                      ))}
+                                    </Combobox>
+                                  </Field>
 
-                                <Field
-                                  name="method"
-                                  label={formatMessage(getTrad('form.shop.webhooks.method'))}
-                                  error={
-                                    methodErrorMessage
-                                      ? isTranslationKey(methodErrorMessage, allKeys)
-                                        ? formatMessage({
-                                            id: methodErrorMessage,
-                                          })
-                                        : renderError('webhooks')
-                                      : undefined
-                                  }
-                                  required={!!webhook.service}
-                                >
-                                  <Combobox
+                                  <Field
                                     name="method"
-                                    autocomplete="both"
-                                    onChange={onMethodChange(index)}
-                                    value={webhook.method}
-                                    disabled={webhook.isPersisted}
-                                    width="100%"
+                                    label={formatMessage(getTrad('form.shop.webhooks.method'))}
+                                    error={
+                                      methodErrorMessage
+                                        ? isTranslationKey(methodErrorMessage, allKeys)
+                                          ? formatMessage({
+                                              id: methodErrorMessage,
+                                            })
+                                          : renderError('webhooks')
+                                        : undefined
+                                    }
+                                    required={!!webhook.service}
                                   >
-                                    {methods?.map((method) => (
-                                      <ComboboxOption key={method} value={method}>
-                                        {method}
-                                      </ComboboxOption>
-                                    ))}
-                                  </Combobox>
-                                </Field>
+                                    <Combobox
+                                      name="method"
+                                      autocomplete="both"
+                                      onChange={onMethodChange(index)}
+                                      value={webhook.method}
+                                      disabled={webhook.isPersisted}
+                                      width="100%"
+                                    >
+                                      {methods?.map((method) => (
+                                        <ComboboxOption key={method} value={method}>
+                                          {method}
+                                        </ComboboxOption>
+                                      ))}
+                                    </Combobox>
+                                  </Field>
 
-                                <Field
-                                  name="topic"
-                                  label={formatMessage(getTrad('form.shop.webhooks.topic'))}
-                                >
-                                  <Combobox
+                                  <Field
                                     name="topic"
-                                    autocomplete="both"
-                                    onChange={onTopicChange(index)}
-                                    value={webhook.topic}
-                                    disabled={webhook.isPersisted}
-                                    width="100%"
-                                    required
+                                    label={formatMessage(getTrad('form.shop.webhooks.topic'))}
                                   >
-                                    {[webhook.topic, ...nextAvailableTopics].map((topic) => (
-                                      <ComboboxOption key={topic} value={topic}>
-                                        {topic}
-                                      </ComboboxOption>
-                                    ))}
-                                  </Combobox>
-                                </Field>
-                              </Flex>
-                            </Accordion.Content>
-                          </Accordion.Item>
-                        );
-                      })}
-                    </Accordion.Root>
-                  ) : null}
+                                    <Combobox
+                                      name="topic"
+                                      autocomplete="both"
+                                      onChange={onTopicChange(index)}
+                                      value={webhook.topic}
+                                      disabled={webhook.isPersisted}
+                                      width="100%"
+                                      required
+                                    >
+                                      {[webhook.topic, ...nextAvailableTopics].map((topic) => (
+                                        <ComboboxOption key={topic} value={topic}>
+                                          {topic}
+                                        </ComboboxOption>
+                                      ))}
+                                    </Combobox>
+                                  </Field>
+                                </Flex>
+                              </Accordion.Content>
+                            </Accordion.Item>
+                          );
+                        })}
+                        <TextButtonCustom
+                          isActive
+                          disabled={disabled || !nextAvailableTopic}
+                          onClick={onAddWebhook}
+                          startIcon={<Plus />}
+                        >
+                          {formatMessage(getTrad('form.shop.webhooks.add'))}
+                        </TextButtonCustom>
+                      </Accordion.Root>
+                    ) : null}
 
-                  <Button variant="secondary" onClick={onAddWebhook} disabled={!nextAvailableTopic}>
-                    {formatMessage(getTrad('form.shop.webhooks.add'))}
-                  </Button>
-                </Flex>
+                    {!props.shop.webhooks?.length ? (
+                      <TextButtonCustom
+                        isActive={false}
+                        disabled={disabled || !nextAvailableTopic}
+                        onClick={onAddWebhook}
+                        startIcon={<Plus />}
+                      >
+                        {formatMessage(getTrad('form.shop.webhooks.add'))}
+                      </TextButtonCustom>
+                    ) : null}
+                  </Flex>
+                </Field>
               </BaseContainer>
             </Flex>
           );
@@ -429,15 +448,46 @@ export const ShopForm: FC<Props> = (props) => {
   );
 };
 
-const BaseContainer: FC<PropsWithChildren> = ({ children }) => (
-  <Box
-    borderRadius="S"
-    background="neutral0"
-    borderWidth="1px"
-    borderColor="neutral150"
-    padding={5}
-    width="100%"
-  >
-    {children}
-  </Box>
-);
+const BaseContainer = styled(Box)`
+  border-radius: ${({ theme }) => theme.borderRadius};
+  background-color: ${({ theme }) => theme.colors.neutral0};
+  border-width: 1px;
+  border-color: ${({ theme }) => theme.colors.neutral150};
+  padding: ${({ theme }) => theme.spaces[5]};
+  width: 100%;
+`;
+
+/** from: https://github.com/strapi/strapi/blob/develop/packages/core/content-manager/admin/src/pages/EditView/components/FormInputs/Component/Repeatable.tsx */
+const TextButtonCustom = styled(TextButton)<{ isActive: boolean }>`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+
+  padding-inline: ${(props) => props.theme.spaces[6]};
+  padding-block: ${(props) => props.theme.spaces[3]};
+
+  ${({ isActive, theme }) =>
+    isActive
+      ? `border-top: 1px solid ${theme.colors.neutral200};`
+      : `border: 1px solid ${theme.colors.neutral200};
+         border-radius: ${theme.borderRadius};
+  `}
+
+  &:not([disabled]) {
+    cursor: pointer;
+
+    &:hover {
+      background-color: ${(props) => props.theme.colors.primary100};
+    }
+  }
+
+  span {
+    font-weight: 600;
+    font-size: 1.4rem;
+    line-height: 2.4rem;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    transition: background-color 120ms ${(props) => props.theme.motion.easings.easeOutQuad};
+  }
+`;
