@@ -1,6 +1,8 @@
 import type { Core } from '@strapi/strapi';
 import { applyProductValues, getModelsWithCustomField, getProductFields, getService } from './utils';
 
+import { PLUGIN_ID } from './const/shopify';
+
 /**
  * Register the Shopify plugin
  */
@@ -41,6 +43,16 @@ const register = ({ strapi }: { strapi: Core.Strapi }) => {
       default:
         return next();
     }
+  });
+
+  strapi.customFields.register({
+    name: `${PLUGIN_ID}_product`,
+    plugin: PLUGIN_ID,
+    type: 'string',
+    inputSize: {
+      default: 4,
+      isResizable: true,
+    },
   });
 };
 

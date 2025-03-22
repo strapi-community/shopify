@@ -103,6 +103,16 @@ const en = {
       },
     },
   },
+
+  customField: {
+    label: 'Shopify product',
+    // TODO: description
+    description: 'TODO',
+    notification: {
+      // TODO: Better text
+      invalidValue: 'Invalid value for {name} provided. "{value}" given.',
+    },
+  },
 };
 
 export default en;

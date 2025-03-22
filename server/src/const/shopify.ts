@@ -1,7 +1,10 @@
+// TODO: Propagate to other places
+export const PLUGIN_ID = 'shopify' as const;
+
 export const HOOK_TYPE = {
   COMMON: {
     name: 'COMMON',
-    pathSuffix: '/api/shopify/webhooks',
+    pathSuffix: `/api/${PLUGIN_ID}/webhooks`,
   },
 } as const;
 

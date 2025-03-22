@@ -66,6 +66,13 @@ export const newShopSchemaWithIdSchema = shopSchemaWithIdSchema.omit({
   updatedAt: true,
 });
 
+// TODO: target schema
+export type ShopProductSchema = z.infer<typeof shopProductSchema>;
+export const shopProductSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+});
+
 export type ServiceSchema = z.infer<typeof serviceSchema>;
 export const serviceSchema = z.object({
   name: z.string(),

@@ -5,6 +5,8 @@ import {
   NewShopSchemaWithIdSchema,
   ServiceSchema,
   serviceSchema,
+  ShopProductSchema,
+  shopProductSchema,
   ShopSchemaWithIdSchema,
   shopSchemaWithIdSchema,
 } from '../validators/shop.validator';
@@ -38,6 +40,16 @@ export const getApiClient = once((fetch: ReturnType<typeof getFetchClient>) => (
         ...shop,
         webhooks: shop.webhooks?.map((webhook) => ({ ...webhook, isPersisted: true })),
       }));
+  },
+
+  getReadShopProductsIndex: (id: number) => [URL_PREFIX, 'shops', id, 'products'],
+  readShopProducts: (id: number): Promise<Array<ShopProductSchema>> => {
+    return (
+      fetch
+        // TODO: targetURL
+        .get(`/${URL_PREFIX}/settings/shops/${id}/products`)
+        .then(({ data }) => shopProductSchema.array().parse(data))
+    );
   },
 
   updateShop: (body: ShopSchemaWithIdSchema): Promise<ShopSchemaWithIdSchema> =>
