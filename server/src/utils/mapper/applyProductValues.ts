@@ -11,7 +11,7 @@ export const applyProductValues = async <T extends object = any>(
   shopifyService: ShopService
 ): Promise<T> => {
   for (const [vendor, attrWithProd] of productFields) {
-    const productsValues = await shopifyService.getProducts(
+    const productsValues = await shopifyService.getProductsById(
       vendor,
       Array.from(attrWithProd.values())
     );

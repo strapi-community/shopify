@@ -1,5 +1,6 @@
 import webhook from './webhook.routes';
 import admin from './admin.routes';
+import contentManager from './content.manager.routes';
 
 export default {
   'content-api': {
@@ -8,6 +9,6 @@ export default {
   },
   admin: {
     type: 'admin',
-    routes: admin,
+    routes: [...admin,...contentManager],
   },
 };

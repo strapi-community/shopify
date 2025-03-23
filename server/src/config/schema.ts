@@ -19,7 +19,7 @@ export type RedisEngine = z.infer<typeof redisEngine>;
 
 export const schemaConfig = z.intersection(
   z.object({
-    host: z.string(),
+    host: z.string().url(),
   }),
   z.discriminatedUnion('engine', [memoryEngine, redisEngine])
 );
