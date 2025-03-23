@@ -67,7 +67,6 @@ const controller = ({ strapi }: StrapiContext) => {
       }
       const { vendor: vendorId, q } = validator.right;
 
-      console.log('getProducts::', shops);
       ctx.body = await getService(strapi, 'shopify').searchProducts(vendorId, q);
     },
   };
