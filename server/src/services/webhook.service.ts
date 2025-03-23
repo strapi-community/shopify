@@ -1,7 +1,7 @@
 import { omit } from 'lodash';
 import { CallbackUrl, StrapiContext } from '../@types';
 import {
-  CreateAllProductsMutation,
+  CreateSingleSubscriptionMutation,
   WebhookEventBridgeEndpoint,
   WebhookHttpEndpoint,
   WebhookPubSubEndpoint,
@@ -20,8 +20,6 @@ import {
 export default ({ strapi }: StrapiContext) => {
   const shopService = getService(strapi, 'shop');
 
-
-
   const extractCallbackUrl = (
     endpoint:
       | WebhookHttpEndpoint
@@ -36,10 +34,7 @@ export default ({ strapi }: StrapiContext) => {
 
   const formatData = (
     id: number,
-    result:
-      | CreateAllProductsMutation['create']
-      | CreateAllProductsMutation['update']
-      | CreateAllProductsMutation['remove']
+    result: CreateSingleSubscriptionMutation['webhookSubscriptionCreate']
   ): WebhookData => {
     return {
       ...omit(result.webhookSubscription || {}, ['endpoint', 'id']),
@@ -51,7 +46,6 @@ export default ({ strapi }: StrapiContext) => {
   };
 
   return {
-
     async create(vendor: string, hooks: WebhookWithShopId[]): Promise<WebhookData[]> {
       // TODO: please don't remove this code, it is usefully for testing
       // return Promise.all(hooks.map(async (hook) => {
@@ -115,7 +109,6 @@ export default ({ strapi }: StrapiContext) => {
     },
     async remove(vendor: string, webhookId: string[]) {
       const client = await shopService.getGQLClient(vendor);
-      console.log('client', client);
       const result = await Promise.all(
         webhookId.map(async (id) => {
           const { data: result } = await client.request(deleteSubscription, {

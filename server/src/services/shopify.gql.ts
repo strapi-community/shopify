@@ -41,30 +41,10 @@ const updateSubscriptionFragment = `
     }
 `;
 
-export const createAllSubscriptionMutation = `
-    #graphql 
-    ${createSubscriptionFragment}
-    mutation createAllProducts(
-        $createTopic: WebhookSubscriptionTopic!,
-        $updateTopic: WebhookSubscriptionTopic!,
-        $removeTopic: WebhookSubscriptionTopic!,
-        $webhookSubscription: WebhookSubscriptionInput!
-    ) {
-        create: webhookSubscriptionCreate(topic: $createTopic, webhookSubscription: $webhookSubscription) {
-            ...CreateWebhookSubscriptionFragment
-        }
-        update: webhookSubscriptionCreate(topic: $updateTopic, webhookSubscription: $webhookSubscription) {
-            ...CreateWebhookSubscriptionFragment
-        }
-        remove: webhookSubscriptionCreate(topic: $removeTopic, webhookSubscription: $webhookSubscription) {
-            ...CreateWebhookSubscriptionFragment
-        }
-    }
-`;
 export const createSingleSubscriptionMutation = `
     #graphql 
     ${createSubscriptionFragment}
-    mutation updateProducts(
+    mutation createSingleSubscription(
         $topic: WebhookSubscriptionTopic!,
         $webhookSubscription: WebhookSubscriptionInput!
     ) {
@@ -74,16 +54,6 @@ export const createSingleSubscriptionMutation = `
     }
 `;
 
-export const updateSubscription = `
-    #graphql
-    ${updateSubscriptionFragment}
-    mutation updateSubscription($id: ID!, $webhookSubscription: WebhookSubscriptionInput!) {
-        webhookSubscriptionUpdate(id: $id, webhookSubscription: $webhookSubscription) {
-            ...UpdateWebhookSubscriptionFragment
-        }
-
-    }
-`;
 export const deleteSubscription = `
     #graphql
     mutation deleteSubscription($id: ID!) {
@@ -127,6 +97,95 @@ export const getWebhooksByCallbackURL = `
                 hasNextPage
                 hasPreviousPage
                 startCursor
+            }
+        }
+    }
+`;
+export const getProductFragment = `
+    #graphql
+    fragment ProductFragment on Product {
+        id
+        tags
+        title
+        handle
+        createdAt
+        updatedAt
+        description
+        descriptionHtml
+        translations(locale: "en") {
+            locale
+            key
+            value
+            market {
+                id
+                name
+                metafields(first: 10) {
+                    nodes {
+                        id
+                        key
+                        value
+                    }
+                }
+            }
+        }
+        priceRangeV2 {
+            maxVariantPrice {
+                amount
+                currencyCode
+            }
+            minVariantPrice {
+                amount
+                currencyCode
+            }
+        }
+        variants(first: 100) {
+            nodes {
+                id
+                title
+                updatedAt
+                createdAt
+                displayName
+                availableForSale
+                barcode
+                compareAtPrice
+                image {
+                    id
+                    altText
+                    url
+                    metafields(first: 10) {
+                        nodes {
+                            id
+                            key
+                            value
+                        }
+                    }
+                }
+            }
+        }
+        featuredMedia {
+            id
+            alt
+            preview {
+                image {
+                    url
+                }
+            }
+        }
+        category {
+            id
+            name
+            isRoot
+            isArchived
+        }
+        media(first: 10) {
+            nodes {
+                id
+                alt
+                preview {
+                    image {
+                        url
+                    }
+                }
             }
         }
     }

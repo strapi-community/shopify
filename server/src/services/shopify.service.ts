@@ -1,105 +1,18 @@
-import { UID } from '@strapi/types';
 import type { StrapiContext } from '../@types';
+import { SearchProductsQuery } from '../@types/shopify';
 import { ShopWithWebhooks } from '../repositories/validators';
 import { getWebhookRepository } from '../repositories/webhook';
 import { getService } from '../utils';
+import { getProductFragment } from './shopify.gql';
 
 export type Vendor = string;
 export type Path = string;
 export type Product = string;
-const productFragment = `
-    #graphql
-    fragment ProductFragment on Product {
-        id
-        tags
-        title
-        handle
-        createdAt
-        updatedAt
-        description
-        descriptionHtml
-        translations(locale: "en") {
-            locale
-            key
-            value
-            market {
-                id
-                name
-                metafields(first: 10) {
-                    nodes {
-                        id
-                        key
-                        value
-                    }
-                }
-            }
-        }
-        priceRangeV2 {
-            maxVariantPrice {
-                amount
-                currencyCode
-            }
-            minVariantPrice {
-                amount
-                currencyCode
-            }
-        }
-        variants(first: 100) {
-            nodes {
-                id
-                title
-                updatedAt
-                createdAt
-                displayName
-                availableForSale
-                barcode
-                compareAtPrice
-                image {
-                    id
-                    altText
-                    url
-                    metafields(first: 10) {
-                        nodes {
-                            id
-                            key
-                            value
-                        }
-                    }
-                }
-            }
-        }
-        featuredMedia {
-            id
-            alt
-            preview {
-                image {
-                    url
-                }
-            }
-        }
-        category {
-            id
-            name
-            isRoot
-            isArchived
-        }
-        media(first: 10) {
-            nodes {
-                id
-                alt
-                preview {
-                    image {
-                        url
-                    }
-                }
-            }
-        }
-    }
-`
 
 const shopifyService = ({ strapi }: StrapiContext) => {
   const webhookService = getService(strapi, 'webhook');
   const shopService = getService(strapi, 'shop');
+  const cacheService = getService(strapi, 'cache');
   const webhookRepository = getWebhookRepository(strapi);
 
   return {
@@ -114,31 +27,54 @@ const shopifyService = ({ strapi }: StrapiContext) => {
       );
     },
     async getProductsById(vendor: string, products: Product[]) {
+      const productsIds = Array.from(new Set(products));
+
       const client = await shopService.getGQLClient(vendor);
+      const cachedProducts = await Promise.all<SearchProductsQuery['products']['nodes'][number]>(
+        productsIds.map((id) => cacheService.get(id))
+      );
+      const cachedProductsMap = new Map(
+        cachedProducts.filter(Boolean).map((product) => [product.id, product])
+      );
+
+      const missingProducts = productsIds.filter((id, i) => !cachedProductsMap.has(id));
+
       const response = await client.request(
         `
               #graphql
-              ${productFragment}
+              ${getProductFragment}
               query Products($ids: [ID!]!) {
                   nodes(ids: $ids) {
                       ... ProductFragment                  }
               }
         `,
         {
-          variables: { ids: Array.from(new Set(products)) },
+          variables: { ids: missingProducts },
           retries: 3,
         }
       );
-      return new Map(response.data.nodes.map((product) => [product.id, product]));
+      await Promise.all(
+        response.data.nodes.map((product) => cacheService.set(product.id, product))
+      );
+      response.data.nodes.forEach((product) => {
+        cachedProductsMap.set(product.id, product);
+        return [product.id, product];
+      });
+      return cachedProductsMap;
     },
     async searchProducts(vendor: string, query: string) {
+      const queryCacheKey = `${vendor}|${query}`;
+      const cachedData = await cacheService.get(queryCacheKey);
+      if (cachedData) {
+        return cachedData;
+      }
       const client = await shopService.getGQLClient(vendor);
       const response = await client.request(
         `
               #graphql
-              ${productFragment}
-              query SearchProducts($query: String!) {
-                  products(first: 50, query: $query) {
+              ${getProductFragment}
+              query searchProducts($query: String!) {
+                  products(first: 20, query: $query) {
                       nodes {
                           ... ProductFragment
                       }
@@ -155,9 +91,19 @@ const shopifyService = ({ strapi }: StrapiContext) => {
         }
       );
 
+      const { nodes: products, pageInfo } = response.data.products;
+
+      await Promise.all([
+        cacheService.set(queryCacheKey, {
+          pageInfo,
+          products: products,
+        }),
+        ...products.map((product) => cacheService.set(product.id, product)),
+      ]);
+
       return {
-        products: response.data.products.nodes,
-        pageInfo: response.data.products.pageInfo,
+        products,
+        pageInfo,
       };
     },
   };

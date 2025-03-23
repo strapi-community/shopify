@@ -12,7 +12,6 @@ const getEngine = (strapi: Core.Strapi) => {
   if (isMemoryEngine(config)) {
     const lruCache = new LRUCache({
       max: 500,
-      maxSize: 5000,
     });
     return {
       set: async <T>(key: string, value: T): Promise<void> => {
@@ -22,6 +21,9 @@ const getEngine = (strapi: Core.Strapi) => {
         const value = lruCache.get(key);
         return value as T;
       },
+      has: async (key: string): Promise<boolean> => {
+        return lruCache.has(key);
+      }
     };
   }
   if (isRedisEngine(config)) {
@@ -35,6 +37,9 @@ const getEngine = (strapi: Core.Strapi) => {
         const value = await cache.get(key);
         return JSON.parse(value);
       },
+      has: async (key: string): Promise<boolean> => {
+        return (await cache.exists(key)) === 1;
+      }
     };
   }
   throw new Error('Unsupported cache engine');
@@ -43,10 +48,9 @@ const getEngine = (strapi: Core.Strapi) => {
 type CacheService = {
   get: <T>(key: string) => Promise<T | undefined>;
   set: <T>(key: string, value: T) => Promise<void>;
+  has: (key: string) => Promise<boolean>;
 };
 
-const cacheService = ({ strapi }: StrapiContext): CacheService => {
-  return getEngine(strapi);
-};
+const cacheService = ({ strapi }: StrapiContext): CacheService => getEngine(strapi);
 
 export default cacheService;
