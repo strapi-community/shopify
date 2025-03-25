@@ -10,7 +10,7 @@ const register = ({ strapi }: { strapi: Core.Strapi }) => {
   // Register custom field
   strapi.customFields.register({
     name: 'product',
-    plugin: 'shopify',
+    plugin: PLUGIN_ID,
     type: 'json',
   });
 
@@ -43,16 +43,6 @@ const register = ({ strapi }: { strapi: Core.Strapi }) => {
       default:
         return next();
     }
-  });
-
-  strapi.customFields.register({
-    name: `${PLUGIN_ID}_product`,
-    plugin: PLUGIN_ID,
-    type: 'string',
-    inputSize: {
-      default: 4,
-      isResizable: true,
-    },
   });
 };
 

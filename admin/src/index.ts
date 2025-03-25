@@ -32,9 +32,9 @@ export default {
     const customFieldDescription: TranslationPath = 'customField.label';
 
     app.customFields.register({
-      name: `${PLUGIN_ID}_product`,
+      name: 'product',
       plugin: PLUGIN_ID,
-      type: 'string',
+      type: 'json',
       intlLabel: {
         id: getTradId(customFieldLabel),
       },
