@@ -7,6 +7,7 @@ import { getShopsRepository } from '../repositories/shop';
 import { getWebhookRepository } from '../repositories/webhook';
 import { getService } from '../utils/getService';
 import { QueryShop, QueryShops, Settings, ShopifyShopWithId } from '../validators/admin.validator';
+import { ShopWithWebhooks, Shop } from '../repositories/validators';
 
 const partialHideValue = (value: string) =>
   `${value.substring(0, 3)}*****${value.substring(value.length - 1)}`;
@@ -30,8 +31,9 @@ export default ({ strapi }: StrapiContext) => {
         'delete',
       ];
       const serviceMethods = Object.keys(service);
-      return standardStrapiMethods.concat(serviceMethods)
-                        .filter((_: string) => typeof strapi.service(name as UID.Service)[_] === 'function');
+      return standardStrapiMethods
+        .concat(serviceMethods)
+        .filter((_: string) => typeof strapi.service(name as UID.Service)[_] === 'function');
     }
     return Object.keys(service);
   };
@@ -70,8 +72,10 @@ export default ({ strapi }: StrapiContext) => {
         const shops = await shopsRepository.findMany({
           where: { isActive: query.isActive },
           populate: query.populate,
+          page: query.page,
+          pageSize: query.pageSize,
         });
-        return shops.map((shop) => ({
+        return shops.map((shop: Shop | ShopWithWebhooks) => ({
           ...shop,
           apiKey: partialHideValue(shop.apiKey),
           apiSecretKey: partialHideValue(shop.apiSecretKey),
@@ -107,14 +111,14 @@ export default ({ strapi }: StrapiContext) => {
                 shop: newShop,
                 service: hook.service,
                 method: hook.method,
-              }),
-            ),
+              })
+            )
           );
 
           const webhookData = await webhookService.create(shop.vendor, hooksData);
           if (webhookData.length) {
             await Promise.all(
-              webhookData.map((data) => webhookRepository.update({ id: data.id }, data)),
+              webhookData.map((data) => webhookRepository.update({ id: data.id }, data))
             );
           }
 
@@ -132,18 +136,18 @@ export default ({ strapi }: StrapiContext) => {
         return strapi.db.transaction(async () => {
           const result = await webhookService.remove(
             shop.vendor,
-            shop.webhooks.map((hook) => hook.shopifyId),
+            shop.webhooks.map((hook) => hook.shopifyId)
           );
 
           if (result.some((r) => r.hasError)) {
             await Promise.all(
               result
-              .filter((r) => r.hasError)
-              .map((r) => webhookRepository.update({ shopifyId: r.id }, { errors: r.errors })),
+                .filter((r) => r.hasError)
+                .map((r) => webhookRepository.update({ shopifyId: r.id }, { errors: r.errors }))
             );
             throw new BadRequestException(
               'Failed to remove shop',
-              result.map((r) => `The webhook ${r.id}: ${r.errors.join(', ')}`).join(', '),
+              result.map((r) => `The webhook ${r.id}: ${r.errors.join(', ')}`).join(', ')
             );
           }
           const [removeResult] = await Promise.all([
@@ -175,8 +179,8 @@ export default ({ strapi }: StrapiContext) => {
               ...hook,
               format: WebhookSubscriptionFormat.Json,
               shop: newShop,
-            }),
-          ),
+            })
+          )
         );
         return shopsRepository.update({ id: newShop.id }, newShop);
       },
@@ -196,18 +200,18 @@ export default ({ strapi }: StrapiContext) => {
           'plugin::users-permissions',
         ];
         return Object.keys(services)
-                     .filter((name) => !blackList.some((_) => name.startsWith(_)))
-                     .map((name) => {
-                       try {
-                         return {
-                           name,
-                           methods: getMethodService(strapi, name as UID.Service),
-                         };
-                       } catch (e) {
-                         return { name, methods: [] };
-                       }
-                     })
-                     .filter((_) => _.methods.length > 0);
+          .filter((name) => !blackList.some((_) => name.startsWith(_)))
+          .map((name) => {
+            try {
+              return {
+                name,
+                methods: getMethodService(strapi, name as UID.Service),
+              };
+            } catch (e) {
+              return { name, methods: [] };
+            }
+          })
+          .filter((_) => _.methods.length > 0);
       },
     },
   };

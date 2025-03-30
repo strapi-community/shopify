@@ -1,3 +1,3 @@
 export * from './applyProductValues';
-export * from './getModelsWithCustomField';
-export * from './getProductFields';
+export * from './getModelsFieldsMap';
+export * from './getShopifyFields';

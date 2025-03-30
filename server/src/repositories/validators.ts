@@ -69,7 +69,17 @@ export type WebhookData = z.infer<typeof webhookShopifyCreating>;
 // SHOP VALIDATOR
 
 const shopBase = z.object({
-  id: z.union([z.number(), z.string()]).transform((val) => Number(val)),
+  id: z
+    .union([
+      z.number().min(1),
+      z
+        .string()
+        .min(1)
+        .refine((val) => !isNaN(Number(val)), {
+          message: 'String must be a valid number',
+        }),
+    ])
+    .transform((val) => Number(val)),
   documentId: z.string(),
   address: z.string().url('The address must be a valid URL.'),
   vendor: z.string(),

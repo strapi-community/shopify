@@ -1,5 +1,5 @@
 import type { Core } from '@strapi/strapi';
-import { applyProductValues, getModelsWithCustomField, getProductFields, getService } from './utils';
+import { applyProductValues, getModelsFieldsMap, getShopifyFields, getService } from './utils';
 
 /**
  * Register the Shopify plugin
@@ -12,8 +12,8 @@ const register = ({ strapi }: { strapi: Core.Strapi }) => {
     type: 'json',
   });
 
-  const contentTypesWithCustomField = getModelsWithCustomField(strapi.contentTypes);
-  const componentsWithCustomField = getModelsWithCustomField(strapi.components);
+  const contentTypesWithCustomField = getModelsFieldsMap(strapi.contentTypes);
+  const componentsWithCustomField = getModelsFieldsMap(strapi.components);
 
   strapi.documents.use(async (context, next) => {
     switch (context.action) {
@@ -30,7 +30,7 @@ const register = ({ strapi }: { strapi: Core.Strapi }) => {
         }
 
         const shopifyService = getService(strapi, 'shopify');
-        const productFields = getProductFields({
+        const productFields = getShopifyFields({
           contentType,
           fetchedData: result,
           contentTypes: contentTypesWithCustomField,

@@ -57,7 +57,7 @@ const processComponentData = (
         break;
       case COMPONENT_FIELDS.DYNAMICZONE:
         if (Array.isArray(fieldData)) {
-          processDynamicZoneField(field, fieldData, fieldPath, result, contentTypes, components);
+          processDynamicZoneField(fieldData, fieldPath, result, contentTypes, components);
         }
         break;
     }
@@ -123,7 +123,6 @@ const processRelationField = (
  * Process a dynamic zone field
  */
 const processDynamicZoneField = (
-  field: DynamicZoneField,
   fieldData: any[],
   fieldPath: string,
   result: ProductFieldsResult,
@@ -155,10 +154,10 @@ const processDynamicZoneField = (
 const processArrayResults = (
   contentType: Array<FieldType>,
   fetchedResult: any[],
-  result: ProductFieldsResult,
   contentTypes: Map<UID.ContentType, Array<FieldType>>,
   components: Map<UID.ContentType, Array<FieldType>>
-): void => {
+): ProductFieldsResult => {
+  const result = new Map<string, Map<string, string>>();
   fetchedResult.forEach((element, index) => {
     contentType.forEach((field) => {
       const fieldData = element[field.field];
@@ -178,23 +177,24 @@ const processArrayResults = (
           break;
         case COMPONENT_FIELDS.DYNAMICZONE:
           if (Array.isArray(fieldData)) {
-            processDynamicZoneField(field, fieldData, path, result, contentTypes, components);
+            processDynamicZoneField(fieldData, path, result, contentTypes, components);
           }
           break;
       }
     });
   });
+  return result;
 };
 /**
  * Process a single result object
  */
 const processSingleResult = (
   contentType: Array<FieldType>,
-  nextResult: any,
-  result: ProductFieldsResult,
+  nextResult: Awaited<ReturnType<Middleware.Middleware>>,
   contentTypes: Map<UID.ContentType, Array<FieldType>>,
   components: Map<UID.ContentType, Array<FieldType>>
-): void => {
+): ProductFieldsResult => {
+  const result = new Map<string, Map<string, string>>();
   contentType.forEach((field) => {
     const fieldData = nextResult[field.field];
     if (!fieldData) return;
@@ -211,39 +211,35 @@ const processSingleResult = (
         break;
       case COMPONENT_FIELDS.DYNAMICZONE:
         if (Array.isArray(fieldData)) {
-          processDynamicZoneField(field, fieldData, field.field, result, contentTypes, components);
+          processDynamicZoneField( fieldData, field.field, result, contentTypes, components);
         }
         break;
     }
   });
+  return result;
 };
 
 type ProductFieldsParams = {
-  contentType: Array<FieldType>,
-  fetchedData: Awaited<ReturnType<Middleware.Middleware>>,
-  contentTypes: Map<UID.ContentType, Array<FieldType>>,
-  components: Map<UID.ContentType, Array<FieldType>>
-}
+  contentType: Array<FieldType>;
+  fetchedData: Awaited<ReturnType<Middleware.Middleware>>;
+  contentTypes: Map<UID.ContentType, Array<FieldType>>;
+  components: Map<UID.ContentType, Array<FieldType>>;
+};
 /**
  * Get product fields from the result
  */
-export const getProductFields = ({
+export const getShopifyFields = ({
   contentType,
   fetchedData,
   contentTypes,
-  components
-}:ProductFieldsParams): ProductFieldsResult => {
+  components,
+}: ProductFieldsParams): ProductFieldsResult => {
   if (!fetchedData || typeof fetchedData !== 'object') {
     return new Map<string, Map<string, string>>();
   }
-
-  const result = new Map<string, Map<string, string>>();
-
   if (Array.isArray(fetchedData)) {
-    processArrayResults(contentType, fetchedData, result, contentTypes, components);
+    return processArrayResults(contentType, fetchedData, contentTypes, components);
   } else {
-    processSingleResult(contentType, fetchedData, result, contentTypes, components);
+    return processSingleResult(contentType, fetchedData, contentTypes, components);
   }
-
-  return result;
 };

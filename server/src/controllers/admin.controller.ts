@@ -60,6 +60,7 @@ const controller = ({ strapi }: StrapiContext) => {
       const payload = getRemoveShopValidator({
         id: ctx.params.shopId,
       });
+
       if (isLeft(payload)) {
         return ctx.badRequest(payload.left.message, {
           issues: payload.left.issues,
@@ -72,6 +73,7 @@ const controller = ({ strapi }: StrapiContext) => {
         ...ctx.request.body,
         id: ctx.params.shopId,
       });
+
       if (isLeft(payload)) {
         return ctx.badRequest(payload.left.message, {
           issues: payload.left.issues,
@@ -83,3 +85,4 @@ const controller = ({ strapi }: StrapiContext) => {
 };
 
 export default controller;
+

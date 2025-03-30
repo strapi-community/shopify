@@ -42,6 +42,8 @@ export type Settings = z.infer<typeof settingsSchema>;
 const queryShopsSchema = z.object({
   isActive: stringToBoolean.optional(),
   populate: z.object({ webhooks: stringToBoolean.optional() }).optional(),
+  page: z.number().min(1).optional().default(1),
+  pageSize: z.number().min(1).optional().default(10),
 });
 
 export const getQueryShopsValidator = (payload: unknown) =>
@@ -49,9 +51,9 @@ export const getQueryShopsValidator = (payload: unknown) =>
 
 export type QueryShops = z.infer<typeof queryShopsSchema>;
 
-const shopSchemaWithWebhooks = shopSchemaWithId
+const shopSchemaWithWebhooks = shopValidator.create.base
   .pick({ id: true })
-  .merge(queryShopsSchema.omit({ isActive: true }));
+  .merge(queryShopsSchema.omit({ isActive: true, page: true, pageSize: true }));
 export const getQueryShopValidator = (payload: unknown) =>
   validate(shopSchemaWithWebhooks.safeParse(payload));
 
