@@ -106,11 +106,12 @@ const en = {
 
   customField: {
     label: 'Shopify product',
-    // TODO: description
-    description: 'TODO',
-    notification: {
-      // TODO: Better text
-      invalidValue: 'Invalid value for {name} provided. "{value}" given.',
+    description: 'Add a shopify product to your entry',
+    vendor: {
+      placeholder: "Select a vendor"
+    },
+    product: {
+      placeholder: "Select a product"
     },
   },
 };

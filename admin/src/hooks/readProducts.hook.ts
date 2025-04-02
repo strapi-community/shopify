@@ -3,13 +3,13 @@ import { useQuery } from '@tanstack/react-query';
 
 import { getApiClient } from '../api/client';
 
-export const useReadShopProducts = (id = 0) => {
+export const useReadShopProducts = (input: { vendor: string; query: string }) => {
   const fetch = getFetchClient();
   const { readShopProducts, getReadShopProductsIndex } = getApiClient(fetch);
 
   return useQuery({
-    queryKey: getReadShopProductsIndex(id),
-    queryFn: () => readShopProducts(id),
-    enabled: !!id,
+    queryKey: getReadShopProductsIndex(input),
+    queryFn: () => readShopProducts(input),
+    enabled: input.query.length > 2,
   });
 };

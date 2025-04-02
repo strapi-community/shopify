@@ -33,7 +33,7 @@ export default {
 
     app.customFields.register({
       name: 'product',
-      plugin: PLUGIN_ID,
+      pluginId: PLUGIN_ID,
       type: 'json',
       intlLabel: {
         id: getTradId(customFieldLabel),
