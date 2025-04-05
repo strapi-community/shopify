@@ -116,12 +116,15 @@ describe('admin.controller', () => {
     });
 
     it('should return bad request when query is invalid', async () => {
+      // Arrange
       const mockAdminService = getMockAdminService();
       const controller = getController(mockAdminService);
-
       const ctx = getRequestContext({ query: { page: -1 } });
+
+      // Act
       await controller.getShops(ctx as any);
 
+      // Assert
       expect(ctx.badRequest).toHaveBeenCalled();
       expect(mockAdminService.shops.getShops).not.toHaveBeenCalled();
     });
@@ -129,20 +132,24 @@ describe('admin.controller', () => {
 
   describe('getShop', () => {
     it('should return shop when params are valid', async () => {
+      // Arrange
       const mockAdminService = getMockAdminService();
       const controller = getController(mockAdminService);
       const mockShop = forgeFakeShop();
       mockAdminService.shops.getShop.mockResolvedValue(mockShop);
 
+      // Act
       const result = await controller.getShop(
         getRequestContext({ params: { shopId: '1' } }) as any
       );
 
+      // Assert
       expect(result).toEqual(mockShop);
       expect(mockAdminService.shops.getShop).toHaveBeenCalled();
     });
 
     it('should return bad request when params are empty', async () => {
+      // Arrange
       const mockAdminService = getMockAdminService();
       const controller = getController(mockAdminService);
       const mockCtx = {
@@ -151,12 +158,15 @@ describe('admin.controller', () => {
         badRequest: jest.fn(),
       };
 
+      // Act
       await controller.getShop(mockCtx as any);
 
+      // Assert
       expect(mockCtx.badRequest).toHaveBeenCalled();
       expect(mockAdminService.shops.getShop).not.toHaveBeenCalled();
     });
-    it('should return bad request when params are invalid', async () => {
+    it('should return bad request when params are is not a number', async () => {
+      // Arrange
       const mockAdminService = getMockAdminService();
       const controller = getController(mockAdminService);
       const mockCtx = {
@@ -165,8 +175,10 @@ describe('admin.controller', () => {
         badRequest: jest.fn(),
       };
 
+      // Act
       await controller.getShop(mockCtx as any);
 
+      // Assert
       expect(mockCtx.badRequest).toHaveBeenCalled();
       expect(mockAdminService.shops.getShop).not.toHaveBeenCalled();
     });
@@ -174,12 +186,14 @@ describe('admin.controller', () => {
 
   describe('addShop', () => {
     it('should add shop when payload is valid', async () => {
+      // Arrange
       const mockAdminService = getMockAdminService();
       const controller = getController(mockAdminService);
       const mockShop = forgeFakeShop();
       const mockPayload = forgeFakeShowWithWebhooks();
       mockAdminService.shops.addShop.mockResolvedValue(mockShop);
 
+      // Act
       const result = await controller.addShop(
         getRequestContext({
           params: { shopId: '1' },
@@ -187,11 +201,13 @@ describe('admin.controller', () => {
         }) as any
       );
 
+      // Assert
       expect(result).toEqual(mockShop);
       expect(mockAdminService.shops.addShop).toHaveBeenCalled();
     });
 
     it('should return bad request when payload is invalid', async () => {
+      // Arrange
       const mockAdminService = getMockAdminService();
       const controller = getController(mockAdminService);
       const ctx = getRequestContext({
@@ -199,8 +215,10 @@ describe('admin.controller', () => {
         request: { body: forgeFakeShop() },
       });
 
+      // Act
       await controller.addShop(ctx as any);
 
+      // Assert
       expect(ctx.badRequest).toHaveBeenCalled();
       expect(mockAdminService.shops.addShop).not.toHaveBeenCalled();
     });
@@ -208,36 +226,45 @@ describe('admin.controller', () => {
 
   describe('removeShop', () => {
     it('should remove shop when params are valid', async () => {
+      // Arrange
       const mockAdminService = getMockAdminService();
       const controller = getController(mockAdminService);
       const mockResult = { success: true };
       mockAdminService.shops.removeShop.mockResolvedValue(mockResult);
 
+      // Act
       const result = await controller.removeShop(
         getRequestContext({ params: { shopId: '1' } }) as any
       );
 
+      // Assert
       expect(result).toEqual(mockResult);
       expect(mockAdminService.shops.removeShop).toHaveBeenCalledWith(1);
     });
 
     it('should return bad request when params are empty', async () => {
+      // Arrange
       const mockAdminService = getMockAdminService();
       const controller = getController(mockAdminService);
       const ctx = getRequestContext({ params: { shopId: '' } });
 
+      // Act
       await controller.removeShop(ctx as any);
 
+      // Assert
       expect(ctx.badRequest).toHaveBeenCalled();
       expect(mockAdminService.shops.removeShop).not.toHaveBeenCalled();
     });
     it('should return bad request when params are invalid', async () => {
+      // Arrange
       const mockAdminService = getMockAdminService();
       const controller = getController(mockAdminService);
       const ctx = getRequestContext({ params: { shopId: faker.string.uuid() } });
 
+      // Act
       await controller.removeShop(ctx as any);
 
+      // Assert
       expect(ctx.badRequest).toHaveBeenCalled();
       expect(mockAdminService.shops.removeShop).not.toHaveBeenCalled();
     });
@@ -245,12 +272,14 @@ describe('admin.controller', () => {
 
   describe('updateShop', () => {
     it('should update shop when payload is valid', async () => {
+      // Arrange
       const mockAdminService = getMockAdminService();
       const controller = getController(mockAdminService);
       const mockShop = forgeFakeShop();
       const mockPayload = forgeFakeShowWithWebhooks();
       mockAdminService.shops.updateShop.mockResolvedValue(mockShop);
 
+      // Act
       const result = await controller.updateShop(
         getRequestContext({
           params: { shopId: '1' },
@@ -258,11 +287,13 @@ describe('admin.controller', () => {
         }) as any
       );
 
+      // Assert
       expect(result).toEqual(mockShop);
       expect(mockAdminService.shops.updateShop).toHaveBeenCalled();
     });
 
-    it('should return bad request when payload is invalid', async () => {
+    it('should return bad request when body is empty', async () => {
+      // Arrange
       const mockAdminService = getMockAdminService();
       const controller = getController(mockAdminService);
       const ctx = getRequestContext({
@@ -270,8 +301,27 @@ describe('admin.controller', () => {
         request: { body: {} },
       });
 
+      // Act
       await controller.updateShop(ctx as any);
 
+      // Assert
+      expect(ctx.badRequest).toHaveBeenCalled();
+      expect(mockAdminService.shops.updateShop).not.toHaveBeenCalled();
+    });
+    it('should return bad request when shopId is not a number', async () => {
+      // Arrange
+      const mockPayload = forgeFakeShowWithWebhooks();
+      const mockAdminService = getMockAdminService();
+      const controller = getController(mockAdminService);
+      const ctx = getRequestContext({
+        params: { shopId: faker.string.uuid() },
+        request: { body: mockPayload },
+      });
+
+      // Act
+      await controller.updateShop(ctx as any);
+
+      // Assert
       expect(ctx.badRequest).toHaveBeenCalled();
       expect(mockAdminService.shops.updateShop).not.toHaveBeenCalled();
     });

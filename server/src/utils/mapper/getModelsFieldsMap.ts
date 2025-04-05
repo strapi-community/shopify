@@ -15,10 +15,10 @@ export const getModelsFieldsMap = (
   data: Schema.ContentTypes | Schema.Components
 ): Map<UID.ContentType, Array<FieldType>> => {
   return new Map(
-    Object.entries(data)
-      .map(([contentTypeName, { attributes }]) => {
+    Object.entries(data).reduce<[UID.ContentType, Array<FieldType>][]>(
+      (acc, [contentTypeName, { attributes }]) => {
         if (!attributes || typeof attributes !== 'object') {
-          return;
+          return acc;
         }
 
         const attributesWithCustomField = Object.entries(attributes)
@@ -28,12 +28,13 @@ export const getModelsFieldsMap = (
           .filter(Boolean);
 
         if (attributesWithCustomField.length === 0) {
-          return false;
+          return acc;
         }
 
-        return [contentTypeName, attributesWithCustomField];
-      })
-      .filter((_) => _) as [UID.ContentType, Array<FieldType>][]
+        return [...acc, [contentTypeName as UID.ContentType, attributesWithCustomField]];
+      },
+      []
+    )
   );
 };
 /**

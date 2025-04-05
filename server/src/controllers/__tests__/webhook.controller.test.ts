@@ -118,7 +118,7 @@ describe('Webhook Controller', () => {
       );
     });
 
-    it('should handle case when service method is not found', async () => {
+    it('should not throw error when service method is not found provided in the webhook', async () => {
       // Arrange
       const mockStrapi = getMockStrapi();
       const mockShop = forgeFakeShowWithWebhooks();

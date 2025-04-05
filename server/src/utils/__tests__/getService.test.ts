@@ -32,15 +32,15 @@ describe('getService', () => {
     expect(result).toBe(mockService);
   });
 
-  it('should work with any valid service name', () => {
-    const mockService = getMockService();
-    const mockStrapi = getStrapiMock(mockService);
-    const serviceNames: Array<keyof Services> = ['webhook', 'shopify', 'admin', 'shop', 'cache'];
+  it.each(['webhook', 'shopify', 'admin', 'shop', 'cache'] as const)(
+    'should work with service name: %s',
+    (serviceName) => {
+      const mockService = getMockService();
+      const mockStrapi = getStrapiMock(mockService);
 
-    serviceNames.forEach((serviceName) => {
       const result = getService(mockStrapi, serviceName);
       expect(mockStrapi.plugin('shopify').service).toHaveBeenCalledWith(serviceName);
       expect(result).toBe(mockService);
-    });
-  });
+    }
+  );
 });

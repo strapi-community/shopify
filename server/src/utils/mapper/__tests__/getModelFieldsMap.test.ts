@@ -143,23 +143,6 @@ describe('getModelFieldsMap', () => {
     expect(result.size).toBe(0);
   });
 
-  //   it('should handle components with custom fields', () => {
-  //     // Arrange
-  //     const components = {
-  //       'components.test.test': getComponentMock({
-  //         title: { type: 'string' },
-  //         customField: { type: 'string', customField: SHOPIFY_CUSTOM_FIELDS },
-  //       }),
-  //     };
-
-  //     // Act
-  //     const result = getModelsWithCustomField(components);
-
-  //     // Assert
-  //     expect(result.size).toBe(1);
-  //     expect(result.get('components.test.test')).toEqual([{ field: 'customField', type: 'raw' }]);
-  //   });
-
   it('should handle invalid attributes', () => {
     // Arrange
     const contentTypes = {

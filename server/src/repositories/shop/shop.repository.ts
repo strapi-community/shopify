@@ -49,9 +49,9 @@ export const getShopsRepository = (strapi: StrapiContext['strapi']) => {
         return shopValidator.findOne.base.parse(shop);
       });
     },
-    async findMany<H extends boolean>(
-      params: FindManyParams<H> = {}
-    ): Promise<H extends true ? Array<ShopWithWebhooks> : Array<Shop>> {
+    async findMany<WDYT extends boolean>(
+      params: FindManyParams<WDYT> = {}
+    ): Promise<WDYT extends true ? Array<ShopWithWebhooks> : Array<Shop>> {
       return repository.findMany(params).then((shops) => {
         if (params?.populate?.webhooks) {
           return shopValidator.findMany.shopWithWebhooks.parse(shops);

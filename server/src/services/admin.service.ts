@@ -18,9 +18,8 @@ export default ({ strapi }: StrapiContext) => {
   const webhookService = getService(strapi, 'webhook');
   const shopService = getService(strapi, 'shop');
 
-  const getMethodService = (strapi: Core.Strapi, name: UID.Service) => {
-    const service = strapi.service(name);
-    if (service.contentType) {
+  const getMethodService = (strapi: Core.Strapi, service: Core.Service, name: string) => {
+    if (service?.contentType) {
       const standardStrapiMethods = [
         'getDocumentId',
         'find',
@@ -33,9 +32,11 @@ export default ({ strapi }: StrapiContext) => {
       const serviceMethods = Object.keys(service);
       return standardStrapiMethods
         .concat(serviceMethods)
-        .filter((_: string) => typeof strapi.service(name as UID.Service)[_] === 'function');
+        .filter(
+          (method: string) => typeof strapi.service(name as UID.Service)[method] === 'function'
+        );
     }
-    return Object.keys(service);
+    return Object.keys(service || {});
   };
 
   return {
@@ -77,6 +78,7 @@ export default ({ strapi }: StrapiContext) => {
         });
         return shops.map((shop: Shop | ShopWithWebhooks) => ({
           ...shop,
+          adminApiAccessToken: partialHideValue(shop.adminApiAccessToken),
           apiKey: partialHideValue(shop.apiKey),
           apiSecretKey: partialHideValue(shop.apiSecretKey),
         }));
@@ -199,13 +201,13 @@ export default ({ strapi }: StrapiContext) => {
           'plugin::content-type-builder',
           'plugin::users-permissions',
         ];
-        return Object.keys(services)
-          .filter((name) => !blackList.some((_) => name.startsWith(_)))
-          .map((name) => {
+        return Object.entries(services)
+          .filter(([name]) => !blackList.some((_) => name.startsWith(_)))
+          .map(([name, service]) => {
             try {
               return {
                 name,
-                methods: getMethodService(strapi, name as UID.Service),
+                methods: getMethodService(strapi, service, name),
               };
             } catch (e) {
               return { name, methods: [] };

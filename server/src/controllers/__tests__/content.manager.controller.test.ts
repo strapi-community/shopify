@@ -67,8 +67,6 @@ describe('content.manager.controller', () => {
   });
 
   describe('getProducts', () => {
-    // const mockShops = [{ vendor: 'shop1' }, { vendor: 'shop2' }];
-
     it('should return products when valid query is provided', async () => {
       // Arrange
       const mockProducts = [{ id: 1, title: 'Product 1' }];
@@ -121,7 +119,7 @@ describe('content.manager.controller', () => {
       expect(mockCtx.badRequest).toHaveBeenCalled();
     });
 
-    it('should return bad request when vendor is invalid', async () => {
+    it('should reject when vendor is non-existent', async () => {
       // Arrange
       const mockShops = [forgeFakeShop({ vendor: 'shop1' })];
       jest.spyOn(shopRepository, 'getShopsRepository').mockReturnValue({
@@ -144,7 +142,7 @@ describe('content.manager.controller', () => {
       expect(mockCtx.badRequest).toHaveBeenCalled();
     });
 
-    it('should handle single vendor case correctly', async () => {
+    it("should not require vendor param if there's only one vendor registered", async () => {
       // Arrange
       const mockProducts = [{ id: 1, title: 'Product 1' }];
       jest.spyOn(utils, 'getService').mockReturnValue({
