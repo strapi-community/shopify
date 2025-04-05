@@ -55,7 +55,15 @@ export const shopSchema = z.object({
 
 export type ShopSchemaWithIdSchema = z.infer<typeof shopSchemaWithIdSchema>;
 export const shopSchemaWithIdSchema = shopSchema.extend({
-  id: z.union([z.number(), z.string()]).transform((val) => Number(val)),
+  id: z.union([
+    z.number().min(1),
+    z
+      .string()
+      .min(1)
+      .refine((val) => !isNaN(Number(val)), {
+        message: 'String must be a valid number',
+      }),
+  ]),
 });
 
 export type NewShopSchemaWithIdSchema = z.infer<typeof newShopSchemaWithIdSchema>;

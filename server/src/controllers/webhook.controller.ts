@@ -3,8 +3,10 @@ import { isLeft } from 'fp-ts/lib/Either';
 import type { Context } from 'koa';
 import type { StrapiContext } from '../@types';
 import { getUpdateProductValidator } from '../validators/webhook.validator';
+// import { getService } from '../utils/getService';
 
-const controller = ({ strapi }: StrapiContext) => {
+const getWebhookController = ({ strapi }: StrapiContext) => {
+  // const cacheService = getService(strapi, 'cache');
   return {
     async handleWebhook(ctx: Context) {
       const vendor = ctx.request.body.vendor;
@@ -23,6 +25,8 @@ const controller = ({ strapi }: StrapiContext) => {
 
       const { result, webhook } = validationResult.right;
       // call the service method with the webhook data
+      // TODO: add cache for the webhook data
+      // cacheService.set(webhook.id, result);
       strapi.service(webhook.service as UID.Service)?.[webhook.method]?.(ctx.request.body, result);
 
       return {};
@@ -30,5 +34,5 @@ const controller = ({ strapi }: StrapiContext) => {
   };
 };
 
-export default controller;
+export default getWebhookController;
 

@@ -24,8 +24,12 @@ type FindParams<H extends boolean = false> = {
     webhooks?: H;
   };
 };
+type FindManyParams<H extends boolean = false> = FindParams<H> & {
+  page?: number;
+  pageSize?: number;
+};
 
-export const getShopsRepository = once((strapi: StrapiContext['strapi']) => {
+export const getShopsRepository = (strapi: StrapiContext['strapi']) => {
   const repository = strapi.query('plugin::shopify.shop');
 
   return {
@@ -45,17 +49,15 @@ export const getShopsRepository = once((strapi: StrapiContext['strapi']) => {
         return shopValidator.findOne.base.parse(shop);
       });
     },
-    async findMany<H extends boolean>(
-      params: FindParams<H> = {},
-    ): Promise<H extends true ? Array<ShopWithWebhooks> : Array<Shop>> {
-      return repository
-        .findMany(params)
-        .then((shops) => {
-          if (params?.populate?.webhooks) {
-            return shopValidator.findMany.shopWithWebhooks.parse(shops);
-          }
-          return shopValidator.findMany.base.parse(shops);
-        });
+    async findMany<WDYT extends boolean>(
+      params: FindManyParams<WDYT> = {}
+    ): Promise<WDYT extends true ? Array<ShopWithWebhooks> : Array<Shop>> {
+      return repository.findMany(params).then((shops) => {
+        if (params?.populate?.webhooks) {
+          return shopValidator.findMany.shopWithWebhooks.parse(shops);
+        }
+        return shopValidator.findMany.base.parse(shops);
+      });
     },
     async remove(params: { where: Required<FindParams>['where'] }) {
       return repository.delete(params);
@@ -72,4 +74,4 @@ export const getShopsRepository = once((strapi: StrapiContext['strapi']) => {
       return repository.count(params);
     },
   };
-});
+};

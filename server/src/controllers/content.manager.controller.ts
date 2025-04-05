@@ -3,10 +3,8 @@ import { z } from 'zod';
 import { StrapiContext } from '../@types';
 import type { RequestContext } from '../@types/koa';
 import { getShopsRepository } from '../repositories/shop';
-import shopifyService from '../services/shopify.service';
 import { getService } from '../utils';
 import { validate } from '../validators/utils';
-import { right } from 'fp-ts/lib/Either';
 
 const getQueryVendorsValidator = (vendors: string[], query: unknown) => {
   if (vendors.length === 0) {
@@ -39,7 +37,7 @@ const getQueryVendorsValidator = (vendors: string[], query: unknown) => {
   );
 };
 
-const controller = ({ strapi }: StrapiContext) => {
+const getContentManagerController = ({ strapi }: StrapiContext) => {
   const shopsRepository = getShopsRepository(strapi);
   return {
     async getVendors(ctx: RequestContext) {
@@ -71,4 +69,4 @@ const controller = ({ strapi }: StrapiContext) => {
     },
   };
 };
-export default controller;
+export default getContentManagerController;
