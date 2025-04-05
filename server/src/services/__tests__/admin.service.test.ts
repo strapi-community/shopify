@@ -70,7 +70,7 @@ const getAdminService = (strapi: Core.Strapi) => {
   return adminService({ strapi });
 };
 
-describe('Admin Service', () => {
+describe('admin.service', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });

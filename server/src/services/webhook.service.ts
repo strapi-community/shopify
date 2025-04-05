@@ -41,7 +41,9 @@ export default ({ strapi }: StrapiContext) => {
       id,
       shopifyId: result.webhookSubscription?.id,
       errors: result.userErrors.map((error) => error.message ?? error),
-      callbackUrl: extractCallbackUrl(result.webhookSubscription.endpoint),
+      callbackUrl: result.webhookSubscription?.endpoint
+        ? extractCallbackUrl(result.webhookSubscription.endpoint)
+        : '',
     } as WebhookData;
   };
 
