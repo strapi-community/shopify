@@ -47,6 +47,9 @@ export const getWebhookRepository = once((strapi: Core.Strapi) => {
     async remove(params: Required<FindParams>) {
       return repository.delete(params);
     },
+    async removeMany(params: { where: { id: { $in: number[] } } }) {
+      return repository.deleteMany(params);
+    },
     async findMany(params: FindParams = {}) {
       return repository.findMany(params).then((op) => webhookValidator.findMany.base.parse(op));
     },

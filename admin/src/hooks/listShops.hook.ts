@@ -5,6 +5,7 @@ import { getApiClient } from '../api/client';
 export const useShops = () => {
   const fetch = getFetchClient();
   const { readAllIndex, readAll } = getApiClient(fetch);
+  console.log('useShops::',);
 
   return useQuery({
     queryKey: readAllIndex(),

@@ -3,35 +3,56 @@ import { WebhookSubscriptionFormat, WebhookSubscriptionTopic } from '../@types/s
 import { nullable } from '../validators/utils';
 
 // WEBHOOK VALIDATOR
-export const webhookBase = z.object({
-  id: z.number(),
-  documentId: z.string(),
-  shopifyId: z.string().nullable(),
+
+const webhookRestAPISchema = z.object({
   topic: z.enum([
     // PRODUCTS
     WebhookSubscriptionTopic.ProductsCreate,
     WebhookSubscriptionTopic.ProductsUpdate,
     WebhookSubscriptionTopic.ProductsDelete,
-    // ORDERS
-    WebhookSubscriptionTopic.OrdersCreate,
-    WebhookSubscriptionTopic.OrdersUpdated,
-    WebhookSubscriptionTopic.OrdersDelete,
   ]),
-  format: z.enum([WebhookSubscriptionFormat.Json]),
-  callbackUrl: z.string().nullable(),
-  createdAt: z.string().nullable().optional(),
-  updatedAt: z.string().nullable().optional(),
-  publishedAt: z.string().nullable().optional(),
-  locale: z.string().nullable().optional(),
-  errors: z.string().array().nullable().optional(),
-  method: z.string(),
+  method: z.string().optional().nullable(),
   service: z
     .string()
     .regex(
       /^admin::|api::[a-zA-Z0-9_\-]+\.[a-zA-Z0-9_\-]+|plugin::[a-zA-Z0-9_\-]+\.[a-zA-Z0-9_\-]+$/,
       'Invalid service name allowed values: admin::, api::[a-zA-Z0-9_\\-]+\.[a-zA-Z0-9_\\-]+, plugin::[a-zA-Z0-9_\\-]+\\.[a-zA-Z0-9_\\-]+'
-    ),
+    )
+    .optional()
+    .nullable(),
 });
+
+const refinedWebhookRestAPISchema = webhookRestAPISchema.superRefine((data, ctx) => {
+  if (data.method && !data.service) {
+    ctx.addIssue({
+      message: 'Method cannot be defined without a service',
+      code: 'custom',
+      path: ['method'],
+    });
+  }
+  if (!data.method && data.service) {
+    ctx.addIssue({
+      message: 'Service cannot be defined without a method',
+      code: 'custom',
+      path: ['service'],
+    });
+  }
+});
+export const webhookBase = z
+  .object({
+    id: z.number(),
+    documentId: z.string(),
+    shopifyId: z.string().nullable(),
+    format: z.enum([WebhookSubscriptionFormat.Json]),
+    callbackUrl: z.string().nullable(),
+    createdAt: z.string().nullable().optional(),
+    updatedAt: z.string().nullable().optional(),
+    publishedAt: z.string().nullable().optional(),
+    locale: z.string().nullable().optional(),
+    errors: z.string().array().nullable().optional(),
+  })
+  .merge(webhookRestAPISchema);
+
 const webhookWithShopId = webhookBase.merge(z.object({ shop: z.object({ id: z.number() }) }));
 const webhookShopifyCreating = webhookBase.pick({
   id: true,
@@ -41,8 +62,10 @@ const webhookShopifyCreating = webhookBase.pick({
   callbackUrl: true,
   errors: true,
 });
+
 export const webhookValidator = {
   create: {
+    restData: refinedWebhookRestAPISchema,
     base: webhookBase,
     withShopId: webhookWithShopId,
     draft: webhookBase.pick({
@@ -84,14 +107,14 @@ const shopBase = z.object({
   address: z.string().url('The address must be a valid URL.'),
   vendor: z.string(),
   apiKey: z
-    .string()
-    .refine((data) => !data.includes('*'), { message: 'API key cannot contain asterisks.' }),
+    .string(),
+    // .refine((data) => !data.includes('*'), { message: 'API key cannot contain asterisks.' }),
   apiSecretKey: z
-    .string()
-    .refine((data) => !data.includes('*'), { message: 'API secret key cannot contain asterisks.' }),
+    .string(),
+    // .refine((data) => !data.includes('*'), { message: 'API secret key cannot contain asterisks.' }),
   adminApiAccessToken: z
-    .string()
-    .refine((data) => !data.includes('*'), { message: 'API secret key cannot contain asterisks.' }),
+    .string(),
+    // .refine((data) => !data.includes('*'), { message: 'API secret key cannot contain asterisks.' }),
   isActive: z.boolean().default(false),
   createdAt: z.string(),
   updatedAt: z.string(),

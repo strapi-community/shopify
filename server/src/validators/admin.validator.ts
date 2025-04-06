@@ -8,12 +8,6 @@ const stringToBoolean = z
   .transform((val) => (val ? val === 'true' : val))
   .pipe(z.boolean());
 
-const createHookSchema = webhookValidator.create.base.pick({
-  topic: true,
-  service: true,
-  method: true,
-});
-
 const createShopSchema = shopValidator.create.base
   .pick({
     vendor: true,
@@ -23,7 +17,7 @@ const createShopSchema = shopValidator.create.base
     adminApiAccessToken: true,
     isActive: true,
   })
-  .merge(z.object({ webhooks: z.array(createHookSchema) }));
+  .merge(z.object({ webhooks: z.array(webhookValidator.create.restData) }));
 
 export const shopSchemaWithId = shopValidator.create.base
   .pick({ id: true })
@@ -64,7 +58,7 @@ export const getAddShopValidator = (payload: unknown) =>
 
 const zodObject = shopSchemaWithId
   .omit({ address: true, webhooks: true })
-  .merge(z.object({ webhooks: z.array(createHookSchema) }));
+  .merge(z.object({ webhooks: z.array(webhookValidator.create.restData) }));
 type UpdateShop = z.infer<typeof zodObject>;
 export const getUpdateShopValidator = (payload: unknown) => validate(zodObject.safeParse(payload));
 
