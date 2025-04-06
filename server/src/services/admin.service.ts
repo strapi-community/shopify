@@ -133,7 +133,7 @@ export default ({ strapi }: StrapiContext) => {
       async removeShop(id: number) {
         const shop = await shopsRepository.findOne({ where: { id }, populate: { webhooks: true } });
         if (!shop) {
-          return;
+          throw new BadRequestException('Shop not found');
         }
         return strapi.db.transaction(async () => {
           const result = await webhookService.remove(
@@ -177,7 +177,7 @@ export default ({ strapi }: StrapiContext) => {
           populate: { webhooks: true },
         });
         if (!oldShop) {
-          return;
+          throw new BadRequestException('Shop not found');
         }
         const comparator = (
           newW: Pick<Webhook, 'service' | 'topic' | 'method' | 'shopifyId'>,
@@ -235,7 +235,7 @@ export default ({ strapi }: StrapiContext) => {
               ...omit(newShop, ['webhooks']),
               ...omit(oldShop, ['webhooks']),
               ...omitBy(newShop, (value, key) => {
-                if (key === 'webhooks') {
+                if (['webhooks', 'id', 'vendor'].includes(key)) {
                   return true;
                 }
                 return !value || (typeof value === 'string' && value.includes('***'));

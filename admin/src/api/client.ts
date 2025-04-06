@@ -14,12 +14,11 @@ export type ApiClient = ReturnType<typeof getApiClient>;
 export const getApiClient = once((fetch: ReturnType<typeof getFetchClient>) => ({
   getIndexPrefix: () => [URL_PREFIX],
 
-  readAll: () => {
-    console.log('readAll::',);
-    return fetch
-    .get(`/${URL_PREFIX}/settings/shops`)
-    .then(({ data }) => shopSchemaWithIdSchema.array().parse(data));
-  },
+  readAll: () =>
+    fetch
+      .get(`/${URL_PREFIX}/settings/shops`)
+      .then(({ data }) => shopSchemaWithIdSchema.array().parse(data)),
+
   readAllIndex: () => [URL_PREFIX, 'shops'],
 
   createShop: (body: NewShopSchemaWithIdSchema): Promise<ShopSchemaWithIdSchema> =>

@@ -55,6 +55,7 @@ const getMockWebhookRepository = () => ({
   create: jest.fn(),
   update: jest.fn(),
   remove: jest.fn(),
+  removeMany: jest.fn(),
 });
 
 const getMockWebhookService = () => ({
@@ -68,6 +69,52 @@ const getMockShopService = () => ({
 
 const getAdminService = (strapi: Core.Strapi) => {
   return adminService({ strapi });
+};
+
+const getMockWebhook = (overrides: Partial<Webhook> = {}): Webhook => ({
+  id: 1,
+  documentId: 'test',
+  shopifyId: 'webhook-1',
+  topic: WebhookSubscriptionTopic.ProductsCreate,
+  format: WebhookSubscriptionFormat.Json,
+  callbackUrl: 'test',
+  service: 'test-service',
+  method: 'test-method',
+  ...overrides,
+});
+
+const getMockWebhookData = (overrides: Partial<WebhookData> = {}): WebhookData => ({
+  id: 1,
+  shopifyId: 'webhook-1',
+  ...overrides,
+});
+
+const setupUpdateShopTest = () => {
+  const strapi = getMockStrapi();
+  const shopsRepository = getMockShopsRepository();
+  const webhookRepository = getMockWebhookRepository();
+  const webhookService = getMockWebhookService();
+
+  const { getShopsRepository } = require('../../repositories/shop');
+  const { getWebhookRepository } = require('../../repositories/webhook');
+  const { getService } = require('../../utils/getService');
+
+  getShopsRepository.mockReturnValue(shopsRepository);
+  getWebhookRepository.mockReturnValue(webhookRepository);
+  getService.mockImplementation((strapi, name) => {
+    if (name === 'webhook') return webhookService;
+    return {};
+  });
+
+  const adminService = getAdminService(strapi);
+
+  return {
+    strapi,
+    shopsRepository,
+    webhookRepository,
+    webhookService,
+    adminService,
+  };
 };
 
 describe('admin.service', () => {
@@ -336,7 +383,7 @@ describe('admin.service', () => {
         shopsRepository.findOne.mockResolvedValue(mockShop);
         webhookService.remove.mockResolvedValue([{ id: 'test', hasError: false }]);
         shopsRepository.remove.mockResolvedValue({ id: 1 });
-        webhookRepository.remove.mockResolvedValue({ id: 1 });
+        webhookRepository.removeMany.mockResolvedValue({ id: 1 });
 
         const { getShopsRepository } = require('../../repositories/shop');
         const { getWebhookRepository } = require('../../repositories/webhook');
@@ -359,7 +406,7 @@ describe('admin.service', () => {
         expect(result).toBeDefined();
         expect(webhookService.remove).toHaveBeenCalled();
         expect(shopsRepository.remove).toHaveBeenCalled();
-        expect(webhookRepository.remove).toHaveBeenCalled();
+        expect(webhookRepository.removeMany).toHaveBeenCalled();
         expect(shopService.remove).toHaveBeenCalled();
       });
 
@@ -401,15 +448,365 @@ describe('admin.service', () => {
     });
 
     describe('updateShop', () => {
-      it('should throw BadRequestException as not implemented', async () => {
+      it('should update shop and manage webhooks correctly', async () => {
         // Arrange
         const strapi = getMockStrapi();
+        const shopsRepository = getMockShopsRepository();
+        const webhookRepository = getMockWebhookRepository();
+        const webhookService = getMockWebhookService();
+
+        const oldShop = getMockShop({
+          webhooks: [
+            {
+              id: 1,
+              shopifyId: 'old-webhook-1',
+              topic: WebhookSubscriptionTopic.ProductsCreate,
+              service: 'old-service',
+              method: 'old-method',
+              format: WebhookSubscriptionFormat.Json,
+              callbackUrl: 'test',
+            } as Webhook,
+          ],
+        });
+
+        const newShop = {
+          ...oldShop,
+          vendor: 'updated-vendor',
+          webhooks: [
+            {
+              topic: WebhookSubscriptionTopic.ProductsCreate,
+              service: 'new-service',
+              method: 'new-method',
+            },
+            {
+              topic: WebhookSubscriptionTopic.ProductsUpdate,
+              service: 'new-service',
+              method: 'new-method',
+            },
+          ],
+        } as ShopifyShopWithId;
+
+        shopsRepository.findOne.mockResolvedValue(oldShop);
+        webhookService.remove.mockResolvedValue([{ id: 'old-webhook-1', hasError: false }]);
+        webhookRepository.create.mockResolvedValue({
+          id: 2,
+          documentId: 'test',
+          shopifyId: 'new-webhook-1',
+          topic: WebhookSubscriptionTopic.ProductsUpdate,
+          format: WebhookSubscriptionFormat.Json,
+          callbackUrl: 'test',
+          service: 'new-service',
+          method: 'new-method',
+        } as Webhook);
+        webhookService.create.mockResolvedValue([
+          { id: 2, shopifyId: 'new-webhook-1' } as WebhookData,
+        ]);
+        shopsRepository.update.mockResolvedValue(newShop);
+
+        const { getShopsRepository } = require('../../repositories/shop');
+        const { getWebhookRepository } = require('../../repositories/webhook');
+        const { getService } = require('../../utils/getService');
+
+        getShopsRepository.mockReturnValue(shopsRepository);
+        getWebhookRepository.mockReturnValue(webhookRepository);
+        getService.mockImplementation((strapi, name) => {
+          if (name === 'webhook') return webhookService;
+          return {};
+        });
+
+        const adminService = getAdminService(strapi);
+
+        // Act
+        const result = await adminService.shops.updateShop(newShop);
+
+        // Assert
+        expect(result).toBeDefined();
+        expect(shopsRepository.findOne).toHaveBeenCalledWith({
+          where: { id: newShop.id },
+          populate: { webhooks: true },
+        });
+        expect(webhookService.remove).toHaveBeenCalledWith(newShop.vendor, ['old-webhook-1']);
+        expect(webhookRepository.create).toHaveBeenCalled();
+        expect(webhookService.create).toHaveBeenCalled();
+        expect(shopsRepository.update).toHaveBeenCalled();
+      });
+
+      it('should throw BadRequestException when shop not found', async () => {
+        // Arrange
+        const strapi = getMockStrapi();
+        const shopsRepository = getMockShopsRepository();
         const mockShop = getMockShop();
+
+        shopsRepository.findOne.mockResolvedValue(null);
+
+        const { getShopsRepository } = require('../../repositories/shop');
+        getShopsRepository.mockReturnValue(shopsRepository);
 
         const adminService = getAdminService(strapi);
 
         // Act & Assert
         await expect(adminService.shops.updateShop(mockShop)).rejects.toThrow(BadRequestException);
+        expect(shopsRepository.findOne).toHaveBeenCalledWith({
+          where: { id: mockShop.id },
+          populate: { webhooks: true },
+        });
+      });
+
+      it('should remove webhooks when they are removed from the shop', async () => {
+        // Arrange
+        const { shopsRepository, webhookRepository, webhookService, adminService } =
+          setupUpdateShopTest();
+
+        const oldShop = getMockShop({
+          webhooks: [
+            getMockWebhook(),
+            getMockWebhook({
+              id: 2,
+              shopifyId: 'webhook-2',
+              topic: WebhookSubscriptionTopic.ProductsUpdate,
+            }),
+          ],
+        });
+
+        const newShop = {
+          ...oldShop,
+          webhooks: [
+            {
+              topic: WebhookSubscriptionTopic.ProductsCreate,
+              service: 'test-service',
+              method: 'test-method',
+            },
+            {
+              topic: WebhookSubscriptionTopic.ProductsDelete,
+              service: 'test-service',
+              method: 'test-method',
+            },
+          ],
+        } as ShopifyShopWithId;
+
+        shopsRepository.findOne.mockResolvedValue(oldShop);
+        webhookService.remove.mockResolvedValue([{ id: 'webhook-2', hasError: false }]);
+        webhookRepository.removeMany.mockResolvedValue({ count: 1 });
+        webhookRepository.create.mockResolvedValue(
+          getMockWebhook({
+            id: 3,
+            shopifyId: 'new-webhook-1',
+            topic: WebhookSubscriptionTopic.ProductsDelete,
+          })
+        );
+        webhookService.create.mockResolvedValue([
+          getMockWebhookData({ id: 3, shopifyId: 'new-webhook-1' }),
+        ]);
+        shopsRepository.update.mockResolvedValue(newShop);
+
+        // Act
+        const result = await adminService.shops.updateShop(newShop);
+
+        // Assert
+        expect(result).toBeDefined();
+        expect(webhookService.remove).toHaveBeenCalledWith(oldShop.vendor, ['webhook-2']);
+        expect(webhookRepository.removeMany).toHaveBeenCalledWith({
+          where: {
+            id: {
+              $in: [2],
+            },
+          },
+        });
+      });
+
+      it('should add new webhooks when they are added to the shop', async () => {
+        // Arrange
+        const { shopsRepository, webhookRepository, webhookService, adminService } =
+          setupUpdateShopTest();
+
+        const oldShop = getMockShop({
+          webhooks: [
+            getMockWebhook(),
+            getMockWebhook({
+              id: 2,
+              shopifyId: 'webhook-2',
+              topic: WebhookSubscriptionTopic.ProductsDelete,
+            }),
+          ],
+        });
+
+        const newWebhook = {
+          topic: WebhookSubscriptionTopic.ProductsUpdate,
+          service: 'new-service',
+          method: 'new-method',
+        };
+
+        const newShop = {
+          ...oldShop,
+          webhooks: [
+            {
+              topic: WebhookSubscriptionTopic.ProductsCreate,
+              service: 'test-service',
+              method: 'test-method',
+            },
+            newWebhook,
+          ],
+        } as ShopifyShopWithId;
+
+        const createdWebhook = getMockWebhook({
+          id: 3,
+          shopifyId: 'new-webhook-1',
+          topic: WebhookSubscriptionTopic.ProductsUpdate,
+          service: 'new-service',
+          method: 'new-method',
+        });
+
+        shopsRepository.findOne.mockResolvedValue(oldShop);
+        webhookService.remove.mockResolvedValue([{ id: 'webhook-2', hasError: false }]);
+        webhookRepository.removeMany.mockResolvedValue({ count: 1 });
+        webhookRepository.create.mockResolvedValue(createdWebhook);
+        webhookService.create.mockResolvedValue([
+          getMockWebhookData({ id: 3, shopifyId: 'new-webhook-1' }),
+        ]);
+        shopsRepository.update.mockResolvedValue(newShop);
+
+        // Act
+        const result = await adminService.shops.updateShop(newShop);
+
+        // Assert
+        expect(result).toBeDefined();
+        expect(webhookService.remove).toHaveBeenCalledWith(oldShop.vendor, ['webhook-2']);
+        expect(webhookRepository.removeMany).toHaveBeenCalledWith({
+          where: {
+            id: {
+              $in: [2],
+            },
+          },
+        });
+        expect(webhookRepository.create).toHaveBeenCalledWith(true, {
+          topic: WebhookSubscriptionTopic.ProductsUpdate,
+          format: WebhookSubscriptionFormat.Json,
+          shop: expect.objectContaining({
+            id: oldShop.id,
+            vendor: oldShop.vendor,
+            webhooks: [
+              {
+                topic: WebhookSubscriptionTopic.ProductsCreate,
+                service: 'test-service',
+                method: 'test-method',
+              },
+              {
+                topic: WebhookSubscriptionTopic.ProductsUpdate,
+                service: 'new-service',
+                method: 'new-method',
+              },
+            ],
+          }),
+          service: 'new-service',
+          method: 'new-method',
+        });
+        expect(webhookService.create).toHaveBeenCalledWith(oldShop.vendor, [createdWebhook]);
+      });
+
+      it('should update shop credentials when they are changed', async () => {
+        // Arrange
+        const { shopsRepository, adminService } = setupUpdateShopTest();
+
+        const oldShop = getMockShop({
+          apiKey: 'old-api-key',
+          apiSecretKey: 'old-secret-key',
+          adminApiAccessToken: 'old-token',
+        });
+
+        const newShop = {
+          ...oldShop,
+          apiKey: 'new-api-key',
+          apiSecretKey: 'new-secret-key',
+          adminApiAccessToken: 'new-token',
+        } as ShopifyShopWithId;
+
+        shopsRepository.findOne.mockResolvedValue(oldShop);
+        shopsRepository.update.mockResolvedValue(newShop);
+
+        // Act
+        const result = await adminService.shops.updateShop(newShop);
+
+        // Assert
+        expect(result).toBeDefined();
+        expect(shopsRepository.update).toHaveBeenCalledWith(
+          { id: oldShop.id },
+          expect.objectContaining({
+            apiKey: 'new-api-key',
+            apiSecretKey: 'new-secret-key',
+            adminApiAccessToken: 'new-token',
+          })
+        );
+      });
+
+      it('should not update credentials when they contain masked values (*)', async () => {
+        // Arrange
+        const { shopsRepository, adminService } = setupUpdateShopTest();
+
+        const oldShop = getMockShop({
+          apiKey: 'old-api-key',
+          apiSecretKey: 'old-secret-key',
+          adminApiAccessToken: 'old-token',
+        });
+
+        const newShop = {
+          ...oldShop,
+          apiKey: 'tes*****6',
+          apiSecretKey: 'sec*****6',
+          adminApiAccessToken: 'tok*****6',
+        } as ShopifyShopWithId;
+
+        shopsRepository.findOne.mockResolvedValue(oldShop);
+        shopsRepository.update.mockResolvedValue(newShop);
+
+        // Act
+        const result = await adminService.shops.updateShop(newShop);
+
+        // Assert
+        expect(result).toBeDefined();
+        expect(shopsRepository.update).toHaveBeenCalledWith(
+          { id: oldShop.id },
+          expect.objectContaining({
+            apiKey: 'old-api-key',
+            apiSecretKey: 'old-secret-key',
+            adminApiAccessToken: 'old-token',
+          })
+        );
+      });
+
+      it('should handle mixed updates with some masked and some new values', async () => {
+        // Arrange
+        const { shopsRepository, adminService } = setupUpdateShopTest();
+
+        const oldShop = getMockShop({
+          apiKey: 'old-api-key',
+          apiSecretKey: 'old-secret-key',
+          adminApiAccessToken: 'old-token',
+          vendor: 'old-vendor',
+        });
+
+        const newShop = {
+          ...oldShop,
+          apiSecretKey: 'new-secret-key',
+          vendor: 'new-vendor',
+        } as ShopifyShopWithId;
+
+        shopsRepository.findOne.mockResolvedValue(oldShop);
+        shopsRepository.update.mockResolvedValue(newShop);
+
+        // Act
+        const result = await adminService.shops.updateShop(newShop);
+
+        // Assert
+        expect(result).toBeDefined();
+        expect(shopsRepository.update).toHaveBeenCalledWith(
+          { id: oldShop.id },
+          expect.objectContaining({
+            apiKey: 'old-api-key',
+            apiSecretKey: 'new-secret-key',
+            adminApiAccessToken: 'old-token',
+            vendor: 'old-vendor',
+          })
+        );
       });
     });
   });

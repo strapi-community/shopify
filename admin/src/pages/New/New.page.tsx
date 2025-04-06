@@ -18,11 +18,6 @@ import {
 
 const initial: Partial<NewShopSchemaWithIdSchema> = {
   id: 1,
-  // address: 'https://sensinum-strapi-int.myshopify.com',
-  // vendor: 'sensinum-strapi-int',
-  // apiKey: '0151d05077a904f4b8d3fb0f1dafbdcb',
-  // apiSecretKey: 'cf63452bc92796643ce05d669551a04e',
-  // adminApiAccessToken: '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',
   webhooks: [],
 };
 
