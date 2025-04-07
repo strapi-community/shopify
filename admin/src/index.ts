@@ -3,7 +3,7 @@ import { Initializer } from './components/Initializer';
 import { PluginIcon } from './components/PluginIcon';
 import { PLUGIN_ID } from './pluginId';
 
-import { en } from './translations';
+import { en, getTradId, TranslationPath } from './translations';
 
 export default {
   register(app: any) {
@@ -26,6 +26,29 @@ export default {
       initializer: Initializer,
       isReady: false,
       name: PLUGIN_ID,
+    });
+
+    const customFieldLabel: TranslationPath = 'customField.label';
+    const customFieldDescription: TranslationPath = 'customField.label';
+
+    app.customFields.register({
+      name: 'product',
+      pluginId: PLUGIN_ID,
+      type: 'json',
+      intlLabel: {
+        id: getTradId(customFieldLabel),
+      },
+      intlDescription: {
+        id: getTradId(customFieldDescription),
+      },
+      components: {
+        Input: async () =>
+          import(/* webpackChunkName: "product-input-component" */ './components/ProductInput'),
+      },
+      options: {
+        // TODO?: specific shop pick
+        // declare options here
+      },
     });
   },
 

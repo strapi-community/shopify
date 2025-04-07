@@ -103,6 +103,17 @@ const en = {
       },
     },
   },
+
+  customField: {
+    label: 'Shopify product',
+    description: 'Add a shopify product to your entry',
+    vendor: {
+      placeholder: "Select a vendor"
+    },
+    product: {
+      placeholder: "Select a product"
+    },
+  },
 };
 
 export default en;

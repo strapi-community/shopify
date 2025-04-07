@@ -1,10 +1,13 @@
 import { getFetchClient } from '@strapi/strapi/admin';
 import { once } from 'lodash';
+import { z } from 'zod';
 import { PLUGIN_ID as URL_PREFIX } from '../pluginId';
 import {
   NewShopSchemaWithIdSchema,
   ServiceSchema,
   serviceSchema,
+  ShopProductSchema,
+  shopProductSchema,
   ShopSchemaWithIdSchema,
   shopSchemaWithIdSchema,
 } from '../validators/shop.validator';
@@ -38,6 +41,39 @@ export const getApiClient = once((fetch: ReturnType<typeof getFetchClient>) => (
         ...shop,
         webhooks: shop.webhooks?.map((webhook) => ({ ...webhook, isPersisted: true })),
       }));
+  },
+
+  getReadVendorsIndex: () => [URL_PREFIX, 'vendors'],
+  readVendors: (): Promise<Array<string>> => {
+    return fetch
+      .get(`/${URL_PREFIX}/content-manager/vendors`)
+      .then(({ data }) => z.object({ vendors: z.string().array() }).parse(data))
+      .then(({ vendors }) => vendors);
+  },
+
+  getReadShopProductsIndex: ({ vendor, query }: { vendor: string; query: string }) => [
+    URL_PREFIX,
+    'vendors',
+    vendor,
+    query,
+    'products',
+  ],
+  readShopProducts: ({
+    vendor,
+    query,
+  }: {
+    vendor: string;
+    query: string;
+  }): Promise<Array<ShopProductSchema>> => {
+    const searchParams = new URLSearchParams();
+
+    searchParams.append('q', query);
+    searchParams.append('vendor', vendor.toString());
+
+    return fetch
+      .get(`/${URL_PREFIX}/content-manager/products?${searchParams.toString()}`)
+      .then(({ data }) => z.object({ products: shopProductSchema.array() }).parse(data))
+      .then(({ products }) => products);
   },
 
   updateShop: (body: ShopSchemaWithIdSchema): Promise<ShopSchemaWithIdSchema> =>
