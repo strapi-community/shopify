@@ -3,26 +3,13 @@ import { getShopsRepository } from '../repositories/shop';
 import type { Shop } from '../repositories/validators';
 import { getHost } from '../utils';
 import { ShopifyShopConfig } from '../validators/admin.validator';
+import { StrapiContext } from '../@types';
 
 type CachedShopData = { shop: Shopify; config: Shop };
-export default () => {
+export default ({ strapi }: StrapiContext) => {
   const shopCache = new Map<string, CachedShopData>();
   const sessionCache = new Map<string, Session>();
-  const scopes = [
-    'read_apps',
-    'write_order_edits',
-    'read_order_edits',
-    'write_orders',
-    'read_orders',
-    'write_product_feeds',
-    'read_product_feeds',
-    'write_product_listings',
-    'read_product_listings',
-    'write_products',
-    'read_products',
-    'write_purchase_options',
-    'read_purchase_options',
-  ] as const;
+  const scopes = ['write_products', 'read_products'] as const;
 
   function getShop(shopifyShopConfig: ShopifyShopConfig) {
     const api = shopifyApi({
@@ -74,7 +61,7 @@ export default () => {
           return session;
         }
       }
-      const { shop, config } = cachedShopData ?? await this.getOrCreateShop(vendor);
+      const { shop, config } = cachedShopData ?? (await this.getOrCreateShop(vendor));
       const appSession = shop.session.customAppSession(new URL(config.address).hostname);
       sessionCache.set(vendor, appSession);
       return appSession;
