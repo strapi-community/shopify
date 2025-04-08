@@ -5,21 +5,35 @@ import { PLUGIN_ID } from './pluginId';
 
 import { en, getTradId, TranslationPath } from './translations';
 
+import pluginPermissions from './utils/permissions';
+
 export default {
   register(app: any) {
-    app.addMenuLink({
-      to: `plugins/${PLUGIN_ID}`,
-      icon: PluginIcon,
-      intlLabel: {
-        id: `${PLUGIN_ID}.plugin.name`,
-        defaultMessage: PLUGIN_ID,
+    app.createSettingSection(
+      {
+        id: PLUGIN_ID,
+        intlLabel: {
+          id: `${PLUGIN_ID}.plugin.section.name`,
+          defaultMessage: `Shopify plugin`,
+        },
       },
-      Component: async () => {
-        const { App } = await import('./pages/App');
+      [
+        {
+          intlLabel: {
+            id: `${PLUGIN_ID}.plugin.section.item`,
+            defaultMessage: 'Shops',
+          },
+          id: 'navigation',
+          to: PLUGIN_ID,
+          permissions: pluginPermissions.settings,
+          Component: async () => {
+            const { App } = await import('./pages/App');
 
-        return App;
-      },
-    });
+            return App;
+          },
+        },
+      ]
+    );
 
     app.registerPlugin({
       id: PLUGIN_ID,

@@ -1,9 +1,12 @@
 import '@shopify/shopify-api/adapters/node';
 import { Core } from '@strapi/strapi';
+import { setupPermissions } from './permissions';
 import { getShopsRepository } from './repositories/shop';
 import { getService } from './utils';
 
 const bootstrap = async ({ strapi }: { strapi: Core.Strapi }) => {
+  await setupPermissions({ strapi });
+
   const shopifyService = getService(strapi, 'shopify');
   const shopRepository = getShopsRepository(strapi);
 

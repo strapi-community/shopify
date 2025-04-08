@@ -114,6 +114,13 @@ const en = {
       placeholder: "Select a product"
     },
   },
+
+  plugin: {
+    section: {
+      name: "Shopify plugin",
+      item: "Shops"
+    }
+  }
 };
 
 export default en;

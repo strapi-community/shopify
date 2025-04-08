@@ -31,10 +31,10 @@ export const EditPage: FC = () => {
 
   const { formatMessage } = useIntl();
 
-  const updateShopMutation = useUpdateShop();
-  const deleteShopMutation = useDeleteShop();
-
   const { goToNew, params } = useAdminNavigation();
+
+  const updateShopMutation = useUpdateShop();
+  const deleteShopMutation = useDeleteShop(goToNew);
 
   const { data: shop, isLoading } = useReadShop(params?.id);
 
@@ -42,21 +42,24 @@ export const EditPage: FC = () => {
   const displaySaveSuccess = useDisplaySaveSuccess('update');
   const displayDeleteSuccess = useDisplayDeleteSuccess();
 
-  const onSubmit = useCallback((shop: ShopSchemaWithIdSchema) => {
-    dispatch({
-      type: 'LOADING_START',
-    });
+  const onSubmit = useCallback(
+    (shop: ShopSchemaWithIdSchema) => {
+      dispatch({
+        type: 'LOADING_START',
+      });
 
-    updateShopMutation.mutate(shop, {
-      onSettled: () => dispatch({ type: 'LOADING_STOP' }),
-      onSuccess: () => {
-        dispatch({ type: 'MARK_CLEAN' });
+      updateShopMutation.mutate(shop, {
+        onSettled: () => dispatch({ type: 'LOADING_STOP' }),
+        onSuccess: () => {
+          dispatch({ type: 'MARK_CLEAN' });
 
-        displaySaveSuccess();
-      },
-      onError: displayApiErrors,
-    });
-  }, [dispatch, updateShopMutation]);
+          displaySaveSuccess();
+        },
+        onError: displayApiErrors,
+      });
+    },
+    [dispatch, updateShopMutation]
+  );
 
   const onDelete = useCallback(
     (shop: ShopSchemaWithIdSchema) => {
@@ -78,15 +81,18 @@ export const EditPage: FC = () => {
     [dispatch, goToNew, displayApiErrors, displayDeleteSuccess, deleteShopMutation]
   );
 
-  const onChange = useCallback((next: Pick<ShopSchemaWithIdSchema, FormField>) => {
-    dispatch({
-      type: 'ON_NEXT',
-      next: {
-        ...current,
-        ...next,
-      },
-    });
-  }, [dispatch, current]);
+  const onChange = useCallback(
+    (next: Pick<ShopSchemaWithIdSchema, FormField>) => {
+      dispatch({
+        type: 'ON_NEXT',
+        next: {
+          ...current,
+          ...next,
+        },
+      });
+    },
+    [dispatch, current]
+  );
 
   const validator = useCallback(
     (shop: unknown) =>
