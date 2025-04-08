@@ -1,13 +1,13 @@
 import { Core, UID } from '@strapi/strapi';
-import { omit, uniqBy } from 'lodash';
+import { differenceWith, omit, omitBy, uniqBy } from 'lodash';
 import { StrapiContext } from '../@types';
 import { WebhookSubscriptionFormat } from '../@types/shopify';
 import { BadRequestException } from '../exceptions/BadRequestException';
 import { getShopsRepository } from '../repositories/shop';
+import { Shop, ShopWithWebhooks, Webhook } from '../repositories/validators';
 import { getWebhookRepository } from '../repositories/webhook';
-import { getService } from '../utils/getService';
+import { getService } from '../utils';
 import { QueryShop, QueryShops, Settings, ShopifyShopWithId } from '../validators/admin.validator';
-import { ShopWithWebhooks, Shop } from '../repositories/validators';
 
 const partialHideValue = (value: string) =>
   `${value.substring(0, 3)}*****${value.substring(value.length - 1)}`;
@@ -71,7 +71,7 @@ export default ({ strapi }: StrapiContext) => {
     shops: {
       async getShops(query: QueryShops) {
         const shops = await shopsRepository.findMany({
-          where: { isActive: query.isActive },
+          where: query.isActive ? { isActive: query.isActive } : {},
           populate: query.populate,
           page: query.page,
           pageSize: query.pageSize,
@@ -133,7 +133,7 @@ export default ({ strapi }: StrapiContext) => {
       async removeShop(id: number) {
         const shop = await shopsRepository.findOne({ where: { id }, populate: { webhooks: true } });
         if (!shop) {
-          return;
+          throw new BadRequestException('Shop not found');
         }
         return strapi.db.transaction(async () => {
           const result = await webhookService.remove(
@@ -154,7 +154,13 @@ export default ({ strapi }: StrapiContext) => {
           }
           const [removeResult] = await Promise.all([
             shopsRepository.remove({ where: { id } }),
-            webhookRepository.remove({ where: { shop: { id } } }),
+            webhookRepository.removeMany({
+              where: {
+                id: {
+                  $in: shop.webhooks.map((hook) => hook.id),
+                },
+              },
+            }),
             shopService.remove(shop.vendor),
           ]);
           return {
@@ -166,25 +172,77 @@ export default ({ strapi }: StrapiContext) => {
         });
       },
       async updateShop(newShop: ShopifyShopWithId) {
-        throw new BadRequestException('Not implemented yet');
-        // TODO TBD: what we should allow when user want disable some webhook? or enable? or change callback url?
         const oldShop = await shopsRepository.findOne({
           where: { id: newShop.id },
           populate: { webhooks: true },
         });
         if (!oldShop) {
-          return;
+          throw new BadRequestException('Shop not found');
         }
-        const hooksData = await Promise.all(
-          uniqBy(newShop.webhooks, 'topic').map((hook) =>
-            webhookRepository.create(true, {
-              ...hook,
-              format: WebhookSubscriptionFormat.Json,
-              shop: newShop,
-            })
-          )
-        );
-        return shopsRepository.update({ id: newShop.id }, newShop);
+        const comparator = (
+          newW: Pick<Webhook, 'service' | 'topic' | 'method' | 'shopifyId'>,
+          oldW: Pick<Webhook, 'service' | 'topic' | 'method' | 'shopifyId'>
+        ) => {
+          if (newW.topic === oldW.topic) {
+            return newW.service === oldW.service && newW.method === oldW.method;
+          }
+          return false;
+        };
+        const diffToAdd = differenceWith(newShop.webhooks, oldShop.webhooks, comparator);
+        const diffToRemove = differenceWith(oldShop.webhooks, newShop.webhooks, comparator);
+        return strapi.db.transaction(async () => {
+          if (diffToAdd.length && diffToRemove.length) {
+            if (diffToRemove.length > 0) {
+              await webhookService.remove(
+                newShop.vendor,
+                diffToRemove.map((_) => _.shopifyId)
+              );
+              const removedWebhook = oldShop.webhooks.filter((hook) =>
+                diffToRemove.some((r) => r.shopifyId === hook.shopifyId)
+              );
+              await webhookRepository.removeMany({
+                where: {
+                  id: {
+                    $in: removedWebhook.map((hook) => hook.id),
+                  },
+                },
+              });
+            }
+            if (diffToAdd.length > 0) {
+              const hooksData = await Promise.all(
+                uniqBy(diffToAdd, 'topic').map((hook) =>
+                  webhookRepository.create(true, {
+                    ...hook,
+                    format: WebhookSubscriptionFormat.Json,
+                    shop: newShop,
+                    service: hook.service,
+                    method: hook.method,
+                  })
+                )
+              );
+              const webhookData = await webhookService.create(oldShop.vendor, hooksData);
+              if (webhookData.length) {
+                await Promise.all(
+                  webhookData.map((data) => webhookRepository.update({ id: data.id }, data))
+                );
+              }
+            }
+          }
+
+          return shopsRepository.update(
+            { id: oldShop.id },
+            {
+              ...omit(newShop, ['webhooks']),
+              ...omit(oldShop, ['webhooks']),
+              ...omitBy(newShop, (value, key) => {
+                if (['webhooks', 'id', 'vendor'].includes(key)) {
+                  return true;
+                }
+                return !value || (typeof value === 'string' && value.includes('***'));
+              }),
+            }
+          );
+        });
       },
     },
     services: {
@@ -193,6 +251,7 @@ export default ({ strapi }: StrapiContext) => {
         const blackList = [
           'admin::',
           'plugin::gql',
+          'plugin::graphql',
           'plugin::i18n',
           'plugin::email',
           'plugin::upload',
@@ -218,4 +277,3 @@ export default ({ strapi }: StrapiContext) => {
     },
   };
 };
-

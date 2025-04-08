@@ -62,10 +62,10 @@ export const getShopsRepository = (strapi: StrapiContext['strapi']) => {
     async remove(params: { where: Required<FindParams>['where'] }) {
       return repository.delete(params);
     },
-    async update(criteria: FindParams['where'], shop: ShopifyShopWithId) {
+    async update(where: FindParams['where'], data: ShopifyShopWithId) {
       return repository
-        .update({ where: criteria, data: shop })
-        .then((shop) => shopSchemaWithId.parse(shop));
+        .update({ where, data })
+        .then((shop) => shopValidator.create.base.parse(shop));
     },
     async restore() {
       return repository.deleteMany();

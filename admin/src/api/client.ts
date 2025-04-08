@@ -21,6 +21,7 @@ export const getApiClient = once((fetch: ReturnType<typeof getFetchClient>) => (
     fetch
       .get(`/${URL_PREFIX}/settings/shops`)
       .then(({ data }) => shopSchemaWithIdSchema.array().parse(data)),
+
   readAllIndex: () => [URL_PREFIX, 'shops'],
 
   createShop: (body: NewShopSchemaWithIdSchema): Promise<ShopSchemaWithIdSchema> =>

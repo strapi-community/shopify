@@ -8,9 +8,7 @@ import {
   WebhookSubscriptionFormat,
 } from '../@types/shopify';
 import { WebhookData, WebhookWithShopId } from '../repositories/validators';
-import { getCorrectSuffix } from '../utils/getCorrectSuffix';
-import { getHost } from '../utils/getHost';
-import { getService } from '../utils/getService';
+import { getCorrectSuffix, getHost, getService } from '../utils';
 import {
   createSingleSubscriptionMutation,
   deleteSubscription,

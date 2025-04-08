@@ -7,6 +7,3 @@ export type AvailableTopic =
   | WebhookSubscriptionTopic.ProductsCreate
   | WebhookSubscriptionTopic.ProductsUpdate
   | WebhookSubscriptionTopic.ProductsDelete
-  | WebhookSubscriptionTopic.OrdersCreate
-  | WebhookSubscriptionTopic.OrdersUpdated
-  | WebhookSubscriptionTopic.OrdersDelete;

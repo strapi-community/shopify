@@ -17,20 +17,6 @@ describe('getCorrectSuffix', () => {
     });
   });
 
-  it('should return common path suffix for order webhooks', () => {
-    // Arrange
-    const topics = [
-      WebhookSubscriptionTopic.OrdersCreate,
-      WebhookSubscriptionTopic.OrdersUpdated,
-      WebhookSubscriptionTopic.OrdersDelete,
-    ] as const;
-
-    // Act & Assert
-    topics.forEach((topic) => {
-      expect(getCorrectSuffix(topic)).toBe(HOOK_TYPE.COMMON.pathSuffix);
-    });
-  });
-
   it('should throw error for invalid topic', () => {
     // Arrange
     const invalidTopic = 'INVALID_TOPIC' as any;

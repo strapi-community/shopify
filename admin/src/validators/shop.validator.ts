@@ -5,9 +5,6 @@ export const validTopics = [
   'PRODUCTS_CREATE',
   'PRODUCTS_UPDATE',
   'PRODUCTS_DELETE',
-  'ORDERS_CREATE',
-  'ORDERS_UPDATED',
-  'ORDERS_DELETE',
 ] as const;
 
 export type TopicSchema = z.infer<typeof topicSchema>;
@@ -17,14 +14,14 @@ export type WebhookSchema = z.infer<typeof webhookSchema>;
 export const webhookSchema = z
   .object({
     topic: z.string(),
-    method: z.string().optional(),
+    method: z.string().optional().nullable(),
     service: z
       .string()
       .regex(
         /^admin::|api::[a-zA-Z0-9_\-]+\.[a-zA-Z0-9_\-]+|plugin::[a-zA-Z0-9_\-]+\.[a-zA-Z0-9_]\-+$/,
         getTradId('form.shop.webhooks.serviceInvalidNameError')
       )
-      .optional(),
+      .optional().nullable(),
     isPersisted: z.boolean().optional(),
   })
   .superRefine((webhook, ctx) => {
@@ -45,7 +42,7 @@ export const shopSchema = z.object({
   apiKey: z.string().optional(),
   apiSecretKey: z.string(),
   adminApiAccessToken: z.string(),
-  isActive: z.boolean().default(false),
+  isActive: z.boolean().default(true),
   createdAt: z.string(),
   updatedAt: z.string(),
   publishedAt: z.string(),
