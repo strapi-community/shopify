@@ -11,5 +11,6 @@ export const useReadShop = (id = 0) => {
     queryKey: getReadShopIndex(id),
     queryFn: () => readShop(id),
     enabled: !!id,
+    retry: false,
   });
 };

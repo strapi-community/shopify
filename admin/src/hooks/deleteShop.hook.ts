@@ -3,13 +3,16 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { getApiClient } from '../api/client';
 
-export const useDeleteShop = () => {
+export const useDeleteShop = (onDone: () => void) => {
   const fetch = getFetchClient();
   const { deleteShop } = getApiClient(fetch);
   const client = useQueryClient();
 
   return useMutation({
     mutationFn: deleteShop,
-    onSuccess: client.clear,
+    onSuccess: () => {
+      client.clear();
+      onDone();
+    },
   });
 };
