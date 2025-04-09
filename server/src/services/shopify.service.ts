@@ -64,7 +64,6 @@ const shopifyService = ({ strapi }: StrapiContext) => {
     },
     async searchProducts(vendor: string, query: string) {
       const queryCacheKey = `${vendor}|${query}`;
-      console.log('queryCacheKey', queryCacheKey);
       const cachedData = await cacheService.get(queryCacheKey);
       if (cachedData) {
         return cachedData;

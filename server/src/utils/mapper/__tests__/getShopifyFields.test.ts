@@ -64,6 +64,33 @@ describe('getShopifyFields', () => {
     expect(result.get(mockShop.vendor).get('product')).toBe('test-product');
   });
 
+  it('should process raw field with shopify product data using productId', () => {
+    const mockShop = forgeFakeShop();
+    const contentType: FieldType[] = [
+      {
+        field: 'product',
+        type: COMPONENT_FIELDS.RAW,
+      },
+    ];
+
+    const fetchedData: any = {
+      product: {
+        vendor: mockShop.vendor,
+        productId: 'test-product-id',
+      },
+    };
+
+    const result = getShopifyFields({
+      contentType,
+      fetchedData,
+      contentTypes: mockContentTypes,
+      components: mockComponents,
+    });
+
+    expect(result.get(mockShop.vendor)).toBeDefined();
+    expect(result.get(mockShop.vendor).get('product')).toBe('test-product-id');
+  });
+
   it('should process component field with shopify product data', () => {
     const mockShop = forgeFakeShop();
 

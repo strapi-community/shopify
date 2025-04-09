@@ -28,10 +28,6 @@ const processRawField = (fieldData: any, fieldPath: string, result: ProductField
   if (fieldData.vendor && fieldData.productId) {
     return addShopifyProductToResult(result, fieldData.vendor, fieldPath, fieldData.productId);
   }
-  // TODO: remove this case
-  if (fieldData.shopId && fieldData.productId) {
-    return addShopifyProductToResult(result, fieldData.shopId, fieldPath, fieldData.productId);
-  }
 };
 /**
  * Process component data recursively

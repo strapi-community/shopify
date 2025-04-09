@@ -221,8 +221,7 @@ export default ({ strapi }: StrapiContext) => {
                 )
               );
               const webhookData = await webhookService.create(oldShop.vendor, hooksData);
-              console.log('hooksData', hooksData);
-              console.log('JSON.stringify(webhookData)', JSON.stringify(webhookData));
+
               if (webhookData.length) {
                 await Promise.all(
                   webhookData.map((data) => webhookRepository.update({ id: data.id }, data))
