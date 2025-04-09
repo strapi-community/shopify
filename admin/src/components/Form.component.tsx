@@ -52,6 +52,9 @@ type Props =
       isDisabled?: boolean;
     };
 
+
+const autocomplete = { type: 'list', filter: 'contains' } as const;
+
 export const ShopForm: FC<Props> = (props) => {
   const { formatMessage, messages } = useIntl();
 
@@ -347,7 +350,7 @@ export const ShopForm: FC<Props> = (props) => {
                                   >
                                     <Combobox
                                       name="service"
-                                      autocomplete="both"
+                                      autocomplete={autocomplete}
                                       onChange={onServiceChange(index)}
                                       value={webhook.service}
                                       disabled={webhook.isPersisted}
@@ -377,7 +380,7 @@ export const ShopForm: FC<Props> = (props) => {
                                   >
                                     <Combobox
                                       name="method"
-                                      autocomplete="both"
+                                      autocomplete={autocomplete}
                                       onChange={onMethodChange(index)}
                                       value={webhook.method}
                                       disabled={webhook.isPersisted}
@@ -397,7 +400,7 @@ export const ShopForm: FC<Props> = (props) => {
                                   >
                                     <Combobox
                                       name="topic"
-                                      autocomplete="both"
+                                      autocomplete={autocomplete}
                                       onChange={onTopicChange(index)}
                                       value={webhook.topic}
                                       disabled={webhook.isPersisted}
