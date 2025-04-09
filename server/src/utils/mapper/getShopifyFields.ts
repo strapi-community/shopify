@@ -23,7 +23,14 @@ const addShopifyProductToResult = (
  */
 const processRawField = (fieldData: any, fieldPath: string, result: ProductFieldsResult): void => {
   if (fieldData.vendor && fieldData.product) {
-    addShopifyProductToResult(result, fieldData.vendor, fieldPath, fieldData.product);
+    return addShopifyProductToResult(result, fieldData.vendor, fieldPath, fieldData.product);
+  }
+  if (fieldData.vendor && fieldData.productId) {
+    return addShopifyProductToResult(result, fieldData.vendor, fieldPath, fieldData.productId);
+  }
+  // TODO: remove this case
+  if (fieldData.shopId && fieldData.productId) {
+    return addShopifyProductToResult(result, fieldData.shopId, fieldPath, fieldData.productId);
   }
 };
 /**

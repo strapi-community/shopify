@@ -1,7 +1,7 @@
 import type { Core } from '@strapi/strapi';
 import { applyProductValues, getModelsFieldsMap, getShopifyFields, getService } from './utils';
 
-import { PLUGIN_ID } from './const/shopify';
+import { PLUGIN_ID } from './const';
 
 /**
  * Register the Shopify plugin
@@ -38,7 +38,6 @@ const register = ({ strapi }: { strapi: Core.Strapi }) => {
           contentTypes: contentTypesWithCustomField,
           components: componentsWithCustomField,
         });
-
         return applyProductValues(result, productFields, shopifyService);
       default:
         return next();

@@ -191,7 +191,7 @@ export default ({ strapi }: StrapiContext) => {
         const diffToAdd = differenceWith(newShop.webhooks, oldShop.webhooks, comparator);
         const diffToRemove = differenceWith(oldShop.webhooks, newShop.webhooks, comparator);
         return strapi.db.transaction(async () => {
-          if (diffToAdd.length && diffToRemove.length) {
+          if (diffToAdd.length || diffToRemove.length) {
             if (diffToRemove.length > 0) {
               await webhookService.remove(
                 newShop.vendor,
@@ -221,6 +221,8 @@ export default ({ strapi }: StrapiContext) => {
                 )
               );
               const webhookData = await webhookService.create(oldShop.vendor, hooksData);
+              console.log('hooksData', hooksData);
+              console.log('JSON.stringify(webhookData)', JSON.stringify(webhookData));
               if (webhookData.length) {
                 await Promise.all(
                   webhookData.map((data) => webhookRepository.update({ id: data.id }, data))
