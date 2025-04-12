@@ -93,13 +93,16 @@ const shopifyService = ({ strapi }: StrapiContext) => {
 
       const { nodes: products, pageInfo } = response.data.products;
 
-      await Promise.all([
-        cacheService.set(queryCacheKey, {
-          pageInfo,
-          products: products,
-        }),
-        ...products.map((product) => cacheService.set(product.id, product)),
-      ]);
+      // we should cache the query only if we have products
+      if (products.length) {
+        await Promise.all([
+          cacheService.set(queryCacheKey, {
+            pageInfo,
+            products: products,
+          }),
+          ...products.map((product) => cacheService.set(product.id, product)),
+        ]);
+      }
 
       return {
         products,

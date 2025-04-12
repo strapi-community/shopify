@@ -15,9 +15,14 @@ export const applyProductValues = async <T extends object = any>(
       vendor,
       Array.from(attrWithProd.values())
     );
-    for (const [attribute, product] of attrWithProd) {
-      if (productsValues.get(product)) {
-        set(result, attribute, productsValues.get(product));
+    for (const [attribute, productId] of attrWithProd) {
+      const shopifyProduct = productsValues.get(productId);
+      if (shopifyProduct) {
+        set(result, attribute, {
+          ...shopifyProduct,
+          vendor,
+          productId,
+        });
       }
     }
   }

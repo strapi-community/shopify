@@ -73,8 +73,16 @@ describe('applyProductValues', () => {
     ]);
 
     expect(finalResult).toEqual({
-      title: mockProduct1,
-      description: mockProduct2,
+      title: {
+        ...mockProduct1,
+        vendor: 'vendor1',
+        productId: firstProduct,
+      },
+      description: {
+        ...mockProduct2,
+        vendor: 'vendor1',
+        productId: secondProduct,
+      },
     });
   });
 
@@ -111,8 +119,16 @@ describe('applyProductValues', () => {
     expect(mockShopifyService.getProductsById).toHaveBeenCalledWith('vendor2', [secondProduct]);
     expect(finalResult).toEqual({
       product: {
-        title: mockProduct1,
-        description: mockProduct2,
+        title: {
+          ...mockProduct1,
+          vendor: 'vendor1',
+          productId: firstProduct,
+        },
+        description: {
+          ...mockProduct2,
+          vendor: 'vendor2',
+          productId: secondProduct,
+        },
       },
     });
   });
@@ -143,7 +159,11 @@ describe('applyProductValues', () => {
     // Assert
     expect(finalResult).toEqual({
       product: {
-        title: mockProduct1,
+        title: {
+          ...mockProduct1,
+          vendor: 'vendor1',
+          productId: 'product1',
+        },
       },
     });
   });
@@ -172,7 +192,11 @@ describe('applyProductValues', () => {
       existing: {
         value: 'test',
         product: {
-          title: mockProduct1,
+          title: {
+            ...mockProduct1,
+            vendor: 'vendor1',
+            productId: 'product1',
+          },
         },
       },
     });

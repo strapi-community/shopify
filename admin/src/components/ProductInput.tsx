@@ -1,12 +1,10 @@
 import { CustomFieldInputProps, Field } from '@sensinum/strapi-utils';
-import { Flex } from '@strapi/design-system';
-import { FC, useEffect, useState } from 'react';
-import { useIntl } from 'react-intl';
-import { z } from 'zod';
-
-import { Combobox, ComboboxOption } from '@strapi/design-system';
+import { Combobox, ComboboxOption, Flex } from '@strapi/design-system';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { debounce } from 'lodash';
+import { FC, useState } from 'react';
+import { useIntl } from 'react-intl';
+import { z } from 'zod';
 import { useReadShopProducts } from '../hooks/readProducts.hook';
 import { useReadVendors } from '../hooks/readVendors.hook';
 import { getTrad } from '../translations';
@@ -16,13 +14,31 @@ interface Props extends CustomFieldInputProps {}
 const validState = z.object({
   vendor: z.string().optional(),
   productId: z.string().optional(),
-  productTitle: z.string().optional(),
+  title: z.string().optional(),
+  id: z.string().optional(),
 });
 
 const queryClient = new QueryClient();
 
+const getParsedValue = (value: any): Required<z.infer<typeof validState>> => {
+  const parsedValue = validState.safeParse(value);
+  if (parsedValue.success) {
+    return {
+      vendor: parsedValue.data.vendor ?? '',
+      productId: parsedValue.data.productId ?? '',
+      title: parsedValue.data.title ?? '',
+      id: parsedValue.data.productId ?? '',
+    };
+  }
+  return {
+    vendor: '',
+    productId: '',
+    title: '',
+    id: '',
+  };
+};
+
 export const ProductInput: FC<Props> = ({
-  attribute,
   disabled,
   name,
   description,
@@ -32,63 +48,37 @@ export const ProductInput: FC<Props> = ({
   required,
 }) => {
   const { formatMessage } = useIntl();
+  const parsedValue = getParsedValue(value);
 
-  const parsedValue = validState.safeParse(value);
-
-  const [currentValue, setCurrentValue] = useState(
-    parsedValue.success ? parsedValue.data : undefined
-  );
-
-  const [query, setQuery] = useState(
-    parsedValue.success ? (parsedValue.data.productTitle ?? '') : ''
-  );
+  const [query, setQuery] = useState('');
 
   const { data: vendors } = useReadVendors();
+  const vendor = parsedValue.vendor || (vendors?.length === 1 ? vendors?.at(0) || '' : '');
   const { data: products, isLoading: productLoading } = useReadShopProducts({
-    vendor: currentValue?.vendor ?? '',
+    vendor: vendor,
     query,
   });
-
   const onChangeBuilder = (field: 'vendor' | 'productId') => (nextId: string | undefined) => {
-    setCurrentValue((current) =>
-      current
-        ? { ...current, [field]: nextId }
-        : {
-            [field]: nextId,
-          }
-    );
+    onChange?.({
+      target: {
+        name,
+        value: {
+          ...parsedValue,
+          vendor: parsedValue.vendor || vendor,
+          [field]: nextId,
+          title: products?.find(({ id }) => id === nextId)?.title ?? parsedValue.title,
+        },
+      },
+    });
   };
   const onShopChange = onChangeBuilder('vendor');
   const onProductChange = onChangeBuilder('productId');
   const onProductClear = () => onProductChange(undefined);
 
-  const doAddIntroItem =
-    currentValue &&
-    currentValue.productId &&
-    currentValue.productTitle &&
-    !products?.find(({ id }) => currentValue.productId === id);
-
-  useEffect(() => {
-    onChange?.({
-      target: {
-        name,
-        value: currentValue
-          ? {
-              shopId: currentValue.vendor,
-              productId: currentValue.productId,
-              productTitle: products?.find((product) => product.id)?.title,
-            }
-          : undefined,
-        type: attribute.type,
-      },
-    });
-  }, [onChange, currentValue, products]);
-
-  useEffect(() => {
-    if (!currentValue?.vendor && vendors?.length === 1) {
-      onShopChange(vendors[0]);
-    }
-  }, [currentValue, vendors, onShopChange]);
+  const data = [
+    parsedValue,
+    ...(products ?? []).filter(({ id }) => id !== parsedValue.productId),
+  ].filter(Boolean);
 
   return (
     <Field name={name} hint={description} label={name} error={error}>
@@ -98,7 +88,7 @@ export const ProductInput: FC<Props> = ({
             name={`${name}.shop`}
             autocomplete="list"
             onChange={onShopChange}
-            value={currentValue?.vendor}
+            value={parsedValue?.vendor}
             disabled={disabled}
             width="100%"
             required={required}
@@ -116,7 +106,7 @@ export const ProductInput: FC<Props> = ({
           name={`${name}.product`}
           autocomplete="list"
           onChange={onProductChange}
-          value={currentValue?.productId}
+          value={parsedValue.productId}
           disabled={disabled}
           width="100%"
           onTextValueChange={debounce(setQuery, 300)}
@@ -125,16 +115,11 @@ export const ProductInput: FC<Props> = ({
           loading={productLoading}
           onClear={onProductClear}
         >
-          {products?.map(({ id, title }) => (
+          {data.map(({ id, title }) => (
             <ComboboxOption key={id} value={id}>
               {title}
             </ComboboxOption>
           ))}
-          {doAddIntroItem ? (
-            <ComboboxOption key={currentValue.productId} value={currentValue.productId}>
-              {currentValue.productTitle}
-            </ComboboxOption>
-          ) : null}
         </Combobox>
       </Flex>
     </Field>

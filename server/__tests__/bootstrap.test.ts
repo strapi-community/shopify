@@ -11,6 +11,15 @@ const getMockStrapi = (): Core.Strapi =>
     config: {
       get: jest.fn(),
     },
+    admin: {
+      services: {
+        permission: {
+          actionProvider: {
+            registerMany: jest.fn(),
+          },
+        },
+      },
+    },
   }) as unknown as Core.Strapi;
 
 const getMockShop = (overrides = {}) => ({
