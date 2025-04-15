@@ -20,6 +20,8 @@ const validState = z.object({
 
 const queryClient = new QueryClient();
 
+const autocomplete = { type: 'list', filter: 'contains' } as const;
+
 const getParsedValue = (value: any): Required<z.infer<typeof validState>> => {
   const parsedValue = validState.safeParse(value);
   if (parsedValue.success) {
@@ -86,7 +88,7 @@ export const ProductInput: FC<Props> = ({
         {(vendors?.length ?? 0) > 1 ? (
           <Combobox
             name={`${name}.shop`}
-            autocomplete="list"
+            autocomplete={autocomplete}
             onChange={onShopChange}
             value={parsedValue?.vendor}
             disabled={disabled}
@@ -104,7 +106,7 @@ export const ProductInput: FC<Props> = ({
 
         <Combobox
           name={`${name}.product`}
-          autocomplete="list"
+          autocomplete={autocomplete}
           onChange={onProductChange}
           value={parsedValue.productId}
           disabled={disabled}

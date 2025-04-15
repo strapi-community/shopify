@@ -18,7 +18,7 @@ export const useAdminNavigation = () => {
     () => ({
       goToNew: () => navigate(`/settings/${PLUGIN_ID}/new`),
 
-      goToEdit: (id: number) => navigate(`/settings/${PLUGIN_ID}/${id}/edit`),
+      goToEdit: (id: number | string) => navigate(`/settings/${PLUGIN_ID}/${id}/edit`),
 
       params,
     }),
