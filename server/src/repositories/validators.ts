@@ -106,15 +106,12 @@ const shopBase = z.object({
   documentId: z.string(),
   address: z.string().url('The address must be a valid URL.'),
   vendor: z.string(),
-  apiKey: z
-    .string(),
-    // .refine((data) => !data.includes('*'), { message: 'API key cannot contain asterisks.' }),
-  apiSecretKey: z
-    .string(),
-    // .refine((data) => !data.includes('*'), { message: 'API secret key cannot contain asterisks.' }),
-  adminApiAccessToken: z
-    .string(),
-    // .refine((data) => !data.includes('*'), { message: 'API secret key cannot contain asterisks.' }),
+  apiKey: z.string().optional().nullable(),
+  // .refine((data) => !data.includes('*'), { message: 'API key cannot contain asterisks.' }),
+  apiSecretKey: z.string(),
+  // .refine((data) => !data.includes('*'), { message: 'API secret key cannot contain asterisks.' }),
+  adminApiAccessToken: z.string(),
+  // .refine((data) => !data.includes('*'), { message: 'API secret key cannot contain asterisks.' }),
   isActive: z.boolean().default(false),
   createdAt: z.string(),
   updatedAt: z.string(),

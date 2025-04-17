@@ -5,9 +5,20 @@ import type { StrapiContext } from '../@types';
 import { getUpdateProductValidator } from '../validators/webhook.validator';
 // import { getService } from '../utils/getService';
 
+/**
+ * Webhook Controller
+ *
+ * All incoming Shopify webhook requests are validated using the shop's `apiSecretKey` (HMAC signature)
+ * via Shopify's official SDK. Only requests with a valid signature are processed; all others are rejected.
+ */
 const getWebhookController = ({ strapi }: StrapiContext) => {
   // const cacheService = getService(strapi, 'cache');
   return {
+    /**
+     * Handles incoming Shopify webhook requests.
+     * Validates the request signature using the shop's apiSecretKey (Shopify SDK).
+     * Only valid, signed requests are processed.
+     */
     async handleWebhook(ctx: Context) {
       const vendor = ctx.request.body.vendor;
 
