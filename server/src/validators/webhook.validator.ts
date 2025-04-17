@@ -5,6 +5,18 @@ import UNPARSED from 'koa-body/lib/unparsed';
 import { getShopsRepository } from '../repositories/shop';
 import { getService } from '../utils/getService';
 
+/**
+ * Webhook Validator
+ *
+ * Validates incoming Shopify webhook requests using the shop's `apiSecretKey` (HMAC signature)
+ * via Shopify's official SDK. Only requests with a valid signature are processed; all others are rejected.
+ */
+
+/**
+ * Validates a Shopify product webhook request for a given vendor.
+ * Uses the shop's apiSecretKey (Shopify SDK) to check the request signature.
+ * Only valid, signed requests are processed.
+ */
 export const getUpdateProductValidator = async (
   strapi: Core.Strapi,
   vendor: string,

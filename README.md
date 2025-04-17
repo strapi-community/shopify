@@ -1,1 +1,187 @@
 # strapi-plugin-shopify
+
+A Strapi plugin to integrate Shopify shops and webhooks into your Strapi application. This plugin provides content types for managing Shopify shops and webhooks, supports product synchronization, and offers flexible caching options.
+
+## Features
+- Manage multiple Shopify shops within Strapi
+- Handle Shopify webhooks for products
+- Custom field for Shopify products
+- Flexible cache engine: in-memory (LRU) or Redis
+- **Automatically attaches Shopify product data to Strapi content type responses** (when a content type uses the custom Shopify product field)
+
+## Requirements
+- Strapi v5.7.0 or later
+- Node.js 18+
+- For Redis cache: a running Redis instance
+
+## Installation
+
+```bash
+npm install strapi-plugin-shopify
+# or
+yarn add strapi-plugin-shopify
+```
+
+## Configuring Shopify for strapi-plugin-shopify (Step-by-Step with Images)
+
+Follow these steps to configure your Shopify store and connect it to your Strapi instance using this plugin. Visual guidance is provided with embedded images for each step.
+
+### 1. Open Your Shopify Store
+![Shopify Store](img/1.store_page.png)
+- Log in to your Shopify admin dashboard.
+
+### 2. Go to Store Settings
+![Store Settings](img/2.store_settings.png)
+- In the Shopify admin sidebar, click on **Settings** to access your store settings.
+
+### 3. Create a Custom App
+![Create Custom App 1](img/3.create_custom_app.png)
+![Create Custom App 2](img/4.create_custom_app.png)
+- Navigate to **Apps** in the sidebar.
+- Click **Develop apps for your store** (you may need to enable this if not already done).
+- Click **Create an app** and provide a name for your custom app.
+
+### 4. Configure the Custom App
+![Custom App Config](img/5.custom_app_config.png)
+- In your new app, go to the **Configuration** tab.
+- Set up the required Admin API scopes for your integration (see next step).
+
+### 5. Set API Scopes
+![Custom App Scopes](img/6.custom_app_scopes.png)
+- Grant the necessary permissions (scopes) for products.
+
+### 6. Set API Version
+![Custom App API Version](img/7.custom_app_api_version.png)
+- Select the appropriate Shopify API version for your app.
+
+### 7. Get API Credentials
+![Custom App Credentials](img/8.custom_app_credential.png)
+- Go to the **API credentials** tab.
+- Copy the **Admin API access token** and **API key**. You will need these for the Strapi plugin configuration.
+
+### 8. Install the Custom App
+![Install Custom App](img/9.install_custom_app.png)
+- Click **Install app** to add the custom app to your Shopify store.
+
+### 9. Retrieve Admin Access Token
+![Admin Access Token 1](img/10.admin_access_token.png)
+![Admin Access Token 2](img/11.admin_access_token_2.png)
+- After installation, you can view and copy your Admin API access token.
+
+### 10. Configure the Plugin in Strapi
+- Use the credentials and settings from the previous steps to fill out the Shopify Shop configuration in Strapi (see the earlier 'Configuration' section in this README).
+- Example fields:
+  - `address`: Your Shopify store address (e.g., `your-store.myshopify.com`)
+  - `apiSecretKey`: The API secret key from your Shopify app
+  - `adminApiAccessToken`: The Admin API access token
+  - `apiKey`: The API key
+
+---
+
+**Note:**
+- Make sure to set up webhooks in Shopify to point to your Strapi instance's webhook endpoint (`/api/shopify/webhooks`).
+- Refer to the images for each step to ensure correct configuration.
+
+## Configuration (@config)
+
+The plugin requires a configuration object. You must provide a `host` (publicly accessible URL of your Strapi instance) and select a cache engine (`memory` or `redis`).
+
+### Schema
+
+```
+{
+  host: string (URL), // required
+  engine: 'memory' | 'redis', // required
+  // If engine is 'redis', provide connection details:
+  connection?: {
+    host: string, // required for redis
+    port: number, // required for redis
+    db: number,   // required for redis
+    password?: string,
+    username?: string
+  }
+}
+```
+
+### Example (Memory Engine)
+```js
+module.exports = {
+  host: 'https://your-strapi-instance.com',
+  engine: 'memory',
+};
+```
+
+### Example (Redis Engine)
+```js
+module.exports = {
+  host: 'https://your-strapi-instance.com',
+  engine: 'redis',
+  connection: {
+    host: 'localhost',
+    port: 6379,
+    db: 0,
+    password: 'yourpassword', // optional
+    username: 'youruser',     // optional
+  },
+};
+```
+
+## Config
+
+### Shopify Shop
+- `vendor` (string, required)
+- `address` (string, required)
+- `apiSecretKey` (string, required)
+  _Used to validate incoming Shopify webhook signatures. Only requests signed with this key are accepted._
+- `isActive` (boolean, required, default: true)
+- `adminApiAccessToken` (string, required)
+- `apiKey` (string)
+- `webhooks` (relation to webhooks)
+
+### Shopify Webhook
+- `topic` (enum: ProductsCreate, ProductsUpdate, ProductsDelete, OrdersCreate, OrdersUpdated, OrdersDelete)
+- `shopifyId` (string)
+- `format` (enum: Json)
+- `callbackUrl` (string)
+- `errors` (json)
+- `shop` (relation to shop)
+- `service` (string, required)
+- `method` (string, required)
+
+### Shopify Product Attachment
+
+When a Strapi content type includes the custom Shopify product field, the plugin will automatically attach the corresponding Shopify product data to API responses for that content type. This is handled transparently in the plugin's middleware during the `findOne` and `findMany` actions.
+
+- **Supported queries:**
+  - `findOne` (single record fetch)
+  - `findMany` (list fetch, including collection endpoints)
+  - Both REST and GraphQL APIs are supported if routed through Strapi's standard controllers.
+
+- **Caching:**
+  - Product data retrieval supports caching to improve performance and reduce Shopify API calls.
+  - The cache engine is configurable via the plugin config (`engine: 'memory' | 'redis'`).
+  - See the [Configuration](#configuration-config) section for details on setting up memory or Redis caching.
+  - Cached product data is used when available; otherwise, fresh data is fetched from Shopify and stored in the cache.
+
+**Reference:** See [`server/src/register.ts`](server/src/register.ts), middleware in the `strapi.documents.use` block for details on how product data is attached to responses.
+
+## Webhook Endpoint
+
+The plugin exposes a webhook endpoint for Shopify:
+
+```
+POST /api/shopify/webhooks
+```
+- No authentication required
+- Handles product events from Shopify
+- **Security:** Every incoming webhook request is validated using the shop's `apiSecretKey` (HMAC signature) via Shopify's official SDK. Only requests with a valid signature are processed; all others are rejected.
+
+## Development & Testing
+
+- Build: `yarn build`
+- Test backend: `yarn test:server`
+- Test frontend: `yarn test:ts:front`
+
+## License
+
+MIT
