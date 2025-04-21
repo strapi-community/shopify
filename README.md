@@ -176,6 +176,23 @@ POST /api/shopify/webhooks
 - Handles product events from Shopify
 - **Security:** Every incoming webhook request is validated using the shop's `apiSecretKey` (HMAC signature) via Shopify's official SDK. Only requests with a valid signature are processed; all others are rejected.
 
+## Middleware Configuration for Raw Request Body
+
+For the plugin to work correctly—especially in verifying incoming Shopify webhook signatures—it is required to have access to the raw (unparsed) request body. This is achieved by configuring Strapi's body parser middleware to include the unparsed body.
+
+To do so, update your application's middleware configuration in `apps/example-app/config/middlewares.ts` as follows:
+
+```js
+{
+  name: 'strapi::body',
+  config: {
+    includeUnparsed: true,
+  },
+}
+```
+
+This setting leverages the Koa Body parser's `includeUnparsed` option. For more details, please refer to the [Strapi V5 documentation](https://docs.strapi.io) and the koa-body parser documentation.
+
 ## Development & Testing
 
 - Build: `yarn build`
