@@ -1,7 +1,7 @@
-import { HOOK_TYPE } from '../const/shopify';
+import { HOOK_TYPE, PLUGIN_ID } from '../const';
 import { StrapiRoute } from './types';
 
-const clearPathSuffix = (pathSuffix: string) => pathSuffix.replace('/api/shopify', '');
+const clearPathSuffix = (pathSuffix: string) => pathSuffix.replace(`/api/${PLUGIN_ID}`, '');
 
 const routes: StrapiRoute<'webhook'>[] = [
   {

@@ -3,7 +3,6 @@ import { isLeft } from 'fp-ts/lib/Either';
 import type { Context } from 'koa';
 import type { StrapiContext } from '../@types';
 import { getUpdateProductValidator } from '../validators/webhook.validator';
-// import { getService } from '../utils/getService';
 
 /**
  * Webhook Controller
@@ -35,9 +34,13 @@ const getWebhookController = ({ strapi }: StrapiContext) => {
       }
 
       const { result, webhook } = validationResult.right;
+      // we can't cache the webhook data because the webhook data is not the same as we get from the GQL API :(
       // call the service method with the webhook data
-      // TODO: add cache for the webhook data
-      // cacheService.set(webhook.id, result);
+      // const cacheKey = ctx.request.body.admin_graphql_api_id;
+      // const productId = ctx.request.body.id;
+      // const cachedData = { ...result, id: productId };
+      // cacheService.set(cacheKey, cachedData);
+
       strapi.service(webhook.service as UID.Service)?.[webhook.method]?.(ctx.request.body, result);
 
       return {};

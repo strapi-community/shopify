@@ -53,7 +53,7 @@ export default ({ strapi }: StrapiContext) => {
         return {
           shops: shops.map((shop) => ({
             ...shop,
-            apiKey: hideSensitiveData ? partialHideValue(shop.apiKey) : shop.apiKey,
+            apiKey: hideSensitiveData ? partialHideValue(shop.apiKey || '') : shop.apiKey,
             apiSecretKey: hideSensitiveData
               ? partialHideValue(shop.apiSecretKey)
               : shop.apiSecretKey,
@@ -79,7 +79,7 @@ export default ({ strapi }: StrapiContext) => {
         return shops.map((shop: Shop | ShopWithWebhooks) => ({
           ...shop,
           adminApiAccessToken: partialHideValue(shop.adminApiAccessToken),
-          apiKey: partialHideValue(shop.apiKey),
+          apiKey: partialHideValue(shop.apiKey || ''),
           apiSecretKey: partialHideValue(shop.apiSecretKey),
         }));
       },
@@ -93,7 +93,7 @@ export default ({ strapi }: StrapiContext) => {
         }
         return {
           ...shop,
-          apiKey: partialHideValue(shop.apiKey),
+          apiKey: partialHideValue(shop.apiKey || ''),
           apiSecretKey: partialHideValue(shop.apiSecretKey),
           adminApiAccessToken: partialHideValue(shop.adminApiAccessToken),
         };
@@ -165,7 +165,7 @@ export default ({ strapi }: StrapiContext) => {
           ]);
           return {
             ...removeResult,
-            apiKey: partialHideValue(shop.apiKey),
+            apiKey: partialHideValue(shop.apiKey || ''),
             apiSecretKey: partialHideValue(shop.apiSecretKey),
             adminApiAccessToken: partialHideValue(shop.adminApiAccessToken),
           };
