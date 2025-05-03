@@ -19,7 +19,7 @@ const shopifyService = ({ strapi }: StrapiContext) => {
     async init(shopsConfig: Array<ShopWithWebhooks>) {
       return Promise.all(
         shopsConfig.map(async (config) => {
-          const hooks = await webhookService.create(config.address, config.webhooks);
+          const hooks = await webhookService.create(config.vendor, config.webhooks);
           if (hooks.length) {
             await Promise.all(hooks.map((data) => webhookRepository.update({ id: data.id }, data)));
           }
