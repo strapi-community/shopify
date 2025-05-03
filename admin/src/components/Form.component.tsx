@@ -15,7 +15,7 @@ import {
 import { Plus, Trash } from '@strapi/icons';
 import { Form, useNotification } from '@strapi/strapi/admin';
 import { FC, useCallback, useEffect } from 'react';
-import { useIntl } from 'react-intl';
+import { MessageDescriptor, useIntl } from 'react-intl';
 import styled from 'styled-components';
 import { useServices } from '../hooks/services.hook';
 import { getTrad, isTranslationKey } from '../translations';
@@ -52,7 +52,6 @@ type Props =
       isDisabled?: boolean;
     };
 
-
 const autocomplete = { type: 'list', filter: 'contains' } as const;
 
 export const ShopForm: FC<Props> = (props) => {
@@ -68,8 +67,8 @@ export const ShopForm: FC<Props> = (props) => {
 
   const { toggleNotification } = useNotification();
 
-  const renderError = (field: FormField): string => {
-    return formatMessage(getTrad(`form.shop.${field}.error`));
+  const renderError = (errorMessage: string | MessageDescriptor): string => {
+    return formatMessage(typeof errorMessage === 'string' ? { id: errorMessage } : errorMessage);
   };
 
   const onChange = useCallback(
@@ -184,7 +183,7 @@ export const ShopForm: FC<Props> = (props) => {
                     <Field
                       name="address"
                       label={formatMessage(getTrad('form.shop.address.label', 'Address'))}
-                      error={errors.address ? renderError('address') : undefined}
+                      error={errors.address ? renderError(errors.address) : undefined}
                       hint={formatMessage(getTrad('form.shop.address.placeholder', 'e.g. Blog'))}
                       required
                     >
@@ -192,7 +191,7 @@ export const ShopForm: FC<Props> = (props) => {
                         type="string"
                         name="address"
                         onChange={onChangeCurried('address')}
-                        value={values.address}
+                        defaultValue={values.address}
                         disabled={disabled || props.mode === 'edit'}
                       />
                     </Field>
@@ -202,14 +201,14 @@ export const ShopForm: FC<Props> = (props) => {
                     <Field
                       name="apiSecretKey"
                       label={formatMessage(getTrad('form.shop.apiSecretKey.label'))}
-                      error={errors.apiSecretKey ? renderError('apiSecretKey') : undefined}
+                      error={errors.apiSecretKey ? renderError(errors.apiSecretKey) : undefined}
                       required
                     >
                       <TextInput
                         type="string"
                         name="apiSecretKey"
                         onChange={onChangeCurried('apiSecretKey')}
-                        value={values.apiSecretKey}
+                        defaultValue={values.apiSecretKey}
                         disabled={disabled}
                         placeholder={formatMessage(getTrad('form.shop.apiSecretKey.placeholder'))}
                       />
@@ -220,7 +219,7 @@ export const ShopForm: FC<Props> = (props) => {
                     <Field
                       name="vendor"
                       label={formatMessage(getTrad('form.shop.vendor.label'))}
-                      error={errors.vendor ? renderError('vendor') : undefined}
+                      error={errors.vendor ? renderError(errors.vendor) : undefined}
                       hint={formatMessage(getTrad('form.shop.vendor.placeholder'))}
                       required
                     >
@@ -228,7 +227,7 @@ export const ShopForm: FC<Props> = (props) => {
                         type="string"
                         name="vendor"
                         onChange={onChangeCurried('vendor')}
-                        value={values.vendor}
+                        defaultValue={values.vendor}
                         disabled={disabled || props.mode === 'edit'}
                       />
                     </Field>
@@ -238,13 +237,13 @@ export const ShopForm: FC<Props> = (props) => {
                     <Field
                       name="apiKey"
                       label={formatMessage(getTrad('form.shop.apiKey.label'))}
-                      error={errors.apiKey ? renderError('apiKey') : undefined}
+                      error={errors.apiKey ? renderError(errors.apiKey) : undefined}
                     >
                       <TextInput
                         type="string"
                         name="apiKey"
                         onChange={onChangeCurried('apiKey')}
-                        value={values.apiKey}
+                        defaultValue={values.apiKey}
                         disabled={disabled}
                         placeholder={formatMessage(getTrad('form.shop.apiKey.placeholder'))}
                       />
@@ -256,7 +255,9 @@ export const ShopForm: FC<Props> = (props) => {
                       name="adminApiAccessToken"
                       label={formatMessage(getTrad('form.shop.adminApiAccessToken.label'))}
                       error={
-                        errors.adminApiAccessToken ? renderError('adminApiAccessToken') : undefined
+                        errors.adminApiAccessToken
+                          ? renderError(errors.adminApiAccessToken)
+                          : undefined
                       }
                       required
                     >
@@ -264,7 +265,7 @@ export const ShopForm: FC<Props> = (props) => {
                         type="string"
                         name="adminApiAccessToken"
                         onChange={onChangeCurried('adminApiAccessToken')}
-                        value={values.adminApiAccessToken}
+                        defaultValue={values.adminApiAccessToken}
                         disabled={disabled}
                         placeholder={formatMessage(
                           getTrad('form.shop.adminApiAccessToken.placeholder')
@@ -344,7 +345,7 @@ export const ShopForm: FC<Props> = (props) => {
                                       serviceErrorMessage
                                         ? isTranslationKey(serviceErrorMessage, allKeys)
                                           ? formatMessage(getTrad(serviceErrorMessage))
-                                          : renderError('webhooks')
+                                          : formatMessage(getTrad('form.shop.webhooks.error'))
                                         : undefined
                                     }
                                   >
@@ -373,7 +374,7 @@ export const ShopForm: FC<Props> = (props) => {
                                           ? formatMessage({
                                               id: methodErrorMessage,
                                             })
-                                          : renderError('webhooks')
+                                          : formatMessage(getTrad('form.shop.webhooks.error'))
                                         : undefined
                                     }
                                     required={!!webhook.service}

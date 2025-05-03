@@ -18,31 +18,36 @@ const en = {
       address: {
         label: "Shop's address",
         placeholder: 'For example: https://acme.myshopify.com',
-        error: 'You need to specify an address of the shop',
+        errorRequired: 'You need to specify an address of the shop',
+        errorUrl: 'Address needs to be a valid URL',
       },
 
       vendor: {
         label: 'Vendor',
         placeholder: "Shop's name",
-        error: 'This field is required',
+        errorRequired: 'This field is required',
       },
 
       apiKey: {
         label: 'API Key',
         placeholder: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-        error: 'This field is required',
+        errorRequired: 'This field is required',
+        errorLength: 'This key is too short',
       },
 
       apiSecretKey: {
         label: 'API Secret key',
         placeholder: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-        error: 'This field is required',
+        errorRequired: 'This field is required',
+        errorLength: 'This key is too short',
       },
 
       adminApiAccessToken: {
         label: 'Admin API Access Token',
         placeholder: 'shpat_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-        error: 'This field is required',
+        errorRequired: 'This field is required',
+        errorLength: 'This key is too short',
+        errorFormat: 'This token has invalid format',
       },
 
       webhooks: {
@@ -108,19 +113,19 @@ const en = {
     label: 'Shopify product',
     description: 'Add a shopify product to your entry',
     vendor: {
-      placeholder: "Select a vendor"
+      placeholder: 'Select a vendor',
     },
     product: {
-      placeholder: "Select a product"
+      placeholder: 'Select a product',
     },
   },
 
   plugin: {
     section: {
-      name: "Shopify plugin",
-      item: "Shops"
-    }
-  }
+      name: 'Shopify plugin',
+      item: 'Shops',
+    },
+  },
 };
 
 export default en;
