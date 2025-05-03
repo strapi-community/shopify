@@ -11,10 +11,7 @@ import { useDisplaySaveSuccess } from '../../hooks/displaySaveSuccess.hook';
 import { reducer, State } from '../../hooks/form.hook';
 import { useAdminNavigation } from '../../hooks/navigation.hook';
 import { getTrad } from '../../translations';
-import {
-  newShopSchemaWithIdSchema,
-  NewShopSchemaWithIdSchema,
-} from '../../validators/shop.validator';
+import { newShopFormSchema, NewShopSchemaWithIdSchema } from '../../validators/shop.validator';
 
 const initial: Partial<NewShopSchemaWithIdSchema> = {
   id: 1,
@@ -46,7 +43,7 @@ export const NewPage: FC = () => {
   const validator = useCallback(
     (shop: unknown) =>
       new Promise<NewShopSchemaWithIdSchema>((resolve, reject) => {
-        const result = newShopSchemaWithIdSchema.safeParse(shop);
+        const result = newShopFormSchema.safeParse(shop);
 
         if (result.success) {
           return resolve(result.data);
@@ -65,22 +62,25 @@ export const NewPage: FC = () => {
     [dispatch]
   );
 
-  const onSubmit = useCallback((shop: NewShopSchemaWithIdSchema) => {
-    dispatch({
-      type: 'LOADING_START',
-    });
+  const onSubmit = useCallback(
+    (shop: NewShopSchemaWithIdSchema) => {
+      dispatch({
+        type: 'LOADING_START',
+      });
 
-    createShopMutation.mutate(shop, {
-      onSuccess: ({ id }) => {
-        displaySaveSuccess();
-        goToEdit(id);
-      },
+      createShopMutation.mutate(shop, {
+        onSuccess: ({ id }) => {
+          displaySaveSuccess();
+          goToEdit(id);
+        },
 
-      onSettled: () => dispatch({ type: 'LOADING_STOP' }),
+        onSettled: () => dispatch({ type: 'LOADING_STOP' }),
 
-      onError: displayApiErrors,
-    });
-  }, [dispatch, createShopMutation, displaySaveSuccess, goToEdit, displayApiErrors]);
+        onError: displayApiErrors,
+      });
+    },
+    [dispatch, createShopMutation, displaySaveSuccess, goToEdit, displayApiErrors]
+  );
 
   const onSave = useCallback(() => {
     validator(current)
@@ -93,15 +93,18 @@ export const NewPage: FC = () => {
       });
   }, [current, validator, dispatch]);
 
-  const onChange = useCallback((next: Partial<NewShopSchemaWithIdSchema>) => {
-    dispatch({
-      type: 'ON_NEXT',
-      next: {
-        ...current,
-        ...next,
-      },
-    });
-  }, [current, dispatch]);
+  const onChange = useCallback(
+    (next: Partial<NewShopSchemaWithIdSchema>) => {
+      dispatch({
+        type: 'ON_NEXT',
+        next: {
+          ...current,
+          ...next,
+        },
+      });
+    },
+    [current, dispatch]
+  );
 
   return (
     <Layouts.Root>

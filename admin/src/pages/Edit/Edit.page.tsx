@@ -14,7 +14,7 @@ import { useAdminNavigation } from '../../hooks/navigation.hook';
 import { useReadShop } from '../../hooks/readShop.hook';
 import { useUpdateShop } from '../../hooks/updateShop.hook';
 import { getTrad } from '../../translations';
-import { shopSchemaWithIdSchema, ShopSchemaWithIdSchema } from '../../validators/shop.validator';
+import { editShopFormSchema, ShopSchemaWithIdSchema } from '../../validators/shop.validator';
 
 const initial: State<ShopSchemaWithIdSchema> = {
   current: {} as ShopSchemaWithIdSchema,
@@ -97,7 +97,7 @@ export const EditPage: FC = () => {
   const validator = useCallback(
     (shop: unknown) =>
       new Promise<ShopSchemaWithIdSchema>((resolve, reject) => {
-        const result = shopSchemaWithIdSchema.safeParse(shop);
+        const result = editShopFormSchema.safeParse(shop);
 
         if (result.success) {
           return resolve(result.data);
