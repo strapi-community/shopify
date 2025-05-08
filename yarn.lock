@@ -5,6 +5,13 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
+"@adobe/css-tools@npm:^4.0.1":
+  version: 4.4.2
+  resolution: "@adobe/css-tools@npm:4.4.2"
+  checksum: 10c0/19433666ad18536b0ed05d4b53fbb3dd6ede266996796462023ec77a90b484890ad28a3e528cdf3ab8a65cb2fcdff5d8feb04db6bc6eed6ca307c40974239c94
+  languageName: node
+  linkType: hard
+
 "@ampproject/remapping@npm:^2.2.0":
   version: 2.3.0
   resolution: "@ampproject/remapping@npm:2.3.0"
@@ -4215,7 +4222,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sensinum/strapi-utils@npm:^1.0.6":
+"@sensinum/strapi-utils@npm:^1.0.9":
   version: 1.0.9
   resolution: "@sensinum/strapi-utils@npm:1.0.9"
   peerDependencies:
@@ -4368,12 +4375,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@strapi-community/strapi-plugin-shopify@workspace:.":
+"@strapi-community/shopify@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@strapi-community/strapi-plugin-shopify@workspace:."
+  resolution: "@strapi-community/shopify@workspace:."
   dependencies:
     "@faker-js/faker": "npm:^9.6.0"
-    "@sensinum/strapi-utils": "npm:^1.0.6"
+    "@sensinum/strapi-utils": "npm:^1.0.9"
     "@shopify/admin-api-client": "npm:^1.0.4"
     "@shopify/api-codegen-preset": "npm:^1.1.4"
     "@shopify/shopify-api": "npm:^11.7.0"
@@ -4390,8 +4397,12 @@ __metadata:
     "@types/react": "npm:^18.3.8"
     "@types/react-dom": "npm:^18.3.0"
     fp-ts: "npm:^2.16.9"
+    husky: "npm:7.0.4"
     ioredis: "npm:^5.5.0"
     jest: "npm:^29.7.0"
+    jest-cli: "npm:^29.7.0"
+    jest-junit: "npm:^16.0.0"
+    jest-styled-components: "npm:^7.1.1"
     lodash: "npm:^4.17.21"
     lru-cache: "npm:^11.0.2"
     prettier: "npm:^3.4.2"
@@ -10870,6 +10881,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"husky@npm:7.0.4":
+  version: 7.0.4
+  resolution: "husky@npm:7.0.4"
+  bin:
+    husky: lib/bin.js
+  checksum: 10c0/aacb2b8fbfed0ec161f94e9b08d422c51fec073def4e165e57da42f47c10f520a5f0a88b42efc667784e314a1af83cf1994b582cd6f4b0333739921a601c6187
+  languageName: node
+  linkType: hard
+
 "iconv-lite@npm:0.4.13":
   version: 0.4.13
   resolution: "iconv-lite@npm:0.4.13"
@@ -11918,6 +11938,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jest-junit@npm:^16.0.0":
+  version: 16.0.0
+  resolution: "jest-junit@npm:16.0.0"
+  dependencies:
+    mkdirp: "npm:^1.0.4"
+    strip-ansi: "npm:^6.0.1"
+    uuid: "npm:^8.3.2"
+    xml: "npm:^1.0.1"
+  checksum: 10c0/d813d4d142341c2b51b634db7ad6ceb9849514cb58f96ec5e7e4cf4031a557133490452710c2d9dec9b1dd546334d9ca663e042d3070c3e8f102ce6217bd8e2e
+  languageName: node
+  linkType: hard
+
 "jest-leak-detector@npm:^29.7.0":
   version: 29.7.0
   resolution: "jest-leak-detector@npm:29.7.0"
@@ -12098,6 +12130,17 @@ __metadata:
     pretty-format: "npm:^29.7.0"
     semver: "npm:^7.5.3"
   checksum: 10c0/6e9003c94ec58172b4a62864a91c0146513207bedf4e0a06e1e2ac70a4484088a2683e3a0538d8ea913bcfd53dc54a9b98a98cdfa562e7fe1d1339aeae1da570
+  languageName: node
+  linkType: hard
+
+"jest-styled-components@npm:^7.1.1":
+  version: 7.2.0
+  resolution: "jest-styled-components@npm:7.2.0"
+  dependencies:
+    "@adobe/css-tools": "npm:^4.0.1"
+  peerDependencies:
+    styled-components: ">= 5"
+  checksum: 10c0/44eecf73cd1ee50686c9c16517222e2c012422dd7d90a07813f82f3ccce4059563e620d25aed60274e05d31fe6375b1f31a3486033aa39ea5e82fd94afcfa32f
   languageName: node
   linkType: hard
 
@@ -18605,6 +18648,13 @@ __metadata:
     fsevents:
       optional: true
   checksum: 10c0/e632280445c5042d7a4b04d332c5481ee49735f443e7d2e5e8fba9a5a5a664fcee6b9f699d729069c7e39eca5124c7fa8f0e6f2dc00aee68a687253ccadc7255
+  languageName: node
+  linkType: hard
+
+"xml@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "xml@npm:1.0.1"
+  checksum: 10c0/04bcc9b8b5e7b49392072fbd9c6b0f0958bd8e8f8606fee460318e43991349a68cbc5384038d179ff15aef7d222285f69ca0f067f53d071084eb14c7fdb30411
   languageName: node
   linkType: hard
 
