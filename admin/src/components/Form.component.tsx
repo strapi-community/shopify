@@ -165,6 +165,8 @@ export const ShopForm: FC<Props> = (props) => {
   return (
     <Flex background="neutral100" width="100%" direction="column" alignItems="stretch">
       <Form
+        width="100%"
+        height="100%"
         method="POST"
         initialValues={props.shop}
         initialErrors={props.initialError}

@@ -1,6 +1,6 @@
 # strapi-plugin-shopify
 
-A Strapi plugin to integrate Shopify shops and webhooks into your Strapi application. This plugin provides content types for managing Shopify shops and webhooks, supports product synchronization, and offers flexible caching options.
+A powerful Strapi plugin that seamlessly connects your Strapi application with Shopify stores through a user-friendly interface. It features a custom Shopify Product field, robust webhook management, and efficient product synchronization capabilities. The plugin comes with built-in content types for store management, along with configurable caching mechanisms to optimize performance.
 
 ## Features
 - Manage multiple Shopify shops within Strapi
@@ -17,9 +17,9 @@ A Strapi plugin to integrate Shopify shops and webhooks into your Strapi applica
 ## Installation
 
 ```bash
-npm install strapi-plugin-shopify@latest
+npm install @strapi-community/strapi-plugin-shopify@latest
 # or
-yarn add strapi-plugin-shopify@latest
+yarn add @strapi-community/strapi-plugin-shopify@latest
 ```
 
 ## Configuring Shopify for strapi-plugin-shopify (Step-by-Step with Images)
