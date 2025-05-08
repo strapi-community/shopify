@@ -1,10 +1,42 @@
 {
-  "name": "strapi-plugin-shopify",
-  "version": "0.0.0",
-  "description": "",
-  "keywords": [],
+  "name": "@strapi-community/strapi-plugin-shopify",
+  "version": "1.0.0-beta.1",
+  "description": "Official Strapi Shopify Plugin",
+  "keywords": [
+    "strapi",
+    "shopify",
+    "plugin",
+    "custom-field",
+    "ecommerce"
+  ],
+  "strapi": {
+    "kind": "plugin",
+    "name": "shopify",
+    "displayName": "Shopify",
+    "description": "Official Strapi Shopify Plugin"
+  },
   "license": "MIT",
   "author": "Maksymilian Pamuła <mpamula@virtuslab.com>",
+  "maintainers": [
+    {
+      "name": "VirtusLab // Mateusz Ziarko",
+      "email": "mziarko@virtuslab.com",
+      "url": "https://virtuslab.com"
+    },
+    {
+      "name": "VirtusLab // Tomasz Puch",
+      "email": "tpuch@virtuslab.com",
+      "url": "https://virtuslab.com"
+    }
+  ],
+  "homepage": "https://github.com/strapi-community/strapi-plugin-shopify#readme",
+  "bugs": {
+    "url": "https://github.com/strapi-community/strapi-plugin-shopify/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/strapi-community/strapi-plugin-shopify.git"
+  },
   "type": "commonjs",
   "exports": {
     "./package.json": "./package.json",
@@ -34,16 +66,19 @@
     "watch": "strapi-plugin watch",
     "watch:link": "strapi-plugin watch:link",
     "graphql-codegen": "graphql-codegen",
+    "lint": "prettier --check .",
+    "format": "prettier --write .",
     "test:server": "jest --forceExit --detectOpenHandles --config server/jest.config.js",
-    "test:server:watch": "jest --forceExit --detectOpenHandles --config server/jest.config.js --watch"
+    "test:server:watch": "jest --forceExit --detectOpenHandles --config server/jest.config.js --watch",
+    "test:server:ci": "CI=true jest --ci --runInBand --verbose --coverage --config server/jest.config.js"
   },
   "dependencies": {
-    "@sensinum/strapi-utils": "^1.0.6",
+    "@sensinum/strapi-utils": "^1.0.9",
     "@shopify/admin-api-client": "^1.0.4",
     "@shopify/shopify-api": "^11.7.0",
     "@shopify/storefront-api-client": "^1.0.3",
-    "@strapi/design-system": "^2.0.0-rc.14",
-    "@strapi/icons": "^2.0.0-rc.14",
+    "@strapi/design-system": "^2.0.0-rc.23",
+    "@strapi/icons": "^2.0.0-rc.23",
     "@tanstack/react-query": "^5.66.0",
     "@types/lodash": "^4.17.14",
     "fp-ts": "^2.16.9",
@@ -69,22 +104,20 @@
     "react-dom": "^18.3.1",
     "react-query": "3.39.3",
     "react-router-dom": "^7.1.1",
-    "styled-components": "^6.1.14",
+    "styled-components": "6.1.8",
     "ts-jest": "^29.2.6",
     "typescript": "^5.7.3"
   },
   "peerDependencies": {
     "@strapi/sdk-plugin": "^5.3.0",
     "@strapi/strapi": "^5.7.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^6.28.1",
-    "styled-components": "^6.1.14"
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0",
+    "react-router-dom": "^6.0.0",
+    "styled-components": "^6.0.0"
   },
-  "strapi": {
-    "kind": "plugin",
-    "name": "shopify",
-    "displayName": "Shopify",
-    "description": ""
+  "engines": {
+    "node": ">=18.0.0 <=22.x.x",
+    "npm": ">=8"
   }
 }

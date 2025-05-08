@@ -1,6 +1,6 @@
 # strapi-plugin-shopify
 
-A Strapi plugin to integrate Shopify shops and webhooks into your Strapi application. This plugin provides content types for managing Shopify shops and webhooks, supports product synchronization, and offers flexible caching options.
+A powerful Strapi plugin that seamlessly connects your Strapi application with Shopify stores through a user-friendly interface. It features a custom Shopify Product field, robust webhook management, and efficient product synchronization capabilities. The plugin comes with built-in content types for store management, along with configurable caching mechanisms to optimize performance.
 
 ## Features
 - Manage multiple Shopify shops within Strapi
@@ -17,9 +17,9 @@ A Strapi plugin to integrate Shopify shops and webhooks into your Strapi applica
 ## Installation
 
 ```bash
-npm install strapi-plugin-shopify
+npm install @strapi-community/strapi-plugin-shopify@latest
 # or
-yarn add strapi-plugin-shopify
+yarn add @strapi-community/strapi-plugin-shopify@latest
 ```
 
 ## Configuring Shopify for strapi-plugin-shopify (Step-by-Step with Images)
@@ -92,6 +92,7 @@ The plugin requires a configuration object. You must provide a `host` (publicly 
 {
   host: string (URL), // required
   engine: 'memory' | 'redis', // required
+  encryptionKey: string (32 chars), // required
   // If engine is 'redis', provide connection details:
   connection?: {
     host: string, // required for redis
@@ -107,6 +108,7 @@ The plugin requires a configuration object. You must provide a `host` (publicly 
 ```js
 module.exports = {
   host: 'https://your-strapi-instance.com',
+  encryptionKey: 'random 32 chars string',
   engine: 'memory',
 };
 ```
@@ -115,6 +117,7 @@ module.exports = {
 ```js
 module.exports = {
   host: 'https://your-strapi-instance.com',
+  encryptionKey: 'random 32 chars string',
   engine: 'redis',
   connection: {
     host: 'localhost',
