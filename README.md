@@ -34,6 +34,8 @@ A powerful Strapi plugin that seamlessly connects your Strapi application with S
 - [🔄 Webhook Endpoint](#webhook-endpoint)
 - [🔒 Middleware Configuration](#middleware-configuration-for-raw-request-body)
 - [👨‍💻 Development & Testing](#development--testing)
+- [🔗 Links](#links)
+- [💬 Community support](#community-support)
 - [📄 License](#license)
 
 ## ✨ Features
@@ -237,6 +239,21 @@ This setting leverages the Koa Body parser's `includeUnparsed` option. For more 
 - Test backend: `yarn test:server`
 - Test frontend: `yarn test:ts:front`
 
+## 🔗 Links
+
+- [Strapi website](http://strapi.io/)
+- [Strapi community on Slack](http://slack.strapi.io)
+- [Strapi news on Twitter](https://twitter.com/strapijs)
+
+## 💬 Community support
+
+- [GitHub](https://github.com/strapi-community/shopify) (Bug reports, contributions)
+  
+You can also used official support platform of Strapi, and search `[VirtusLab]` prefixed people (maintainers) 
+
+- [Discord](https://discord.strapi.io) (For live discussion with the Community and Strapi team)
+- [Community Forum](https://forum.strapi.io) (Questions and Discussions)
+
 ## 📄 License
 
-MIT
+See the [MIT License](LICENSE) file for licensing information.
