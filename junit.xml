@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="123" failures="0" errors="0" time="14.409">
+  <testsuite name="shopify.service" errors="0" failures="0" skipped="0" timestamp="2025-05-08T12:37:01" time="5.795" tests="5">
+    <testcase classname="shopify.service init should initialize webhooks for all shops" name="shopify.service init should initialize webhooks for all shops" time="0.002">
+    </testcase>
+    <testcase classname="shopify.service getProductsById should return products from cache when available" name="shopify.service getProductsById should return products from cache when available" time="0">
+    </testcase>
+    <testcase classname="shopify.service getProductsById should fetch missing products from Shopify and cache them" name="shopify.service getProductsById should fetch missing products from Shopify and cache them" time="0">
+    </testcase>
+    <testcase classname="shopify.service searchProducts should return cached search results when available" name="shopify.service searchProducts should return cached search results when available" time="0.001">
+    </testcase>
+    <testcase classname="shopify.service searchProducts should fetch and cache search results when not in cache" name="shopify.service searchProducts should fetch and cache search results when not in cache" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="admin.controller" errors="0" failures="0" skipped="0" timestamp="2025-05-08T12:37:06" time="1.391" tests="16">
+    <testcase classname="admin.controller getSettings should return settings from admin service" name="admin.controller getSettings should return settings from admin service" time="0">
+    </testcase>
+    <testcase classname="admin.controller restore should call restore from admin service" name="admin.controller restore should call restore from admin service" time="0">
+    </testcase>
+    <testcase classname="admin.controller getServices should return services from admin service" name="admin.controller getServices should return services from admin service" time="0">
+    </testcase>
+    <testcase classname="admin.controller getShops should return shops when query is valid" name="admin.controller getShops should return shops when query is valid" time="0.003">
+    </testcase>
+    <testcase classname="admin.controller getShops should return bad request when query is invalid" name="admin.controller getShops should return bad request when query is invalid" time="0">
+    </testcase>
+    <testcase classname="admin.controller getShop should return shop when params are valid" name="admin.controller getShop should return shop when params are valid" time="0.001">
+    </testcase>
+    <testcase classname="admin.controller getShop should return bad request when params are empty" name="admin.controller getShop should return bad request when params are empty" time="0.001">
+    </testcase>
+    <testcase classname="admin.controller getShop should return bad request when params are is not a number" name="admin.controller getShop should return bad request when params are is not a number" time="0">
+    </testcase>
+    <testcase classname="admin.controller addShop should add shop when payload is valid" name="admin.controller addShop should add shop when payload is valid" time="0.002">
+    </testcase>
+    <testcase classname="admin.controller addShop should return bad request when payload is invalid" name="admin.controller addShop should return bad request when payload is invalid" time="0">
+    </testcase>
+    <testcase classname="admin.controller removeShop should remove shop when params are valid" name="admin.controller removeShop should remove shop when params are valid" time="0">
+    </testcase>
+    <testcase classname="admin.controller removeShop should return bad request when params are empty" name="admin.controller removeShop should return bad request when params are empty" time="0.001">
+    </testcase>
+    <testcase classname="admin.controller removeShop should return bad request when params are invalid" name="admin.controller removeShop should return bad request when params are invalid" time="0">
+    </testcase>
+    <testcase classname="admin.controller updateShop should update shop when payload is valid" name="admin.controller updateShop should update shop when payload is valid" time="0.001">
+    </testcase>
+    <testcase classname="admin.controller updateShop should return bad request when body is empty" name="admin.controller updateShop should return bad request when body is empty" time="0">
+    </testcase>
+    <testcase classname="admin.controller updateShop should return bad request when shopId is not a number" name="admin.controller updateShop should return bad request when shopId is not a number" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="admin.service" errors="0" failures="0" skipped="0" timestamp="2025-05-08T12:37:08" time="1.348" tests="18">
+    <testcase classname="admin.service settings getSettings should return settings with hidden sensitive data" name="admin.service settings getSettings should return settings with hidden sensitive data" time="0.001">
+    </testcase>
+    <testcase classname="admin.service settings getSettings should return settings with visible sensitive data when hideSensitiveData is false" name="admin.service settings getSettings should return settings with visible sensitive data when hideSensitiveData is false" time="0">
+    </testcase>
+    <testcase classname="admin.service settings restore should call shopsRepository.restore" name="admin.service settings restore should call shopsRepository.restore" time="0.001">
+    </testcase>
+    <testcase classname="admin.service shops getShops should return shops with hidden sensitive data" name="admin.service shops getShops should return shops with hidden sensitive data" time="0">
+    </testcase>
+    <testcase classname="admin.service shops getShop should return shop with hidden sensitive data" name="admin.service shops getShop should return shop with hidden sensitive data" time="0">
+    </testcase>
+    <testcase classname="admin.service shops getShop should return undefined when shop not found" name="admin.service shops getShop should return undefined when shop not found" time="0">
+    </testcase>
+    <testcase classname="admin.service shops addShop should throw BadRequestException when shop already exists" name="admin.service shops addShop should throw BadRequestException when shop already exists" time="0.01">
+    </testcase>
+    <testcase classname="admin.service shops addShop should create new shop and webhooks" name="admin.service shops addShop should create new shop and webhooks" time="0.001">
+    </testcase>
+    <testcase classname="admin.service shops removeShop should remove shop and associated webhooks" name="admin.service shops removeShop should remove shop and associated webhooks" time="0">
+    </testcase>
+    <testcase classname="admin.service shops removeShop should throw BadRequestException when webhook removal fails" name="admin.service shops removeShop should throw BadRequestException when webhook removal fails" time="0.001">
+    </testcase>
+    <testcase classname="admin.service shops updateShop should update shop and manage webhooks correctly" name="admin.service shops updateShop should update shop and manage webhooks correctly" time="0">
+    </testcase>
+    <testcase classname="admin.service shops updateShop should throw BadRequestException when shop not found" name="admin.service shops updateShop should throw BadRequestException when shop not found" time="0.001">
+    </testcase>
+    <testcase classname="admin.service shops updateShop should remove webhooks when they are removed from the shop" name="admin.service shops updateShop should remove webhooks when they are removed from the shop" time="0">
+    </testcase>
+    <testcase classname="admin.service shops updateShop should add new webhooks when they are added to the shop" name="admin.service shops updateShop should add new webhooks when they are added to the shop" time="0.001">
+    </testcase>
+    <testcase classname="admin.service shops updateShop should update shop credentials when they are changed" name="admin.service shops updateShop should update shop credentials when they are changed" time="0">
+    </testcase>
+    <testcase classname="admin.service shops updateShop should not update credentials when they contain masked values (*)" name="admin.service shops updateShop should not update credentials when they contain masked values (*)" time="0">
+    </testcase>
+    <testcase classname="admin.service shops updateShop should handle mixed updates with some masked and some new values" name="admin.service shops updateShop should handle mixed updates with some masked and some new values" time="0.001">
+    </testcase>
+    <testcase classname="admin.service services getServices should return filtered services with their methods" name="admin.service services getServices should return filtered services with their methods" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="shop.service" errors="0" failures="0" skipped="0" timestamp="2025-05-08T12:37:09" time="0.828" tests="10">
+    <testcase classname="shop.service getConfig should return shop config for given vendor" name="shop.service getConfig should return shop config for given vendor" time="0.001">
+    </testcase>
+    <testcase classname="shop.service getOrCreateWithConfig should return cached shop if exists" name="shop.service getOrCreateWithConfig should return cached shop if exists" time="0">
+    </testcase>
+    <testcase classname="shop.service getOrCreateWithConfig should create new shop instance if not cached" name="shop.service getOrCreateWithConfig should create new shop instance if not cached" time="0">
+    </testcase>
+    <testcase classname="shop.service getOrCreateShop should return cached shop if exists" name="shop.service getOrCreateShop should return cached shop if exists" time="0">
+    </testcase>
+    <testcase classname="shop.service getOrCreateShop should throw error if shop not found" name="shop.service getOrCreateShop should throw error if shop not found" time="0.005">
+    </testcase>
+    <testcase classname="shop.service remove should remove shop and session from cache" name="shop.service remove should remove shop and session from cache" time="0">
+    </testcase>
+    <testcase classname="shop.service getOrCreateSession should return cached session if not expired" name="shop.service getOrCreateSession should return cached session if not expired" time="0">
+    </testcase>
+    <testcase classname="shop.service getOrCreateSession should create new session if cached one is expired" name="shop.service getOrCreateSession should create new session if cached one is expired" time="0">
+    </testcase>
+    <testcase classname="shop.service getGQLClient should return GraphQL client with session" name="shop.service getGQLClient should return GraphQL client with session" time="0.001">
+    </testcase>
+    <testcase classname="shop.service getRestClient should return REST client with session" name="shop.service getRestClient should return REST client with session" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="content.manager.controller" errors="0" failures="0" skipped="0" timestamp="2025-05-08T12:37:10" time="0.446" tests="5">
+    <testcase classname="content.manager.controller getVendors should return list of vendors from shops" name="content.manager.controller getVendors should return list of vendors from shops" time="0.002">
+    </testcase>
+    <testcase classname="content.manager.controller getProducts should return products when valid query is provided" name="content.manager.controller getProducts should return products when valid query is provided" time="0">
+    </testcase>
+    <testcase classname="content.manager.controller getProducts should return bad request when query is too short" name="content.manager.controller getProducts should return bad request when query is too short" time="0.001">
+    </testcase>
+    <testcase classname="content.manager.controller getProducts should reject when vendor is non-existent" name="content.manager.controller getProducts should reject when vendor is non-existent" time="0">
+    </testcase>
+    <testcase classname="content.manager.controller getProducts should not require vendor param if there&apos;s only one vendor registered" name="content.manager.controller getProducts should not require vendor param if there&apos;s only one vendor registered" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="cache.service" errors="0" failures="0" skipped="0" timestamp="2025-05-08T12:37:11" time="0.508" tests="10">
+    <testcase classname="cache.service Memory Cache Engine should initialize memory cache engine" name="cache.service Memory Cache Engine should initialize memory cache engine" time="0.001">
+    </testcase>
+    <testcase classname="cache.service Memory Cache Engine should set value in memory cache" name="cache.service Memory Cache Engine should set value in memory cache" time="0">
+    </testcase>
+    <testcase classname="cache.service Memory Cache Engine should get value from memory cache" name="cache.service Memory Cache Engine should get value from memory cache" time="0">
+    </testcase>
+    <testcase classname="cache.service Memory Cache Engine should check if key exists in memory cache" name="cache.service Memory Cache Engine should check if key exists in memory cache" time="0.004">
+    </testcase>
+    <testcase classname="cache.service Redis Cache Engine should initialize Redis cache engine" name="cache.service Redis Cache Engine should initialize Redis cache engine" time="0.004">
+    </testcase>
+    <testcase classname="cache.service Redis Cache Engine should set value in Redis cache" name="cache.service Redis Cache Engine should set value in Redis cache" time="0.007">
+    </testcase>
+    <testcase classname="cache.service Redis Cache Engine should get value from Redis cache" name="cache.service Redis Cache Engine should get value from Redis cache" time="0.003">
+    </testcase>
+    <testcase classname="cache.service Redis Cache Engine should check if key exists in Redis cache" name="cache.service Redis Cache Engine should check if key exists in Redis cache" time="0.007">
+    </testcase>
+    <testcase classname="cache.service Error Cases should throw error when cache engine is not defined" name="cache.service Error Cases should throw error when cache engine is not defined" time="0.007">
+    </testcase>
+    <testcase classname="cache.service Error Cases should throw error when cache engine is not supported" name="cache.service Error Cases should throw error when cache engine is not supported" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="getShopifyFields" errors="0" failures="0" skipped="0" timestamp="2025-05-08T12:37:11" time="0.37" tests="9">
+    <testcase classname="getShopifyFields should return empty map when fetchedData is null" name="getShopifyFields should return empty map when fetchedData is null" time="0">
+    </testcase>
+    <testcase classname="getShopifyFields should return empty map when fetchedData is number" name="getShopifyFields should return empty map when fetchedData is number" time="0.001">
+    </testcase>
+    <testcase classname="getShopifyFields should process raw field with shopify product data" name="getShopifyFields should process raw field with shopify product data" time="0">
+    </testcase>
+    <testcase classname="getShopifyFields should process raw field with shopify product data using productId" name="getShopifyFields should process raw field with shopify product data using productId" time="0">
+    </testcase>
+    <testcase classname="getShopifyFields should process component field with shopify product data" name="getShopifyFields should process component field with shopify product data" time="0">
+    </testcase>
+    <testcase classname="getShopifyFields should process repeatable component field" name="getShopifyFields should process repeatable component field" time="0">
+    </testcase>
+    <testcase classname="getShopifyFields should process dynamic zone field" name="getShopifyFields should process dynamic zone field" time="0.001">
+    </testcase>
+    <testcase classname="getShopifyFields should process array of results" name="getShopifyFields should process array of results" time="0">
+    </testcase>
+    <testcase classname="getShopifyFields should handle nested components" name="getShopifyFields should handle nested components" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="register" errors="0" failures="0" skipped="0" timestamp="2025-05-08T12:37:11" time="0.366" tests="6">
+    <testcase classname="register custom field registration should register the product custom field" name="register custom field registration should register the product custom field" time="0">
+    </testcase>
+    <testcase classname="register document middleware should set up document middleware" name="register document middleware should set up document middleware" time="0">
+    </testcase>
+    <testcase classname="register document middleware should handle findOne action with product field" name="register document middleware should handle findOne action with product field" time="0">
+    </testcase>
+    <testcase classname="register document middleware should handle findMany action with product field" name="register document middleware should handle findMany action with product field" time="0">
+    </testcase>
+    <testcase classname="register document middleware should pass through for non-product content types" name="register document middleware should pass through for non-product content types" time="0">
+    </testcase>
+    <testcase classname="register document middleware should pass through for non-find actions" name="register document middleware should pass through for non-find actions" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="webhook.service" errors="0" failures="0" skipped="0" timestamp="2025-05-08T12:37:12" time="0.417" tests="6">
+    <testcase classname="webhook.service create should create webhooks for given vendor and hooks" name="webhook.service create should create webhooks for given vendor and hooks" time="0">
+    </testcase>
+    <testcase classname="webhook.service create should handle errors from Shopify API" name="webhook.service create should handle errors from Shopify API" time="0.001">
+    </testcase>
+    <testcase classname="webhook.service validate should validate webhooks for given vendor" name="webhook.service validate should validate webhooks for given vendor" time="0">
+    </testcase>
+    <testcase classname="webhook.service validate should return false when webhooks are not found" name="webhook.service validate should return false when webhooks are not found" time="0">
+    </testcase>
+    <testcase classname="webhook.service remove should remove webhooks for given vendor" name="webhook.service remove should remove webhooks for given vendor" time="0">
+    </testcase>
+    <testcase classname="webhook.service remove should handle errors when removing webhooks" name="webhook.service remove should handle errors when removing webhooks" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="Bootstrap" errors="0" failures="0" skipped="0" timestamp="2025-05-08T12:37:12" time="0.382" tests="3">
+    <testcase classname="Bootstrap when there are shops with incomplete webhooks should initialize shopify service with those shops" name="Bootstrap when there are shops with incomplete webhooks should initialize shopify service with those shops" time="0">
+    </testcase>
+    <testcase classname="Bootstrap when there are no shops with incomplete webhooks should not initialize shopify service" name="Bootstrap when there are no shops with incomplete webhooks should not initialize shopify service" time="0.001">
+    </testcase>
+    <testcase classname="Bootstrap when shop repository throws an error should propagate the error" name="Bootstrap when shop repository throws an error should propagate the error" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="Webhook Controller" errors="0" failures="0" skipped="0" timestamp="2025-05-08T12:37:13" time="0.338" tests="4">
+    <testcase classname="Webhook Controller handleWebhook should display error when no vendor is provided" name="Webhook Controller handleWebhook should display error when no vendor is provided" time="0.001">
+    </testcase>
+    <testcase classname="Webhook Controller handleWebhook should display error when validation fails" name="Webhook Controller handleWebhook should display error when validation fails" time="0.001">
+    </testcase>
+    <testcase classname="Webhook Controller handleWebhook should process webhook successfully when validation passes" name="Webhook Controller handleWebhook should process webhook successfully when validation passes" time="0">
+    </testcase>
+    <testcase classname="Webhook Controller handleWebhook should not throw error when service method is not found provided in the webhook" name="Webhook Controller handleWebhook should not throw error when service method is not found provided in the webhook" time="0.003">
+    </testcase>
+  </testsuite>
+  <testsuite name="applyProductValues" errors="0" failures="0" skipped="0" timestamp="2025-05-08T12:37:13" time="0.33" tests="4">
+    <testcase classname="applyProductValues should apply product values to the result object" name="applyProductValues should apply product values to the result object" time="0.001">
+    </testcase>
+    <testcase classname="applyProductValues should handle multiple vendors" name="applyProductValues should handle multiple vendors" time="0.001">
+    </testcase>
+    <testcase classname="applyProductValues should not set values for products that do not exist" name="applyProductValues should not set values for products that do not exist" time="0.001">
+    </testcase>
+    <testcase classname="applyProductValues should handle nested paths in the result object" name="applyProductValues should handle nested paths in the result object" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="getService" errors="0" failures="0" skipped="0" timestamp="2025-05-08T12:37:13" time="0.277" tests="6">
+    <testcase classname="getService should return the requested service" name="getService should return the requested service" time="0.001">
+    </testcase>
+    <testcase classname="getService should work with service name: webhook" name="getService should work with service name: webhook" time="0">
+    </testcase>
+    <testcase classname="getService should work with service name: shopify" name="getService should work with service name: shopify" time="0">
+    </testcase>
+    <testcase classname="getService should work with service name: admin" name="getService should work with service name: admin" time="0">
+    </testcase>
+    <testcase classname="getService should work with service name: shop" name="getService should work with service name: shop" time="0">
+    </testcase>
+    <testcase classname="getService should work with service name: cache" name="getService should work with service name: cache" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="getConfig" errors="0" failures="0" skipped="0" timestamp="2025-05-08T12:37:14" time="0.232" tests="3">
+    <testcase classname="getConfig should return the plugin configuration" name="getConfig should return the plugin configuration" time="0">
+    </testcase>
+    <testcase classname="getConfig should return the correct configuration structure" name="getConfig should return the correct configuration structure" time="0.001">
+    </testcase>
+    <testcase classname="getConfig should work with redis engine configuration" name="getConfig should work with redis engine configuration" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="getHost" errors="0" failures="0" skipped="0" timestamp="2025-05-08T12:37:14" time="0.234" tests="2">
+    <testcase classname="getHost should retrieve the host from plugin configuration" name="getHost should retrieve the host from plugin configuration" time="0">
+    </testcase>
+    <testcase classname="getHost should return undefined when config is not found" name="getHost should return undefined when config is not found" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="cacheDetection" errors="0" failures="0" skipped="0" timestamp="2025-05-08T12:37:14" time="0.228" tests="4">
+    <testcase classname="cacheDetection isRedisEngine should return true for Redis engine config" name="cacheDetection isRedisEngine should return true for Redis engine config" time="0">
+    </testcase>
+    <testcase classname="cacheDetection isRedisEngine should return false for Memory engine config" name="cacheDetection isRedisEngine should return false for Memory engine config" time="0">
+    </testcase>
+    <testcase classname="cacheDetection isMemoryEngine should return true for Memory engine config" name="cacheDetection isMemoryEngine should return true for Memory engine config" time="0.001">
+    </testcase>
+    <testcase classname="cacheDetection isMemoryEngine should return false for Redis engine config" name="cacheDetection isMemoryEngine should return false for Redis engine config" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="getModelFieldsMap" errors="0" failures="0" skipped="0" timestamp="2025-05-08T12:37:14" time="0.21" tests="7">
+    <testcase classname="getModelFieldsMap should return empty map when no custom fields are present" name="getModelFieldsMap should return empty map when no custom fields are present" time="0">
+    </testcase>
+    <testcase classname="getModelFieldsMap should map content types with custom fields" name="getModelFieldsMap should map content types with custom fields" time="0">
+    </testcase>
+    <testcase classname="getModelFieldsMap should map content types with component fields" name="getModelFieldsMap should map content types with component fields" time="0.001">
+    </testcase>
+    <testcase classname="getModelFieldsMap should map content types with dynamic zone fields" name="getModelFieldsMap should map content types with dynamic zone fields" time="0">
+    </testcase>
+    <testcase classname="getModelFieldsMap should map content types with relation fields" name="getModelFieldsMap should map content types with relation fields" time="0">
+    </testcase>
+    <testcase classname="getModelFieldsMap should filter out blacklisted relations" name="getModelFieldsMap should filter out blacklisted relations" time="0">
+    </testcase>
+    <testcase classname="getModelFieldsMap should handle invalid attributes" name="getModelFieldsMap should handle invalid attributes" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="getCorrectSuffix" errors="0" failures="0" skipped="0" timestamp="2025-05-08T12:37:14" time="0.173" tests="2">
+    <testcase classname="getCorrectSuffix should return common path suffix for product webhooks" name="getCorrectSuffix should return common path suffix for product webhooks" time="0.001">
+    </testcase>
+    <testcase classname="getCorrectSuffix should throw error for invalid topic" name="getCorrectSuffix should throw error for invalid topic" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="setupPermissions" errors="0" failures="0" skipped="0" timestamp="2025-05-08T12:37:15" time="0.167" tests="2">
+    <testcase classname="setupPermissions should register plugin permissions correctly" name="setupPermissions should register plugin permissions correctly" time="0">
+    </testcase>
+    <testcase classname="setupPermissions should handle errors from permission registration" name="setupPermissions should handle errors from permission registration" time="0.003">
+    </testcase>
+  </testsuite>
+  <testsuite name="getPlugin" errors="0" failures="0" skipped="0" timestamp="2025-05-08T12:37:15" time="0.166" tests="1">
+    <testcase classname="getPlugin should retrieve the shopify plugin instance" name="getPlugin should retrieve the shopify plugin instance" time="0">
+    </testcase>
+  </testsuite>
+</testsuites>

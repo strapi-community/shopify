@@ -3,7 +3,7 @@ module.exports = {
   testEnvironment: 'node',
   testPathIgnorePatterns: ['/node_modules/', '.tmp'],
   coverageDirectory: '../coverage',
-  testMatch: ['**/__tests__/?(*.)+(test).ts?(x)'],
+  testMatch: ['**/__tests__/**/?(*.)+(test).ts?(x)'],
   transform: {
     '^.+\\.tsx?$': ['ts-jest', {
       tsconfig: 'server/tsconfig.json',
@@ -15,5 +15,6 @@ module.exports = {
     '!**/node_modules/**',
     '!**/dist/**',
   ],
-  coverageReporters: ['text-summary', 'lcov'],
+  collectCoverage: true,
+  reporters: ['default', 'jest-junit'],
 }; 
