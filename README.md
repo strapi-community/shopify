@@ -28,7 +28,7 @@ A powerful Strapi plugin that seamlessly connects your Strapi application with S
 - [✨ Features](#features)
 - [📋 Requirements](#requirements)
 - [📦 Installation](#installation)
-- [⚙️ Shopify Configuration](#configuring-shopify-for-strapi-plugin-shopify-step-by-step-with-images)
+- [⚙️ Shopify Configuration](#configuring-shopify-for-shopify-step-by-step-with-images)
 - [🔧 Plugin Configuration](#configuration-config)
 - [📝 Config](#config)
 - [🔄 Webhook Endpoint](#webhook-endpoint)
@@ -53,12 +53,12 @@ A powerful Strapi plugin that seamlessly connects your Strapi application with S
 ## 📦 Installation
 
 ```bash
-npm install @strapi-community/strapi-plugin-shopify@latest
+npm install @strapi-community/shopify@latest
 # or
-yarn add @strapi-community/strapi-plugin-shopify@latest
+yarn add @strapi-community/shopify@latest
 ```
 
-## ⚙️ Configuring Shopify for strapi-plugin-shopify (Step-by-Step with Images)
+## ⚙️ Configuring Shopify for `shopify` (Step-by-Step with Images)
 
 Follow these steps to configure your Shopify store and connect it to your Strapi instance using this plugin. Visual guidance is provided with embedded images for each step.
 
@@ -144,24 +144,28 @@ The plugin requires a configuration object. You must provide a `host` (publicly 
 ### Example (Memory Engine)
 ```js
 module.exports = {
-  host: 'https://your-strapi-instance.com',
-  encryptionKey: 'random 32 chars string',
-  engine: 'memory',
+  'shopify': {
+    host: 'https://your-strapi-instance.com',
+    encryptionKey: 'random 32 chars string',
+    engine: 'memory',
+  },
 };
 ```
 
 ### Example (Redis Engine)
 ```js
 module.exports = {
-  host: 'https://your-strapi-instance.com',
-  encryptionKey: 'random 32 chars string',
-  engine: 'redis',
-  connection: {
-    host: 'localhost',
-    port: 6379,
-    db: 0,
-    password: 'yourpassword', // optional
-    username: 'youruser',     // optional
+  'shopify': {
+    host: 'https://your-strapi-instance.com',
+    encryptionKey: 'random 32 chars string',
+    engine: 'redis',
+    connection: {
+      host: 'localhost',
+      port: 6379,
+      db: 0,
+      password: 'yourpassword', // optional
+      username: 'youruser',     // optional
+    },
   },
 };
 ```
