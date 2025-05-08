@@ -66,12 +66,14 @@
     "watch": "strapi-plugin watch",
     "watch:link": "strapi-plugin watch:link",
     "graphql-codegen": "graphql-codegen",
+    "lint": "prettier --check .",
+    "format": "prettier --write .",
     "test:server": "jest --forceExit --detectOpenHandles --config server/jest.config.js",
     "test:server:watch": "jest --forceExit --detectOpenHandles --config server/jest.config.js --watch",
     "test:server:ci": "CI=true jest --ci --runInBand --verbose --coverage --config server/jest.config.js"
   },
   "dependencies": {
-    "@sensinum/strapi-utils": "^1.0.6",
+    "@sensinum/strapi-utils": "^1.0.9",
     "@shopify/admin-api-client": "^1.0.4",
     "@shopify/shopify-api": "^11.7.0",
     "@shopify/storefront-api-client": "^1.0.3",
