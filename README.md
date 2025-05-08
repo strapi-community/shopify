@@ -15,6 +15,12 @@
   </a>
 </div>
 
+---
+
+<div style="margin: 20px 0" align="center">
+  <img style="width: 100%; height: auto;" src="https://www.sensinum.com/img/open-source/strapi-plugin-shopify/preview.png" alt="UI preview" />
+</div>
+
 A powerful Strapi plugin that seamlessly connects your Strapi application with Shopify stores through a user-friendly interface. It features a custom Shopify Product field, robust webhook management, and efficient product synchronization capabilities. The plugin comes with built-in content types for store management, along with configurable caching mechanisms to optimize performance.
 
 ## 📋 Table of Contents
@@ -22,7 +28,7 @@ A powerful Strapi plugin that seamlessly connects your Strapi application with S
 - [✨ Features](#features)
 - [📋 Requirements](#requirements)
 - [📦 Installation](#installation)
-- [⚙️ Configuration](#configuring-shopify-for-strapi-plugin-shopify-step-by-step-with-images)
+- [⚙️ Shopify Configuration](#configuring-shopify-for-strapi-plugin-shopify-step-by-step-with-images)
 - [🔧 Plugin Configuration](#configuration-config)
 - [📝 Config](#config)
 - [🔄 Webhook Endpoint](#webhook-endpoint)
@@ -55,48 +61,49 @@ yarn add @strapi-community/strapi-plugin-shopify@latest
 Follow these steps to configure your Shopify store and connect it to your Strapi instance using this plugin. Visual guidance is provided with embedded images for each step.
 
 ### 1. Open Your Shopify Store
-![Shopify Store](img/1.store_page.png)
+![Shopify Store](https://www.sensinum.com/img/open-source/strapi-plugin-shopify/cfg-shopify/1.png)
 - Log in to your Shopify admin dashboard.
 
 ### 2. Go to Store Settings
-![Store Settings](img/2.store_settings.png)
+![Store Settings](https://www.sensinum.com/img/open-source/strapi-plugin-shopify/cfg-shopify/2.png)
 - In the Shopify admin sidebar, click on **Settings** to access your store settings.
 
 ### 3. Create a Custom App
-![Create Custom App 1](img/3.create_custom_app.png)
-![Create Custom App 2](img/4.create_custom_app.png)
+![Create Custom App 1](https://www.sensinum.com/img/open-source/strapi-plugin-shopify/cfg-shopify/3.png)
+![Create Custom App 2](https://www.sensinum.com/img/open-source/strapi-plugin-shopify/cfg-shopify/4.png)
 - Navigate to **Apps** in the sidebar.
 - Click **Develop apps for your store** (you may need to enable this if not already done).
 - Click **Create an app** and provide a name for your custom app.
 
 ### 4. Configure the Custom App
-![Custom App Config](img/5.custom_app_config.png)
+![Custom App Config](https://www.sensinum.com/img/open-source/strapi-plugin-shopify/cfg-shopify/5.png)
 - In your new app, go to the **Configuration** tab.
 - Set up the required Admin API scopes for your integration (see next step).
 
 ### 5. Set API Scopes
-![Custom App Scopes](img/6.custom_app_scopes.png)
+![Custom App Scopes](https://www.sensinum.com/img/open-source/strapi-plugin-shopify/cfg-shopify/6.png)
 - Grant the necessary permissions (scopes) for products.
 
 ### 6. Set API Version
-![Custom App API Version](img/7.custom_app_api_version.png)
+![Custom App API Version](https://www.sensinum.com/img/open-source/strapi-plugin-shopify/cfg-shopify/7.png)
 - Select the appropriate Shopify API version for your app.
 
 ### 7. Get API Credentials
-![Custom App Credentials](img/8.custom_app_credential.png)
+![Custom App Credentials](https://www.sensinum.com/img/open-source/strapi-plugin-shopify/cfg-shopify/8.png)
 - Go to the **API credentials** tab.
 - Copy the **Admin API access token** and **API key**. You will need these for the Strapi plugin configuration.
 
 ### 8. Install the Custom App
-![Install Custom App](img/9.install_custom_app.png)
+![Install Custom App](https://www.sensinum.com/img/open-source/strapi-plugin-shopify/cfg-shopify/9.png)
 - Click **Install app** to add the custom app to your Shopify store.
 
 ### 9. Retrieve Admin Access Token
-![Admin Access Token 1](img/10.admin_access_token.png)
-![Admin Access Token 2](img/11.admin_access_token_2.png)
+![Admin Access Token 1](https://www.sensinum.com/img/open-source/strapi-plugin-shopify/cfg-shopify/10.png)
+![Admin Access Token 2](https://www.sensinum.com/img/open-source/strapi-plugin-shopify/cfg-shopify/11.png)
 - After installation, you can view and copy your Admin API access token.
 
 ### 10. Configure the Plugin in Strapi
+![Plugin configuration](https://www.sensinum.com/img/open-source/strapi-plugin-shopify/cfg-plugin/1.png)
 - Use the credentials and settings from the previous steps to fill out the Shopify Shop configuration in Strapi (see the earlier 'Configuration' section in this README).
 - Example fields:
   - `address`: Your Shopify store address (e.g., `your-store.myshopify.com`)
