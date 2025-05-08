@@ -1,6 +1,6 @@
 {
   "name": "@strapi-community/shopify",
-  "version": "1.0.0-beta.1",
+  "version": "v1.0.0",
   "description": "Official Strapi Shopify Plugin",
   "keywords": [
     "strapi",
