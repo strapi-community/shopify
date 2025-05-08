@@ -1,10 +1,28 @@
 {
-  "name": "strapi-plugin-shopify",
-  "version": "0.0.0",
-  "description": "",
-  "keywords": [],
+  "name": "@strapi-community/strapi-plugin-shopify",
+  "version": "1.0.0",
+  "description": "Official Strapi Shopify Plugin",
+  "keywords": [
+    "strapi",
+    "shopify",
+    "plugin",
+    "custom-field",
+    "ecommerce"
+  ],
   "license": "MIT",
   "author": "Maksymilian Pamuła <mpamula@virtuslab.com>",
+  "maintainers": [
+    {
+      "name": "VirtusLab // Mateusz Ziarko",
+      "email": "mziarko@virtuslab.com",
+      "url": "https://virtuslab.com"
+    },
+    {
+      "name": "VirtusLab // Tomasz Puch",
+      "email": "tpuch@virtuslab.com",
+      "url": "https://virtuslab.com"
+    }
+  ],
   "type": "commonjs",
   "exports": {
     "./package.json": "./package.json",

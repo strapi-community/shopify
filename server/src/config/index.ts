@@ -4,6 +4,7 @@ export default {
   default: {
     host: '',
     engine: 'memory',
+    encryptionKey: '',
   },
   validator(config: unknown) {
     const result = schemaConfig.safeParse(config);
