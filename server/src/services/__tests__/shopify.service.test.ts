@@ -62,6 +62,7 @@ describe('shopify.service', () => {
 
       const shop: ShopWithWebhooks = {
         address: 'test-shop.myshopify.com',
+        vendor: 'test-vendor',
         webhooks: [
           {
             topic: WebhookSubscriptionTopic.ProductsCreate,
@@ -95,7 +96,7 @@ describe('shopify.service', () => {
       await service.init(mockShopsConfig);
 
       // Assert
-      expect(webhookService.create).toHaveBeenCalledWith(shop.address, shop.webhooks);
+      expect(webhookService.create).toHaveBeenCalledWith(shop.vendor, shop.webhooks);
       expect(webhookRepository.update).toHaveBeenCalledWith({ id: webhook.id }, webhook);
     });
   });
