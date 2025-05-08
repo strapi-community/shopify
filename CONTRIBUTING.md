@@ -50,6 +50,7 @@ Our team will review your pull request and either merge it, request changes, or 
 1. **Setup Your Environment**
    - Fork the repository and create your branch from `main`
    - Run `yarn install` in the repository root
+   - Run `yarn prepare` in the repository root to install `pre-commit` hooks
    - For bug fixes or new features, add tests and link the corresponding issue
    - Ensure all tests pass: `yarn test:server`
    - Verify code quality: `yarn lint`

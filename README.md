@@ -1,20 +1,48 @@
-# strapi-plugin-shopify
+<div align="center" style="max-width: 10rem; margin: 0 auto">
+  <img style="width: 150px; height: auto;" src="https://www.sensinum.com/img/open-source/strapi-plugin-shopify/logo.png" alt="Logo - Strapi Shopify Plugin" />
+</div>
+<div align="center">
+  <h1>Strapi Shopify Plugin</h1>
+  <p>Out-of-the-box seamless Shopify integration for your Strapi instance</p>
+  <a href="https://www.npmjs.org/package/@strapi-community/shopify">
+    <img alt="NPM version" src="https://img.shields.io/npm/v/@strapi-community/shopify.svg">
+  </a>
+  <a href="https://www.npmjs.org/package/@strapi-community/shopify">
+    <img src="https://img.shields.io/npm/dm/@strapi-community/shopify.svg" alt="Monthly download on NPM" />
+  </a>
+  <a href="https://codecov.io/gh/strapi-community/shopify">
+    <img src="https://codecov.io/gh/strapi-community/shopify/branch/master/graph/badge.svg?token=p4KW9ytA6u" alt="codecov.io" />
+  </a>
+</div>
 
 A powerful Strapi plugin that seamlessly connects your Strapi application with Shopify stores through a user-friendly interface. It features a custom Shopify Product field, robust webhook management, and efficient product synchronization capabilities. The plugin comes with built-in content types for store management, along with configurable caching mechanisms to optimize performance.
 
-## Features
+## 📋 Table of Contents
+
+- [✨ Features](#features)
+- [📋 Requirements](#requirements)
+- [📦 Installation](#installation)
+- [⚙️ Configuration](#configuring-shopify-for-strapi-plugin-shopify-step-by-step-with-images)
+- [🔧 Plugin Configuration](#configuration-config)
+- [📝 Config](#config)
+- [🔄 Webhook Endpoint](#webhook-endpoint)
+- [🔒 Middleware Configuration](#middleware-configuration-for-raw-request-body)
+- [👨‍💻 Development & Testing](#development--testing)
+- [📄 License](#license)
+
+## ✨ Features
 - Manage multiple Shopify shops within Strapi
 - Handle Shopify webhooks for products
 - Custom field for Shopify products
 - Flexible cache engine: in-memory (LRU) or Redis
 - **Automatically attaches Shopify product data to Strapi content type responses** (when a content type uses the custom Shopify product field)
 
-## Requirements
+## 📋 Requirements
 - Strapi v5.7.0 or later
 - Node.js 18+
 - For Redis cache: a running Redis instance
 
-## Installation
+## 📦 Installation
 
 ```bash
 npm install @strapi-community/strapi-plugin-shopify@latest
@@ -22,7 +50,7 @@ npm install @strapi-community/strapi-plugin-shopify@latest
 yarn add @strapi-community/strapi-plugin-shopify@latest
 ```
 
-## Configuring Shopify for strapi-plugin-shopify (Step-by-Step with Images)
+## ⚙️ Configuring Shopify for strapi-plugin-shopify (Step-by-Step with Images)
 
 Follow these steps to configure your Shopify store and connect it to your Strapi instance using this plugin. Visual guidance is provided with embedded images for each step.
 
@@ -82,7 +110,7 @@ Follow these steps to configure your Shopify store and connect it to your Strapi
 - Make sure to set up webhooks in Shopify to point to your Strapi instance's webhook endpoint (`/api/shopify/webhooks`).
 - Refer to the images for each step to ensure correct configuration.
 
-## Configuration (@config)
+## 🔧 Configuration (@config)
 
 The plugin requires a configuration object. You must provide a `host` (publicly accessible URL of your Strapi instance) and select a cache engine (`memory` or `redis`).
 
@@ -129,7 +157,7 @@ module.exports = {
 };
 ```
 
-## Config
+## 📝 Config
 
 ### Shopify Shop
 - `vendor` (string, required)
@@ -168,7 +196,7 @@ When a Strapi content type includes the custom Shopify product field, the plugin
 
 **Reference:** See [`server/src/register.ts`](server/src/register.ts), middleware in the `strapi.documents.use` block for details on how product data is attached to responses.
 
-## Webhook Endpoint
+## 🔄 Webhook Endpoint
 
 The plugin exposes a webhook endpoint for Shopify:
 
@@ -179,7 +207,7 @@ POST /api/shopify/webhooks
 - Handles product events from Shopify
 - **Security:** Every incoming webhook request is validated using the shop's `apiSecretKey` (HMAC signature) via Shopify's official SDK. Only requests with a valid signature are processed; all others are rejected.
 
-## Middleware Configuration for Raw Request Body
+## 🔒 Middleware Configuration for Raw Request Body
 
 For the plugin to work correctly—especially in verifying incoming Shopify webhook signatures—it is required to have access to the raw (unparsed) request body. This is achieved by configuring Strapi's body parser middleware to include the unparsed body.
 
@@ -196,12 +224,12 @@ To do so, update your application's middleware configuration in `apps/example-ap
 
 This setting leverages the Koa Body parser's `includeUnparsed` option. For more details, please refer to the [Strapi V5 documentation](https://docs.strapi.io) and the koa-body parser documentation.
 
-## Development & Testing
+## 👨‍💻 Development & Testing
 
 - Build: `yarn build`
 - Test backend: `yarn test:server`
 - Test frontend: `yarn test:ts:front`
 
-## License
+## 📄 License
 
 MIT
