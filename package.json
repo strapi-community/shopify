@@ -1,5 +1,5 @@
 {
-  "name": "@strapi-community/strapi-plugin-shopify",
+  "name": "@strapi-community/shopify",
   "version": "1.0.0-beta.1",
   "description": "Official Strapi Shopify Plugin",
   "keywords": [
@@ -29,13 +29,13 @@
       "url": "https://virtuslab.com"
     }
   ],
-  "homepage": "https://github.com/strapi-community/strapi-plugin-shopify#readme",
+  "homepage": "https://github.com/strapi-community/shopify#readme",
   "bugs": {
-    "url": "https://github.com/strapi-community/strapi-plugin-shopify/issues"
+    "url": "https://github.com/strapi-community/shopify/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/strapi-community/strapi-plugin-shopify.git"
+    "url": "git+https://github.com/strapi-community/shopify.git"
   },
   "type": "commonjs",
   "exports": {
@@ -59,6 +59,7 @@
     "dist"
   ],
   "scripts": {
+    "prepare": "husky install",
     "build": "strapi-plugin build",
     "test:ts:back": "run -T tsc -p server/tsconfig.json",
     "test:ts:front": "run -T tsc -p admin/tsconfig.json",
@@ -71,6 +72,11 @@
     "test:server": "jest --forceExit --detectOpenHandles --config server/jest.config.js",
     "test:server:watch": "jest --forceExit --detectOpenHandles --config server/jest.config.js --watch",
     "test:server:ci": "CI=true jest --ci --runInBand --verbose --coverage --config server/jest.config.js"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn format && yarn lint && yarn test:server"
+    }
   },
   "dependencies": {
     "@sensinum/strapi-utils": "^1.0.9",
@@ -98,7 +104,11 @@
     "@types/jest": "^29.5.14",
     "@types/react": "^18.3.8",
     "@types/react-dom": "^18.3.0",
+    "husky": "7.0.4",
     "jest": "^29.7.0",
+    "jest-cli": "^29.7.0",
+    "jest-junit": "^16.0.0",
+    "jest-styled-components": "^7.1.1",
     "prettier": "^3.4.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
