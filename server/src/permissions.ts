@@ -4,12 +4,13 @@ import { Core } from '@strapi/strapi';
 import { PLUGIN_ID } from './const';
 
 const permissions = {
-  render: function (uid: string) {
+  settings: 'settings',
+};
+export const pluginPermissions = {
+  render: function (uid: keyof typeof permissions) {
     return `plugin::${PLUGIN_ID}.${uid}`;
   },
-  [PLUGIN_ID]: {
-    settings: 'settings',
-  },
+  [PLUGIN_ID]: permissions,
 };
 
 export const setupPermissions = async ({ strapi }: { strapi: Core.Strapi }) => {
@@ -18,7 +19,7 @@ export const setupPermissions = async ({ strapi }: { strapi: Core.Strapi }) => {
     {
       section: 'plugins',
       displayName: 'Settings',
-      uid: permissions[PLUGIN_ID].settings,
+      uid: pluginPermissions[PLUGIN_ID].settings,
       pluginName: PLUGIN_ID,
     },
   ];
