@@ -143,6 +143,7 @@ The plugin requires a configuration object. You must provide a `host` (publicly 
 
 ### Example (Memory Engine)
 ```js
+// Strapi v4
 module.exports = {
   'shopify': {
     host: 'https://your-strapi-instance.com',
@@ -150,10 +151,20 @@ module.exports = {
     engine: 'memory',
   },
 };
+
+// Strapi v5 /config/plugins.ts
+shopify: {
+  config: {
+    host: 'https://your-strapi-instance.com',
+    encryptionKey: 'random 32 chars string',
+    engine: 'memory',
+  }
+}
 ```
 
 ### Example (Redis Engine)
 ```js
+// Strapi v4
 module.exports = {
   'shopify': {
     host: 'https://your-strapi-instance.com',
@@ -168,6 +179,22 @@ module.exports = {
     },
   },
 };
+
+// Strapi v5 /config/plugins.ts
+'shopify': {
+  config: {
+    host: 'https://your-strapi-instance.com',
+    encryptionKey: 'random 32 chars string',
+    engine: 'redis',
+    connection: {
+      host: 'localhost',
+      port: 6379,
+      db: 0,
+      password: 'yourpassword', // optional
+      username: 'youruser',     // optional
+    },
+  }
+}
 ```
 
 ## 📝 Config
